@@ -899,7 +899,7 @@ onValue(ref(db,'presence'), snap => {
   });
   const namedList = [...new Set(Object.values(raw).map(v => v && v.name).filter(Boolean))].sort();
   window._onlinePlayers = namedList;
-  if(typeof scoresInit === 'function') scoresInit();
+  if(typeof scoresInit === 'function') window.scoresInit?.();
 
   const chips = document.getElementById('playersChips');
   const num   = document.getElementById('onlineNum');
@@ -918,7 +918,7 @@ onValue(ref(db,'presence'), snap => {
     : '<div class="players-empty">Czekam na graczy…</div>';
   if(num) num.textContent = namedList.length;
 
-  updateGamePlayersStrip(window._lastVotes || {});
+  window.updateGamePlayersStrip?.(window._lastVotes || {});
 });
 
 // ── GAME STATE (what host broadcasts) ──
@@ -929,7 +929,7 @@ function pushVotesReset() {
   // _lastVotes already holds the snapshot (updated by onValue listener)
   // Just clear Firebase; scoring functions read _lastVotes synchronously before this resolves
   window._lastVotes = {};
-  updateGamePlayersStrip({});
+  window.updateGamePlayersStrip?.({});
   return set(ref(db,'votes'), null);
 }
 
@@ -939,7 +939,7 @@ onValue(ref(db,'votes'), snap => {
   const votes = snap.val() || {};
   window._lastVotes = votes;           // ← FIX: always keep snapshot
   if(votesCallback) votesCallback(votes);
-  updateGamePlayersStrip(votes);
+  window.updateGamePlayersStrip?.(votes);
   const total = Object.keys(votes).length;
   const badge = document.getElementById('liveVotesBadge');
   if(badge) {
@@ -951,7 +951,7 @@ onValue(ref(db,'votes'), snap => {
 // ── ADVICE (players submit) ──
 onValue(ref(db,'advice'), snap => {
   window._advices = snap.val() ? Object.values(snap.val()) : [];
-  if(window._currentGame === 'advice') renderAdviceDisplay();
+  if(window._currentGame === 'advice') window.renderAdviceDisplay?.();
 });
 
 // Expose to global scope
@@ -1106,7 +1106,8 @@ function scoresInit() {
   players.forEach(p => {
     if(!SCORES[p]) SCORES[p] = { total:0, games:{} };
   });
-}
+}window.scoresInit = scoresInit;
+
 
 function scoreAdd(player, game, pts, label='') {
   if(!player || pts === 0) return;
@@ -1264,7 +1265,8 @@ function renderMiniSB(game) {
 // ════════════════════════════════════════════════════════════════
 // END-OF-GAME SCOREBOARD
 // ════════════════════════════════════════════════════════════════
-function showEndOfGameSB(game, onNext) {
+function showEndOfGameSB(gameOrEl, onNext) {
+  const game = (typeof gameOrEl === 'string') ? gameOrEl : gameOrEl?.dataset?.g || gameOrEl;
   const MEDALS = ['🥇','🥈','🥉'];
   const GAME_EMOJI = {
     quiz:'🎤', honornot:'🔥', highlow:'📊', choice:'⚡',
@@ -2008,10 +2010,11 @@ function renderVabank() {
         </div>
       </div>`;
     const vbAllUsed = vb.used.length >= vb.categories.length*vb.prices.length;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="DATA.vabank.used=[];renderVabank()">🔄 NOWA GRA</button>
-      <span class="counter-badge">${vb.used.length}/${vb.categories.length*vb.prices.length} pytań</span>
-      ${vbAllUsed ? '<button class="ctrl-btn primary" onclick="showEndOfGameSB('vabank')">🏆 WYNIKI</button>' : ''}`;
+    const _finishBtn = vbAllUsed ? '<button class="ctrl-btn primary" onclick="showEndOfGameSB(this.dataset.g)" data-g="vabank">🏆 WYNIKI</button>' : '';
+    document.getElementById('gsControls').innerHTML =
+      '<button class="ctrl-btn secondary" onclick="DATA.vabank.used=[];renderVabank()">🔄 NOWA GRA</button>' +
+      '<span class="counter-badge">' + vb.used.length + '/' + (vb.categories.length*vb.prices.length) + ' pytań</span>' +
+      _finishBtn;
     window.pushState?.({game:'vabank',view:'board'});
   } else {
     const ci=S.vabank.catIdx,pi=S.vabank.priceIdx;
@@ -2124,7 +2127,8 @@ function renderAdviceDisplay(){
       <button class="advice-del" onclick="window._advices.splice(${i},1);renderAdviceDisplay();window.FB&&window.FB.set(window.FB.ref(window.FB.db,'advice'),Object.fromEntries(window._advices.map((v,k)=>[k,v])))">✕</button>
     </div>`).join('');
   list.scrollTop=list.scrollHeight;
-}
+}window.renderAdviceDisplay = renderAdviceDisplay;
+
 function addAdvice(){
   const v=document.getElementById('adviceInput')?.value.trim();
   if(!v)return;
