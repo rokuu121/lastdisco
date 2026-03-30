@@ -50,7 +50,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .name-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;width:100%;max-width:360px;}
 .name-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
 .name-input{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,215,0,.3);border-radius:10px;
-  color:var(--text);font-family:'Outfit';font-size:1.2rem;font-weight:600;padding:14px 16px;
+  color:var(--text);font-family:'Outfit';font-size:16px;font-weight:600;padding:14px 16px;
   outline:none;text-align:center;transition:border-color .2s;}
 .name-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,215,0,.15);}
 .join-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));
@@ -103,8 +103,9 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 
 /* ── VOTE BUTTONS (big) ── */
 .vote-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.vote-btn{border-radius:14px;padding:22px 12px;text-align:center;cursor:pointer;
-  border:2px solid transparent;transition:all .25s;-webkit-tap-highlight-color:transparent;}
+.vote-btn{border-radius:14px;padding:24px 12px;text-align:center;cursor:pointer;
+  border:2px solid transparent;transition:all .25s;-webkit-tap-highlight-color:transparent;
+  min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .vote-btn:active{transform:scale(.96);}
 .vote-btn.hot{background:rgba(255,45,156,.12);border-color:rgba(255,45,156,.4);color:var(--pink);}
 .vote-btn.not{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
@@ -146,7 +147,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .advice-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
 .advice-label{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
 .advice-ta{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,215,0,.25);border-radius:10px;
-  color:var(--text);font-family:'Outfit';font-size:1rem;padding:12px 14px;outline:none;
+  color:var(--text);font-family:'Outfit';font-size:16px;padding:12px 14px;outline:none;
   resize:none;min-height:80px;line-height:1.6;caret-color:var(--gold);}
 .advice-ta:focus{border-color:var(--gold);}
 .advice-ta::placeholder{color:var(--muted);}
@@ -218,7 +219,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .score-bar-track{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
 .score-bar-fill{height:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:2px;
   transition:width .6s cubic-bezier(.34,1.1,.64,1);}
-.score-feedback{position:fixed;bottom:70px;right:16px;z-index:300;
+.score-feedback{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom));right:16px;z-index:300;
   font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:2px;
   padding:8px 18px;border-radius:50px;
   animation:feedbackPop .4s cubic-bezier(.34,1.56,.64,1) forwards, feedbackFade 2s 1s forwards;
@@ -264,7 +265,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
     <div class="game-tag" id="gameTag">🪩 LAST DISCO</div>
     <div class="player-tag" id="playerTag"></div>
   </div>
-  <div id="gameContent"></div>
+  <div id="gameContent" style="padding-bottom:8px;"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -444,11 +445,12 @@ function sendVote(value) {
 function renderQuizPlayer(state) {
   const c = document.getElementById('gameContent');
   if(state.phase === 'question') {
+    _currentOpts = state.opts || [];
     c.innerHTML = `
       <div class="q-card"><div class="q-round">PYTANIE ${(state.idx||0)+1}</div><div class="q-text">${esc(state.question||'')}</div></div>
       <div class="options">
         ${(state.opts||[]).map((o,i) => `
-          <div class="opt ${_playerVoted?'sent':''}" onclick="quizVote('${esc(o)}','${'ABCD'[i]}')">
+          <div class="opt ${_playerVoted?'sent':''}" data-opt="${i}" onclick="quizVoteIdx(${i})">
             <span class="opt-letter">${'ABCD'[i]}</span>
             <span class="opt-text">${esc(o)}</span>
           </div>`).join('')}
@@ -456,6 +458,7 @@ function renderQuizPlayer(state) {
       ${_playerVoted ? `<div class="voted-badge" style="margin:8px auto;display:block;text-align:center;">✅ Głos wysłany!</div>` : ''}`;
   } else {
     const ci = state.correctIdx ?? -1;
+    _currentOpts = state.opts || [];
     c.innerHTML = `
       <div class="q-card"><div class="q-round">PYTANIE ${(state.idx||0)+1}</div><div class="q-text">${esc(state.question||'')}</div></div>
       <div class="options">
@@ -464,6 +467,13 @@ function renderQuizPlayer(state) {
       <div class="answer-card correct"><div class="answer-lbl">✅ ODPOWIEDŹ KASI</div><div class="answer-val">${esc(state.answer||'')}</div></div>`;
     spawnConfetti(20);
   }
+}
+let _currentOpts = [];
+function quizVoteIdx(i) {
+  const val = _currentOpts[i];
+  if(!val) return;
+  sendVote(val);
+  renderQuizVotedUI();
 }
 function quizVote(val) { sendVote(val); renderQuizVotedUI(); }
 function renderQuizVotedUI(){
@@ -726,7 +736,12 @@ window._renderScoreBar = function() {
 
   // Update pts display
   if(ptsEl) ptsEl.innerHTML = total + ' <small>pkt</small>';
-  if(fillEl) fillEl.style.width = Math.min(100, total * 4) + '%';
+  if(fillEl) {
+    fillEl.style.width = Math.min(100, total * 4) + '%';
+    fillEl.style.background = lastPts > 1.5 ? 'linear-gradient(90deg,#39FF14,#ADFF2F)'
+      : lastPts > 0 ? 'linear-gradient(90deg,#FFD700,#FFA500)'
+      : 'linear-gradient(90deg,#FFD700,#FFA500)';
+  }
 
   // Show feedback if pts changed
   if(total !== _prevTotal && total > 0) {

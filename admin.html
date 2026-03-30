@@ -15,6 +15,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow:hidden;}
+#home{overflow-y:auto!important;}
 .disco-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse at 10% 15%,rgba(255,45,156,.2) 0%,transparent 40%),
     radial-gradient(ellipse at 90% 85%,rgba(0,207,255,.16) 0%,transparent 40%),
@@ -26,7 +27,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .screen.active{display:flex;}
 
 /* ── HOME ── */
-#home{align-items:center;justify-content:center;}
+#home{align-items:center;justify-content:flex-start;padding:18px 0 24px;gap:10px;}
 .home-crown{font-size:3.5rem;margin-bottom:4px;animation:float 3s ease-in-out infinite;}
 @keyframes float{0%,100%{transform:translateY(0)rotate(-5deg);}50%{transform:translateY(-10px)rotate(5deg);}}
 .home-title{font-family:'Bebas Neue';font-size:clamp(3rem,9vw,8rem);letter-spacing:8px;line-height:.9;text-align:center;
@@ -37,15 +38,15 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .host-badge{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.4);border-radius:20px;
   padding:5px 18px;font-family:'Bebas Neue';font-size:.85rem;letter-spacing:3px;color:var(--gold);margin-bottom:24px;}
 .qr-section{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.05);
-  border:1px solid var(--border);border-radius:14px;padding:14px 20px;margin-bottom:20px;
-  max-width:500px;width:90vw;}
+  border:1px solid var(--border);border-radius:14px;padding:14px 20px;margin-bottom:10px;
+  max-width:700px;width:92vw;}
 .qr-section canvas{border-radius:8px;background:white;padding:4px;flex-shrink:0;}
 .qr-info{flex:1;}
 .qr-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;color:var(--gold);margin-bottom:4px;}
 .qr-url{font-size:.8rem;color:var(--blue);word-break:break-all;line-height:1.4;}
 .qr-hint{font-size:.65rem;color:var(--muted);margin-top:6px;line-height:1.4;}
 .online-count{font-family:'Bebas Neue';font-size:.9rem;letter-spacing:2px;color:var(--green);margin-top:6px;}
-.games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:min(1080px,94vw);max-height:50vh;overflow-y:auto;padding:2px;}
+.games-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:min(1100px,96vw);max-height:none;padding:2px;}
 @media(max-width:900px){.games-grid{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:600px){.games-grid{grid-template-columns:repeat(2,1fr);}}
 .games-grid::-webkit-scrollbar{width:4px;}
@@ -78,7 +79,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 .game-stage-wrap{flex:1;display:flex;overflow:hidden;position:relative;z-index:2;}
 .game-stage{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.game-body{flex:1;overflow-y:auto;padding:18px 24px;display:flex;flex-direction:column;gap:14px;}
+.game-body{flex:1;overflow-y:auto;padding:14px 20px;display:flex;flex-direction:column;gap:12px;}
 .game-body::-webkit-scrollbar{width:4px;}
 .game-body::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px;}
 .nav-controls{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;
@@ -368,7 +369,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 /* ── PLAYERS PANEL ── */
 .players-panel{background:rgba(255,255,255,.04);border:1px solid rgba(57,255,20,.25);border-radius:14px;
-  padding:12px 16px;max-width:500px;width:90vw;margin-bottom:14px;}
+  padding:12px 16px;max-width:700px;width:92vw;margin-bottom:8px;}
 .players-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .players-panel-title{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;color:var(--green);}
 .players-panel-count{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold);letter-spacing:2px;}
@@ -462,86 +463,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 /* ════════════════════════════════════
    SCOREBOARD
 ════════════════════════════════════ */
-/* Floating scoreboard button */
-.sb-fab{position:fixed;bottom:52px;right:12px;z-index:800;
-  background:linear-gradient(135deg,#FFD700,#FFA500);color:#07000F;
-  border:none;border-radius:14px;padding:9px 14px;
-  font-family:'Bebas Neue';font-size:.82rem;letter-spacing:2px;
-  cursor:pointer;box-shadow:0 4px 18px rgba(255,215,0,.4);
-  display:flex;align-items:center;gap:5px;transition:all .2s;}
-.sb-fab:hover{transform:scale(1.06);box-shadow:0 6px 24px rgba(255,215,0,.55);}
-.sb-fab-badge{background:#07000F;color:#FFD700;border-radius:50%;
-  width:18px;height:18px;font-size:.65rem;display:flex;align-items:center;
-  justify-content:center;font-family:'Bebas Neue';}
-
-/* Scoreboard drawer */
-.sb-drawer{position:fixed;right:-360px;top:0;bottom:0;width:340px;z-index:900;
-  background:#0A001A;border-left:1px solid rgba(255,215,0,.2);
-  display:flex;flex-direction:column;transition:right .35s cubic-bezier(.4,0,.2,1);
-  box-shadow:-8px 0 40px rgba(0,0,0,.6);}
-.sb-drawer.open{right:0;}
-.sb-drawer-header{padding:16px 18px 12px;border-bottom:1px solid rgba(255,215,0,.12);
-  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-  background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,45,156,.04));}
-.sb-drawer-title{font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:4px;
-  background:linear-gradient(90deg,#FFD700,#FF2D9C);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.sb-drawer-close{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
-  color:rgba(255,248,231,.6);border-radius:8px;padding:5px 10px;
-  font-family:'Bebas Neue';font-size:.8rem;letter-spacing:1px;cursor:pointer;transition:all .2s;}
-.sb-drawer-close:hover{background:rgba(255,45,156,.15);border-color:rgba(255,45,156,.4);color:#FF2D9C;}
-.sb-drawer-body{flex:1;overflow-y:auto;padding:14px 14px;}
-.sb-drawer-body::-webkit-scrollbar{width:3px;}
-.sb-drawer-body::-webkit-scrollbar-thumb{background:rgba(255,215,0,.2);border-radius:2px;}
-
-/* Total leaderboard */
-.sb-section-label{font-family:'Bebas Neue';font-size:.65rem;letter-spacing:4px;
-  color:rgba(255,248,231,.35);margin:10px 0 8px;display:flex;align-items:center;gap:8px;}
-.sb-section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07);}
-
-.sb-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;
-  margin-bottom:5px;transition:all .2s;position:relative;overflow:hidden;}
-.sb-row:first-child{background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,165,0,.05));border:1px solid rgba(255,215,0,.3);}
-.sb-row:nth-child(2){background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);}
-.sb-row:nth-child(3){background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);}
-.sb-row:not(:first-child):not(:nth-child(2)):not(:nth-child(3)){background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);}
-.sb-pos{font-family:'Bebas Neue';font-size:1rem;min-width:28px;text-align:center;flex-shrink:0;}
-.sb-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;font-family:'Bebas Neue';font-size:.85rem;flex-shrink:0;
-  border:2px solid transparent;}
-.sb-row:first-child .sb-avatar{background:linear-gradient(135deg,rgba(255,215,0,.3),rgba(255,165,0,.15));border-color:#FFD700;color:#FFD700;}
-.sb-row:nth-child(2) .sb-avatar{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.3);color:rgba(255,248,231,.7);}
-.sb-row:nth-child(3) .sb-avatar{background:rgba(255,140,0,.1);border-color:rgba(255,140,0,.3);color:#FFA500;}
-.sb-row:not(:first-child):not(:nth-child(2)):not(:nth-child(3)) .sb-avatar{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:rgba(255,248,231,.5);}
-.sb-info{flex:1;min-width:0;}
-.sb-name{font-family:'Bebas Neue';font-size:.95rem;letter-spacing:2px;color:#FFF8E7;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sb-breakdown{font-size:.58rem;color:rgba(255,248,231,.4);margin-top:1px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sb-pts{font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:1px;flex-shrink:0;}
-.sb-row:first-child .sb-pts{color:#FFD700;}
-.sb-row:nth-child(2) .sb-pts{color:rgba(255,248,231,.8);}
-.sb-row:nth-child(3) .sb-pts{color:#FFA500;}
-.sb-row:not(:first-child):not(:nth-child(2)):not(:nth-child(3)) .sb-pts{color:rgba(255,248,231,.5);}
-.sb-bar-bg{position:absolute;left:0;top:0;bottom:0;border-radius:10px;
-  background:linear-gradient(90deg,rgba(255,215,0,.06),transparent);pointer-events:none;}
-
-/* Per-game score pills */
-.sb-game-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
-.sb-game-label{font-family:'Bebas Neue';font-size:.62rem;letter-spacing:2px;color:rgba(255,248,231,.35);min-width:60px;flex-shrink:0;}
-.sb-game-chip{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:8px;
-  font-family:'Bebas Neue';font-size:.7rem;letter-spacing:1px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);}
-.sb-game-chip.leader{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.3);}
-.sb-game-chip .sc-name{color:rgba(255,248,231,.7);}
-.sb-game-chip.leader .sc-name{color:#FFD700;}
-.sb-game-chip .sc-pts{font-size:.8rem;color:rgba(255,248,231,.5);margin-left:2px;}
-.sb-game-chip.leader .sc-pts{color:#FFD700;}
-
-/* Reset btn */
-.sb-reset{width:100%;background:rgba(255,45,156,.06);border:1px solid rgba(255,45,156,.2);
-  color:rgba(255,45,156,.6);border-radius:8px;padding:9px;font-family:'Bebas Neue';
-  font-size:.8rem;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:14px;}
+/* sb-reset inline */
 .sb-reset:hover{background:rgba(255,45,156,.15);color:#FF2D9C;border-color:rgba(255,45,156,.4);}
 
 /* In-game mini scoreboard */
@@ -628,7 +550,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
     </div>
     <div class="players-chips" id="playersChips"><div class="players-empty">Czekam na graczy…</div></div>
   </div>
-  <div id="globalSBWrap" style="max-width:520px;width:90vw;margin-bottom:16px;display:none;">
+  <div id="globalSBWrap" style="max-width:700px;width:92vw;margin-bottom:8px;display:none;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
       <div style="font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:#FFD700;">🏆 TABLICA WYNIKÓW</div>
       <button onclick="resetScores()" style="background:rgba(255,45,156,.08);border:1px solid rgba(255,45,156,.25);color:rgba(255,45,156,.7);border-radius:6px;padding:3px 10px;font-family:'Bebas Neue';font-size:.65rem;letter-spacing:2px;cursor:pointer;">🔄 RESET</button>
@@ -946,7 +868,7 @@ function scoreAdd(player, game, pts, label='') {
   });
   renderLocalSB(game);
   renderGlobalSB();
-  updateFabBadge();
+
 }
 
 function scoreAddMany(playerPtsMap, game, label='') {
@@ -970,8 +892,7 @@ function toggleSB() {
 
 function resetScores() {
   SCORES = {};
-  renderSB();
-  updateFabBadge();
+
   showToast('Wyniki zresetowane!');
 }
 
@@ -1055,7 +976,7 @@ function resetScores() {
   renderLocalSB(window._currentGame);
   // Clear Firebase scores
   window.FB?.set(window.FB.ref(window.FB.db,'scores'), null);
-  updateFabBadge();
+
   showToast('Wyniki zresetowane!');
 }
 
@@ -1327,14 +1248,10 @@ function renderQuiz(resetVotes=true) {
       <div class="answer-box correct"><div class="answer-label">✅ ODPOWIEDŹ KASI</div><div class="answer-text">${e(d.answer)}</div>${d.answerNote?`<div class="answer-sub">${e(d.answerNote)}</div>`:''}</div>`;
     document.getElementById('gsControls').innerHTML=`
       <button class="ctrl-btn secondary" onclick="quizPrev()">◀ WSTECZ</button>
-      <button class="ctrl-btn primary" onclick="quizNext()">NASTĘPNE ▶</button>
-      <button class="ctrl-btn secondary" onclick="toggleSB()">🏆 WYNIKI</button>`;
+      <button class="ctrl-btn primary" onclick="quizNext()">NASTĘPNE ▶</button>`;
     pushQuestion('quiz',{idx:s.idx,phase:'answer',answer:d.answer,correctIdx:ci});
     // inject mini scoreboard after body renders
-    setTimeout(()=>{
-      const b=document.getElementById('gsBody');
-      if(b && Object.keys(SCORES).length) b.insertAdjacentHTML('beforeend', renderMiniSB('quiz'));
-    },50);
+    renderLocalSB('quiz');
   }
 }
 function quizReveal(){
@@ -1400,8 +1317,8 @@ function renderVabank() {
             ${(window._onlinePlayers||[]).map(p=>`<button onclick="vbAward('${p.replace(/'/g,"\\'")}');this.style.opacity='.4';this.disabled=true;" style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);color:#FFD700;border-radius:8px;padding:6px 14px;font-family:'Bebas Neue';font-size:.82rem;letter-spacing:2px;cursor:pointer;">+${price} ${e(p)}</button>`).join('')}
           </div>
         </div>
-        ${renderMiniSB('vabank')}
       </div>`;
+    setTimeout(()=>renderLocalSB('vabank'),50);
     document.getElementById('gsControls').innerHTML=`
       <button class="ctrl-btn secondary" onclick="S.vabank.view='board';renderVabank()">← TABLICA</button>
       ${S.vabank.phase==='question'?`<button class="ctrl-btn reveal-btn" onclick="vbReveal()">🔓 ODPOWIEDŹ</button>`:
@@ -1441,8 +1358,7 @@ function renderHon(resetVotes=true) {
   document.getElementById('gsControls').innerHTML=`
     <button class="ctrl-btn secondary" onclick="honPrev()">◀ WSTECZ</button>
     <span class="counter-badge">${s.idx+1}/${DATA.hon.length}</span>
-    <button class="ctrl-btn primary" onclick="honNext()">NASTĘPNE ▶</button>
-    <button class="ctrl-btn secondary" onclick="toggleSB()">🏆</button>`;
+    <button class="ctrl-btn primary" onclick="honNext()">NASTĘPNE ▶</button>`;
   pushQuestion('honornot',{idx:s.idx,statement:txt,opts:['🔥 HOT','❄️ NOT']},resetVotes);
 }
 function honNext(){
@@ -1460,6 +1376,7 @@ function honNext(){
     const pts = v===majority ? 2 : 1;
     scoreAdd(p,'honornot',pts,'Głos oddany');
   });
+  renderLocalSB('honornot');
   if(S.hon.idx<DATA.hon.length-1){S.hon.idx++;renderHon();}else showToast('Koniec!');
 }
 function honPrev(){if(S.hon.idx>0){S.hon.idx--;renderHon();}}
@@ -1519,8 +1436,11 @@ function renderHL(resetVotes=true) {
         <button class="hon-vote-btn hot" style="flex:1;font-size:1.2rem;">⬆️ WYŻEJ</button>
         <button class="hon-vote-btn not" style="flex:1;font-size:1.2rem;">⬇️ NIŻEJ</button>
       </div>`;
+    const curDir = S.highlow.correctDir;
     document.getElementById('gsControls').innerHTML=`
       <button class="ctrl-btn secondary" onclick="hlPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn ${curDir==='⬆️ WYŻEJ'?'primary':'secondary'}" onclick="S.highlow.correctDir='⬆️ WYŻEJ';renderHL(false)">⬆️ WYŻEJ</button>
+      <button class="ctrl-btn ${curDir==='⬇️ NIŻEJ'?'primary':'secondary'}" onclick="S.highlow.correctDir='⬇️ NIŻEJ';renderHL(false)">⬇️ NIŻEJ</button>
       <button class="ctrl-btn reveal-btn" onclick="hlReveal()">🔓 ODSŁOŃ</button>
       <button class="ctrl-btn secondary" onclick="hlNext()">POMIŃ ▶</button>`;
     pushQuestion('highlow',{idx:s.idx,phase:'question',question:d.q,hint:d.hint,opts:['⬆️ WYŻEJ','⬇️ NIŻEJ']},resetVotes);
@@ -1531,13 +1451,9 @@ function renderHL(resetVotes=true) {
       <div class="answer-box correct"><div class="answer-label">✅ ODPOWIEDŹ</div><div class="answer-text">${e(d.answer)}</div></div>`;
     document.getElementById('gsControls').innerHTML=`
       <button class="ctrl-btn secondary" onclick="hlPrev()">◀ WSTECZ</button>
-      <button class="ctrl-btn primary" onclick="hlNext()">NASTĘPNE ▶</button>
-      <button class="ctrl-btn secondary" onclick="toggleSB()">🏆 WYNIKI</button>`;
+      <button class="ctrl-btn primary" onclick="hlNext()">NASTĘPNE ▶</button>`;
     pushQuestion('highlow',{idx:s.idx,phase:'answer',answer:d.answer});
-    setTimeout(()=>{
-      const b=document.getElementById('gsBody');
-      if(b && Object.keys(SCORES).length) b.insertAdjacentHTML('beforeend', renderMiniSB('highlow'));
-    },50);
+    renderLocalSB('highlow');
   }
 }
 function hlReveal(){
@@ -1546,15 +1462,16 @@ function hlReveal(){
   const d=DATA.highlow[S.highlow.idx];
   const votes=window._lastVotes||{};
   const players=window._onlinePlayers||[];
-  // Determine correct direction from answer text
-  const ansLower=d.answer.toLowerCase();
-  const correctDir = ansLower.includes('więcej')||ansLower.includes('wyżej')||ansLower.includes('ponad')||ansLower.includes('aż') ? '⬆️ WYŻEJ' : '⬇️ NIŻEJ';
+  // Use stored correct direction (set by host via toggle before reveal)
+  const correctDir = S.highlow.correctDir || null;
   players.forEach(p=>{
     const key=p.replace(/\s/g,'_');
     const v=votes[key]!==undefined?votes[key]:votes[p];
     if(v===undefined) return;
-    const pts = v===correctDir ? 3 : 0;
-    if(pts>0) scoreAdd(p,'highlow',pts,'✓ Poprawny kierunek');
+    if(correctDir) {
+      const pts = v===correctDir ? 3 : 0;
+      if(pts>0) scoreAdd(p,'highlow',pts,'✓ Poprawny kierunek');
+    }
   });
   renderHL(false);
 }
@@ -1637,8 +1554,7 @@ function renderChoice(resetVotes=true) {
   document.getElementById('gsControls').innerHTML=`
     <button class="ctrl-btn secondary" onclick="choicePrev()">◀ WSTECZ</button>
     <span class="counter-badge">${s.idx+1}/${DATA.choice.length}</span>
-    <button class="ctrl-btn primary" onclick="choiceNext()">NASTĘPNE ▶</button>
-    <button class="ctrl-btn secondary" onclick="toggleSB()">🏆</button>`;
+    <button class="ctrl-btn primary" onclick="choiceNext()">NASTĘPNE ▶</button>`;
   pushQuestion('choice',{idx:s.idx,a:d.a,b:d.b,opts:[d.a,d.b]},resetVotes);
 }
 function choiceNext(){
@@ -1653,6 +1569,7 @@ function choiceNext(){
     if(v===undefined) return;
     scoreAdd(p,'choice', v===majority?2:1, v===majority?'Większość!':'Własny wybór');
   });
+  renderLocalSB('choice');
   if(S.choice.idx<DATA.choice.length-1){S.choice.idx++;renderChoice();}else showToast('Koniec!');
 }
 function choicePrev(){if(S.choice.idx>0){S.choice.idx--;renderChoice(false);}}
@@ -1761,11 +1678,10 @@ function renderAuction() {
       <div class="auction-item"><div class="round-badge">${item.emoji} SPRZEDANO!</div><div class="auction-item-name">${item.emoji} ${e(item.name)}</div></div>
       <div class="answer-box correct"><div class="answer-label">🔨 KUPUJE</div><div class="answer-text">${st.currentWinner||'—'}</div><div class="answer-sub">za ${st.currentBid} monet</div></div>
       <div class="player-budgets">${budgetsHTML}</div>
-      ${renderMiniSB('auction')}`;
+`;    // localSBPanel handles auction sb
     document.getElementById('gsControls').innerHTML=`
       <button class="ctrl-btn secondary" onclick="auctionPrev()">◀</button>
-      <button class="ctrl-btn primary" onclick="auctionNext()">NASTĘPNA CECHA ▶</button>
-      <button class="ctrl-btn secondary" onclick="toggleSB()">🏆 WYNIKI</button>`;
+      <button class="ctrl-btn primary" onclick="auctionNext()">NASTĘPNA CECHA ▶</button>`;
     spawnConfetti(40);
   }
   window.pushState?.({game:'auction',idx:st.idx,item:item.name,emoji:item.emoji,phase:st.phase,currentBid:st.currentBid,winner:st.currentWinner});
@@ -1917,8 +1833,7 @@ function renderNever(resetVotes=true) {
   document.getElementById('gsControls').innerHTML=`
     <button class="ctrl-btn secondary" onclick="neverPrev()">◀ WSTECZ</button>
     <span class="counter-badge">${s.idx+1}/${DATA.never.length}</span>
-    <button class="ctrl-btn primary" onclick="neverNext()">NASTĘPNA ▶</button>
-    <button class="ctrl-btn secondary" onclick="toggleSB()">🏆</button>`;
+    <button class="ctrl-btn primary" onclick="neverNext()">NASTĘPNA ▶</button>`;
   pushQuestion('neverhave',{idx:s.idx,statement:txt,opts:['🍹 ROBIŁAM!','😇 NIE JA!']},resetVotes);
 }
 function neverNext(){
@@ -1930,6 +1845,7 @@ function neverNext(){
     const v=votes[key]!==undefined?votes[key]:votes[p];
     if(v===ROBILAM) scoreAdd(p,'neverhave',1,'🍹 Robiłam!');
   });
+  renderLocalSB('neverhave');
   if(S.never.idx<DATA.never.length-1){S.never.idx++;renderNever();}else showToast('Koniec kart!');
 }
 function neverPrev(){if(S.never.idx>0){S.never.idx--;renderNever(false);}}
@@ -2075,21 +1991,6 @@ document.addEventListener('keydown',ev=>{
 });
 </script>
 
-<!-- ══ SCOREBOARD DRAWER ══ -->
-<button class="sb-fab" onclick="toggleSB()">
-  🏆 <span>WYNIKI</span>
-  <div class="sb-fab-badge" id="sbFabBadge">0</div>
-</button>
-<div class="sb-drawer" id="sbDrawer">
-  <div class="sb-drawer-header">
-    <div class="sb-drawer-title">🏆 TABLICA WYNIKÓW</div>
-    <button class="sb-drawer-close" onclick="toggleSB()">✕ ZAMKNIJ</button>
-  </div>
-  <div class="sb-drawer-body" id="sbDrawerBody">
-    <div style="text-align:center;padding:24px;font-size:.8rem;color:rgba(255,248,231,.3);font-style:italic;">
-      Zagraj w gry żeby zobaczyć wyniki!
-    </div>
-  </div>
-</div>
+<!-- scoreboard embedded in home screen and in-game localSBPanel -->
 </body>
 </html>
