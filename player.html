@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#07000F">
+<title>🪩 Last Disco – Dołącz!</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#FFD700;--gold2:#FFA500;--pink:#FF2D9C;--pink2:#FF6BC8;
+  --blue:#00CFFF;--green:#39FF14;--green2:#ADFF2F;--red:#FF3333;
+  --dark:#07000F;--card:rgba(255,255,255,.07);--border:rgba(255,215,0,.2);
+  --text:#FFF8E7;--muted:rgba(255,248,231,.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{
+  min-height:100%;min-height:100dvh;
+  background:var(--dark);color:var(--text);
+  font-family:'Outfit',sans-serif;
+  overflow-x:hidden;
+}
+/* Safe area for iPhone notch */
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);}
+
+/* ── BG ── */
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 20% 20%,rgba(255,45,156,.18) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(0,207,255,.12) 0%,transparent 50%);}
+.dots{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;
+  background-image:radial-gradient(circle,rgba(255,215,0,.15) 1px,transparent 1px);
+  background-size:24px 24px;}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;overflow-y:auto;overflow-x:hidden;
+  padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));}
+.screen.active{display:flex;}
+
+/* ── JOIN SCREEN ── */
+#join{align-items:center;justify-content:center;text-align:center;gap:0;}
+.join-disco{font-size:3.5rem;margin-bottom:6px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)rotate(-5deg);}50%{transform:translateY(-8px)rotate(5deg);}}
+.join-title{font-family:'Bebas Neue';font-size:clamp(2.5rem,12vw,5rem);letter-spacing:6px;line-height:.9;
+  background:linear-gradient(135deg,var(--gold),var(--gold2) 40%,var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 20px rgba(255,215,0,.2));}
+.join-sub{font-family:'Outfit';font-style:italic;color:var(--blue);font-size:1rem;letter-spacing:2px;margin:8px 0 28px;}
+.name-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;width:100%;max-width:360px;}
+.name-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
+.name-input{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,215,0,.3);border-radius:10px;
+  color:var(--text);font-family:'Outfit';font-size:1.2rem;font-weight:600;padding:14px 16px;
+  outline:none;text-align:center;transition:border-color .2s;}
+.name-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,215,0,.15);}
+.join-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--dark);border:none;border-radius:12px;padding:16px;
+  font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:3px;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 20px rgba(255,215,0,.3);}
+.join-btn:active{transform:scale(.97);}
+.join-hint{font-size:.7rem;color:var(--muted);margin-top:10px;text-align:center;line-height:1.5;}
+
+/* ── WAITING SCREEN ── */
+#waiting{align-items:center;justify-content:center;text-align:center;gap:16px;}
+.wait-emoji{font-size:3rem;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.wait-title{font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:4px;color:var(--gold);}
+.wait-sub{font-size:.9rem;color:var(--muted);line-height:1.6;}
+.wait-name{font-family:'Bebas Neue';font-size:1.2rem;color:var(--pink);letter-spacing:2px;}
+.wait-online{font-size:.8rem;color:var(--green);letter-spacing:2px;font-family:'Bebas Neue';}
+
+/* ── GAME SCREEN ── */
+#game{gap:12px;padding-top:max(16px, env(safe-area-inset-top));}
+.game-top{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-bottom:4px;}
+.game-tag{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;
+  background:linear-gradient(90deg,var(--gold),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.player-tag{font-family:'Bebas Neue';font-size:.7rem;letter-spacing:2px;color:var(--muted);}
+.voted-badge{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:2px;color:var(--green);
+  background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);border-radius:20px;padding:4px 12px;}
+
+/* ── QUESTION CARD ── */
+.q-card{background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,45,156,.05));
+  border:1px solid rgba(255,215,0,.25);border-radius:16px;
+  padding:22px 20px;text-align:center;flex-shrink:0;}
+.q-round{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:3px;color:var(--pink);margin-bottom:6px;}
+.q-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.2rem,5vw,1.8rem);line-height:1.25;color:var(--text);}
+.q-hint{font-size:.85rem;color:var(--muted);margin-top:8px;font-style:italic;line-height:1.4;}
+
+/* ── OPTIONS ── */
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt{background:rgba(255,255,255,.06);border:2px solid rgba(255,215,0,.2);border-radius:12px;
+  padding:16px 18px;display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.opt:active{transform:scale(.98);}
+.opt.selected{border-color:var(--gold);background:rgba(255,215,0,.12);}
+.opt.correct{border-color:var(--green);background:rgba(57,255,20,.1);}
+.opt.wrong{border-color:var(--red);background:rgba(255,51,51,.07);}
+.opt.sent{border-color:var(--green2);background:rgba(173,255,47,.06);cursor:default;}
+.opt-letter{font-family:'Bebas Neue';font-size:1.5rem;color:var(--blue);min-width:24px;text-align:center;flex-shrink:0;}
+.opt-letter.correct{color:var(--green);}
+.opt-text{font-size:.95rem;font-weight:600;line-height:1.35;}
+
+/* ── VOTE BUTTONS (big) ── */
+.vote-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.vote-btn{border-radius:14px;padding:22px 12px;text-align:center;cursor:pointer;
+  border:2px solid transparent;transition:all .25s;-webkit-tap-highlight-color:transparent;}
+.vote-btn:active{transform:scale(.96);}
+.vote-btn.hot{background:rgba(255,45,156,.12);border-color:rgba(255,45,156,.4);color:var(--pink);}
+.vote-btn.not{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
+.vote-btn.yes{background:rgba(57,255,20,.1);border-color:rgba(57,255,20,.4);color:var(--green);}
+.vote-btn.no{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
+.vote-btn.a{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.4);color:var(--gold);}
+.vote-btn.b{background:rgba(255,45,156,.1);border-color:rgba(255,45,156,.35);color:var(--pink);}
+.vote-btn.selected{transform:scale(.97);}
+.vote-btn.hot.selected,.vote-btn.yes.selected{background:rgba(255,45,156,.3);border-color:var(--pink);box-shadow:0 0 20px rgba(255,45,156,.25);}
+.vote-btn.not.selected,.vote-btn.no.selected{background:rgba(0,207,255,.2);border-color:var(--blue);box-shadow:0 0 20px rgba(0,207,255,.2);}
+.vote-btn.a.selected{background:rgba(255,215,0,.25);border-color:var(--gold);box-shadow:0 0 20px rgba(255,215,0,.2);}
+.vote-btn.b.selected{background:rgba(255,45,156,.25);border-color:var(--pink);box-shadow:0 0 20px rgba(255,45,156,.2);}
+.vote-icon{font-size:2.2rem;display:block;margin-bottom:6px;}
+.vote-label{font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:2px;display:block;}
+
+/* ── ANSWER REVEAL ── */
+.answer-card{border-radius:14px;padding:20px 18px;text-align:center;
+  animation:revealPop .4s cubic-bezier(.34,1.56,.64,1);}
+.answer-card.correct{background:linear-gradient(135deg,rgba(57,255,20,.1),rgba(0,207,255,.06));border:2px solid rgba(57,255,20,.35);}
+.answer-card.neutral{background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,207,255,.06));border:2px solid rgba(255,215,0,.3);}
+@keyframes revealPop{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+.answer-lbl{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:var(--green);margin-bottom:6px;}
+.answer-lbl.neutral{color:var(--gold);}
+.answer-val{font-family:'Outfit';font-weight:800;font-size:clamp(1.3rem,5vw,2rem);color:var(--text);line-height:1.15;}
+.answer-note{font-size:.8rem;color:var(--muted);margin-top:6px;line-height:1.4;}
+
+/* ── RESULTS BAR ── */
+.results-wrap{background:rgba(57,255,20,.05);border:1px solid rgba(57,255,20,.2);border-radius:10px;padding:10px 14px;}
+.results-title{font-family:'Bebas Neue';font-size:.68rem;letter-spacing:3px;color:var(--green);margin-bottom:8px;}
+.result-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.result-lbl{font-family:'Bebas Neue';font-size:.75rem;color:var(--text);min-width:70px;letter-spacing:1px;}
+.result-bar-wrap{flex:1;height:10px;background:rgba(255,255,255,.08);border-radius:5px;overflow:hidden;}
+.result-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s ease;}
+.result-bar-fill.pink{background:linear-gradient(90deg,var(--pink),var(--pink2));}
+.result-bar-fill.blue{background:linear-gradient(90deg,var(--blue),#0080FF);}
+.result-count{font-family:'Bebas Neue';font-size:.8rem;color:var(--gold);min-width:24px;text-align:right;}
+
+/* ── ADVICE INPUT ── */
+.advice-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.advice-label{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
+.advice-ta{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,215,0,.25);border-radius:10px;
+  color:var(--text);font-family:'Outfit';font-size:1rem;padding:12px 14px;outline:none;
+  resize:none;min-height:80px;line-height:1.6;caret-color:var(--gold);}
+.advice-ta:focus{border-color:var(--gold);}
+.advice-ta::placeholder{color:var(--muted);}
+.advice-send{width:100%;margin-top:10px;background:linear-gradient(135deg,var(--pink),#8B0055);
+  border:none;border-radius:10px;color:white;padding:14px;
+  font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:3px;cursor:pointer;transition:all .2s;}
+.advice-send:active{transform:scale(.97);}
+.advice-sent-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.advice-sent-item{background:var(--card);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;
+  padding:10px 12px;font-style:italic;font-size:.9rem;color:var(--text);line-height:1.5;}
+
+/* ── IDLE / WAITING FOR GAME ── */
+.idle-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:28px 20px;text-align:center;margin-top:24px;}
+.idle-emoji{font-size:2.5rem;margin-bottom:10px;animation:pulse 2s ease-in-out infinite;}
+.idle-text{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;color:var(--gold);}
+.idle-sub{font-size:.82rem;color:var(--muted);margin-top:6px;line-height:1.5;}
+
+/* ── BINGO PLAYER ── */
+.player-bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px;}
+.pb-cell{aspect-ratio:1;border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;font-size:.5rem;font-weight:600;color:var(--text);line-height:1.2;background:var(--card);cursor:pointer;transition:all .2s;}
+.pb-cell.marked{background:linear-gradient(135deg,var(--pink),#7B0044);border-color:var(--gold);color:white;}
+.pb-cell.free{background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,45,156,.12));border-color:var(--gold);font-family:'Bebas Neue';font-size:.75rem;color:var(--gold);}
+
+/* ── TIER LIST PLAYER ── */
+.player-tier{display:flex;flex-direction:column;gap:8px;}
+.ptier-row{display:flex;align-items:center;gap:8px;}
+.ptier-lbl{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.2rem;flex-shrink:0;}
+.ptier-lbl.S{background:#FF215A;color:white;}.ptier-lbl.A{background:#FF8C00;color:white;}
+.ptier-lbl.B{background:#FFD700;color:#333;}.ptier-lbl.C{background:#39C26E;color:white;}
+.ptier-lbl.D{background:#00CFFF;color:white;}.ptier-lbl.F{background:#7B2D8B;color:white;}
+.ptier-items{flex:1;display:flex;flex-wrap:wrap;gap:4px;min-height:36px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,215,0,.15);border-radius:7px;padding:5px;}
+.ptier-item{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:4px 9px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.ptier-item:active{transform:scale(.94);}
+.ptier-pool{display:flex;flex-wrap:wrap;gap:5px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:8px;min-height:40px;}
+.ptier-pool-lbl{font-family:'Bebas Neue';font-size:.68rem;letter-spacing:3px;color:var(--muted);margin-bottom:5px;}
+
+/* ── FB STATUS ── */
+.fb-dot{position:fixed;top:max(8px,env(safe-area-inset-top));right:10px;
+  font-family:'Bebas Neue';font-size:.6rem;letter-spacing:1px;color:var(--muted);z-index:9999;}
+.fb-dot.ok{color:var(--green);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;
+  transform:translateX(-50%) translateY(100px);
+  background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);
+  font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;
+  padding:10px 24px;border-radius:50px;z-index:9999;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;
+  box-shadow:0 4px 20px rgba(255,215,0,.3);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── CONFETTI ── */
+.confetti-overlay{position:fixed;inset:0;z-index:500;pointer-events:none;overflow:hidden;}
+.confetti-piece{position:absolute;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-10px)rotate(0);opacity:1;}100%{transform:translateY(110vh)rotate(540deg);opacity:0;}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="dots"></div>
+<div class="confetti-overlay" id="confettiOverlay"></div>
+<div class="fb-dot" id="fbDot">⬤</div>
+
+<!-- JOIN -->
+<div class="screen active" id="join">
+  <div class="join-disco">🪩</div>
+  <div class="join-title">LAST DISCO</div>
+  <div class="join-sub">Wieczór Panieński Kasi</div>
+  <div class="name-card">
+    <div class="name-label">TWOJE IMIĘ</div>
+    <input class="name-input" id="nameInput" type="text" placeholder="Np. Ania" autocomplete="off" autocapitalize="words" maxlength="20">
+    <button class="join-btn" onclick="joinGame()">🪩 DOŁĄCZ!</button>
+    <div class="join-hint">Wpisz swoje imię i dołącz do zabawy.<br>Prowadząca widzi wszystkie głosy na TV.</div>
+  </div>
+</div>
+
+<!-- WAITING -->
+<div class="screen" id="waiting">
+  <div class="wait-emoji">🪩</div>
+  <div class="wait-title">CZEKAJ NA GRĘ</div>
+  <div class="wait-name" id="waitName"></div>
+  <div class="wait-online" id="waitOnline">⬤ 0 graczy online</div>
+  <div class="wait-sub">Prowadząca zaraz wybierze grę.<br>Telefon zostaw odblokowany!</div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="game">
+  <div class="game-top">
+    <div class="game-tag" id="gameTag">🪩 LAST DISCO</div>
+    <div class="player-tag" id="playerTag"></div>
+  </div>
+  <div id="gameContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, push, serverTimestamp, onDisconnect }
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA6rMzHu8Its4w4EP2D4P5gewp5KfSO5oE",
+  authDomain: "lastdisco.firebaseapp.com",
+  databaseURL: "https://lastdisco-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "lastdisco",
+  storageBucket: "lastdisco.firebasestorage.app",
+  messagingSenderId: "686521685198",
+  appId: "1:686521685198:web:31642810de2c2ca2086c9f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Connection status
+onValue(ref(db,'.info/connected'), snap => {
+  const el = document.getElementById('fbDot');
+  el.textContent = snap.val() ? '⬤ OK' : '⬤ OFF';
+  el.className = snap.val() ? 'fb-dot ok' : 'fb-dot';
+});
+
+// Online count
+onValue(ref(db,'presence'), snap => {
+  const count = snap.val() ? Object.keys(snap.val()).length : 0;
+  document.getElementById('waitOnline').textContent = `⬤ ${count} graczy online`;
+});
+
+// Expose
+window.DB = { db, ref, set, push, onValue, onDisconnect };
+
+window.addEventListener('fbReady_player', async () => {
+  const name = window._playerName;
+  if(!name) return;
+  // Presence
+  const presRef = ref(db, 'presence/'+name+'_'+Date.now());
+  await set(presRef, {name, ts: Date.now()});
+  onDisconnect(presRef).remove();
+});
+
+// Listen to game state
+onValue(ref(db,'gameState'), snap => {
+  const state = snap.val();
+  if(!window._playerName) return; // not joined yet
+  window._handleGameState(state);
+});
+
+// Advice sync
+onValue(ref(db,'advice'), snap => {
+  window._adviceList = snap.val() ? Object.values(snap.val()) : [];
+  if(window._currentPlayerGame === 'advice') renderAdvicePlayer();
+});
+
+window.dispatchEvent(new Event('fbReady_player'));
+</script>
+
+<script>
+let _playerName = '';
+let _playerVoted = false;
+let _playerTier = {};
+let _playerBingo = new Array(25).fill(false);
+let _currentPlayerGame = '';
+let _lastGameKey = '';
+window._adviceList = [];
+
+// ══════════════════════════════════════════
+// JOIN
+// ══════════════════════════════════════════
+function joinGame() {
+  const n = document.getElementById('nameInput').value.trim();
+  if(!n) { showToast('Wpisz swoje imię!'); return; }
+  _playerName = n;
+  window._playerName = n;
+  document.getElementById('playerTag').textContent = n.toUpperCase();
+  document.getElementById('waitName').textContent = '👋 Hej, ' + n + '!';
+  switchScreen('waiting');
+  window.dispatchEvent(new Event('fbReady_player'));
+  showToast('Dołączyłaś! 🪩');
+}
+
+document.getElementById('nameInput').addEventListener('keydown', ev => {
+  if(ev.key === 'Enter') joinGame();
+});
+
+// ══════════════════════════════════════════
+// SCREEN NAV
+// ══════════════════════════════════════════
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// GAME STATE HANDLER
+// ══════════════════════════════════════════
+window._handleGameState = function(state) {
+  if(!state || state.game === 'idle') {
+    switchScreen('waiting');
+    _currentPlayerGame = '';
+    return;
+  }
+  switchScreen('game');
+  _currentPlayerGame = state.game;
+  document.getElementById('gameTag').textContent = gameEmoji(state.game) + ' ' + state.game.toUpperCase();
+
+  // Reset vote flag when new question
+  const key = state.game + '_' + (state.idx ?? '') + '_' + (state.phase ?? '') + '_' + (state.ts ?? '');
+  if(key !== _lastGameKey) {
+    _playerVoted = false;
+    _lastGameKey = key;
+  }
+
+  const content = document.getElementById('gameContent');
+  content.innerHTML = '';
+
+  switch(state.game) {
+    case 'quiz':      renderQuizPlayer(state); break;
+    case 'honornot':  renderHonPlayer(state); break;
+    case 'highlow':   renderHLPlayer(state); break;
+    case 'choice':    renderChoicePlayer(state); break;
+    case 'neverhave': renderNeverPlayer(state); break;
+    case 'advice':    renderAdvicePlayer(state); break;
+    case 'bingo':     renderBingoPlayer(state); break;
+    case 'tierlist':  renderTierPlayer(state); break;
+    case 'couples':   renderCouplesPlayer(state); break;
+    case 'vabank':    renderVabankPlayer(state); break;
+    case 'eight':     renderEightPlayer(state); break;
+    case 'auction':   renderAuctionPlayer(state); break;
+    default:          renderIdleCard('Gra: ' + state.game); break;
+  }
+};
+
+function gameEmoji(g) {
+  return {quiz:'🎤',honornot:'🔥',highlow:'📊',choice:'⚡',neverhave:'🙈',advice:'💌',
+    bingo:'🎰',tierlist:'🏆',couples:'💑',vabank:'🎲',eight:'⏱️',auction:'💰',wrozby:'🔮',telephone:'📞'}[g]||'🪩';
+}
+
+// ── VOTE HELPER ──
+function sendVote(value) {
+  if(_playerVoted) { showToast('Już głosowałaś!'); return; }
+  _playerVoted = true;
+  window.DB?.set(window.DB.ref(window.DB.db,'votes/'+_playerName.replace(/\s/g,'_')), value);
+  showToast('✅ Głos wysłany!');
+  spawnConfetti(15);
+}
+
+// ══════════════════════════════════════════
+// QUIZ PLAYER
+// ══════════════════════════════════════════
+function renderQuizPlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.phase === 'question') {
+    c.innerHTML = `
+      <div class="q-card"><div class="q-round">PYTANIE ${(state.idx||0)+1}</div><div class="q-text">${esc(state.question||'')}</div></div>
+      <div class="options">
+        ${(state.opts||[]).map((o,i) => `
+          <div class="opt ${_playerVoted?'sent':''}" onclick="quizVote('${esc(o)}','${'ABCD'[i]}')">
+            <span class="opt-letter">${'ABCD'[i]}</span>
+            <span class="opt-text">${esc(o)}</span>
+          </div>`).join('')}
+      </div>
+      ${_playerVoted ? `<div class="voted-badge" style="margin:8px auto;display:block;text-align:center;">✅ Głos wysłany!</div>` : ''}`;
+  } else {
+    const ci = state.correctIdx ?? -1;
+    c.innerHTML = `
+      <div class="q-card"><div class="q-round">PYTANIE ${(state.idx||0)+1}</div><div class="q-text">${esc(state.question||'')}</div></div>
+      <div class="options">
+        ${(state.opts||[]).map((o,i)=>`<div class="opt ${i===ci?'correct':'wrong'}"><span class="opt-letter ${i===ci?'correct':''}">${'ABCD'[i]}</span><span class="opt-text">${esc(o)}</span></div>`).join('')}
+      </div>
+      <div class="answer-card correct"><div class="answer-lbl">✅ ODPOWIEDŹ KASI</div><div class="answer-val">${esc(state.answer||'')}</div></div>`;
+    spawnConfetti(20);
+  }
+}
+function quizVote(val) { sendVote(val); renderQuizVotedUI(); }
+function renderQuizVotedUI(){
+  document.querySelectorAll('.opt').forEach(el => el.classList.add('sent'));
+  const badge = document.createElement('div');
+  badge.className='voted-badge';badge.style.cssText='margin:8px auto;display:block;text-align:center;';
+  badge.textContent='✅ Głos wysłany!';
+  document.querySelector('.options')?.after(badge);
+}
+
+// ══════════════════════════════════════════
+// HOT OR NOT
+// ══════════════════════════════════════════
+function renderHonPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML = `
+    <div class="q-card"><div class="q-round">HOT OR NOT</div><div class="q-text">${esc(state.statement||'')}</div></div>
+    ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
+    <div class="vote-grid">
+      <div class="vote-btn hot" onclick="sendVote('🔥 HOT');renderHonVoted()"><span class="vote-icon">🔥</span><span class="vote-label">HOT</span></div>
+      <div class="vote-btn not" onclick="sendVote('❄️ NOT');renderHonVoted()"><span class="vote-icon">❄️</span><span class="vote-label">NOT</span></div>
+    </div>`}`;
+}
+function renderHonVoted(){document.querySelector('.vote-grid')?.remove();document.getElementById('gameContent').insertAdjacentHTML('beforeend','<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>');}
+
+// ══════════════════════════════════════════
+// WYŻEJ / NIŻEJ
+// ══════════════════════════════════════════
+function renderHLPlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.phase==='question') {
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round">WYŻEJ CZY NIŻEJ?</div><div class="q-text">${esc(state.question||'')}</div><div class="q-hint">${esc(state.hint||'')}</div></div>
+      ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
+      <div class="vote-grid">
+        <div class="vote-btn hot" onclick="sendVote('⬆️ WYŻEJ');renderSimpleVoted()"><span class="vote-icon">⬆️</span><span class="vote-label">WYŻEJ</span></div>
+        <div class="vote-btn not" onclick="sendVote('⬇️ NIŻEJ');renderSimpleVoted()"><span class="vote-icon">⬇️</span><span class="vote-label">NIŻEJ</span></div>
+      </div>`}`;
+  } else {
+    c.innerHTML=`
+      <div class="q-card"><div class="q-text">${esc(state.question||'')}</div></div>
+      <div class="answer-card correct"><div class="answer-lbl">✅ ODPOWIEDŹ</div><div class="answer-val">${esc(state.answer||'')}</div></div>`;
+    spawnConfetti(20);
+  }
+}
+
+// ══════════════════════════════════════════
+// CO WYBIERASZ
+// ══════════════════════════════════════════
+function renderChoicePlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">CO WYBIERASZ?</div><div class="q-text" style="font-size:1rem;">Głosuj która opcja lepsza!</div></div>
+    ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
+    <div class="vote-grid">
+      <div class="vote-btn a" onclick="sendVote(${JSON.stringify(state.a||'A')});renderSimpleVoted()"><span class="vote-icon">⚡</span><span class="vote-label" style="font-size:.85rem;white-space:normal;line-height:1.3;">${esc(state.a||'A')}</span></div>
+      <div class="vote-btn b" onclick="sendVote(${JSON.stringify(state.b||'B')});renderSimpleVoted()"><span class="vote-icon">⚡</span><span class="vote-label" style="font-size:.85rem;white-space:normal;line-height:1.3;">${esc(state.b||'B')}</span></div>
+    </div>`}`;
+}
+
+// ══════════════════════════════════════════
+// NIGDY NIE
+// ══════════════════════════════════════════
+function renderNeverPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">🙈 NIGDY NIE...</div><div class="q-text">${esc(state.statement||'')}</div></div>
+    ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
+    <div class="vote-grid">
+      <div class="vote-btn yes" onclick="sendVote('🍹 ROBIŁAM!');renderSimpleVoted()"><span class="vote-icon">🍹</span><span class="vote-label">ROBIŁAM!</span></div>
+      <div class="vote-btn no" onclick="sendVote('😇 NIE JA!');renderSimpleVoted()"><span class="vote-icon">😇</span><span class="vote-label">NIE JA!</span></div>
+    </div>`}`;
+}
+
+// ══════════════════════════════════════════
+// ADVICE
+// ══════════════════════════════════════════
+function renderAdvicePlayer() {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="advice-wrap">
+      <div class="advice-label">NAPISZ RADĘ DLA KASI 💌</div>
+      <textarea class="advice-ta" id="adviceTa" placeholder="Np. Nigdy nie kładź się spać z żalem…" rows="3"></textarea>
+      <button class="advice-send" onclick="sendAdvice()">💌 WYŚLIJ RADĘ</button>
+    </div>
+    ${window._adviceList.length ? `
+    <div class="advice-label" style="margin-top:14px;">ZEBRANE RADY (${window._adviceList.length})</div>
+    <div class="advice-sent-list">
+      ${window._adviceList.slice(-6).map(a=>`<div class="advice-sent-item">"${esc(a)}"</div>`).join('')}
+    </div>` : ''}`;
+}
+function sendAdvice() {
+  const v = document.getElementById('adviceTa')?.value.trim();
+  if(!v) { showToast('Wpisz radę!'); return; }
+  window.DB?.push(window.DB.ref(window.DB.db,'advice'), v);
+  document.getElementById('adviceTa').value = '';
+  showToast('Rada wysłana! 💌');
+  spawnConfetti(20);
+}
+
+// ══════════════════════════════════════════
+// BINGO PLAYER
+// ══════════════════════════════════════════
+function renderBingoPlayer(state) {
+  const marked = state.marked || new Array(25).fill(false);
+  const bingoItems=["Ktoś śpiewa do szczotki","Kasia płacze ze śmiechu","Kogoś bolą nogi","Selfie z ochroniarzem","Kelner dostaje numer","Ktoś zakłada tiare","Foto bez filtra","Kasia opowiada jak się poznali","Tylko jeden drink","Ktoś gubi szpilkę","Disco polo po 1","Cola dla trzeźwości","FREE\n🪩","Ktoś dzwoni do chłopaka","Choreograf","Kasia na stole","Ktoś płacze","Kolejka bez pytania","Chodźmy jeszcze","Nieznajomy z kwiatem","Ktoś tańczy ABBA","Zgubiona torebka","Wszyscy śpiewają","Taksówkarz pyta","Ktoś wysyła mema"];
+  document.getElementById('gameContent').innerHTML=`
+    <div class="q-card"><div class="q-round">🎰 BINGO</div><div class="q-text" style="font-size:1rem;">Obserwuj co się dzieje!</div></div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px;">
+      ${bingoItems.map((t,i)=>`<div style="aspect-ratio:1;border:1px solid ${marked[i]?'var(--gold)':'var(--border)'};border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;padding:3px;font-size:.42rem;font-weight:600;background:${i===12?'linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,45,156,.12))':marked[i]?'linear-gradient(135deg,var(--pink),#7B0044)':'var(--card)'};color:${marked[i]||i===12?'white':'var(--text)'};">${esc(t)}</div>`).join('')}
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// TIER LIST PLAYER
+// ══════════════════════════════════════════
+const TIERS=['S','A','B','C','D','F'];
+function renderTierPlayer(state) {
+  const tier = state.tier || {};
+  const items = state.items || [];
+  const category = state.category || 'Tier List';
+  document.getElementById('gameContent').innerHTML=`
+    <div class="q-card"><div class="q-round">🏆 TIER LIST</div><div class="q-text" style="font-size:1rem;">${esc(category)}</div></div>
+    <div class="player-tier">
+      ${TIERS.map(t=>`
+        <div class="ptier-row">
+          <div class="ptier-lbl ${t}">${t}</div>
+          <div class="ptier-items">
+            ${items.filter(it=>tier[it]===t).map(it=>`<div class="ptier-item">${esc(it)}</div>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:8px;">
+      <div class="ptier-pool-lbl">PULA</div>
+      <div class="ptier-pool">${items.filter(it=>!tier[it]||tier[it]==='pool').map(it=>`<div class="ptier-item">${esc(it)}</div>`).join('')}</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// COUPLES PLAYER
+// ══════════════════════════════════════════
+function renderCouplesPlayer(state) {
+  const c = document.getElementById('gameContent');
+  const matched = state.matched || [];
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">💑 DOPASUJ PARĘ</div><div class="q-text" style="font-size:1rem;">✅ ${state.score||0} / par dopasowanych</div></div>
+    <div class="idle-card"><div class="idle-emoji">💑</div><div class="idle-text">OGLĄDAJ NA TV!</div><div class="idle-sub">Prowadząca dopasowuje pary na ekranie.<br>Kibicuj i podpowiadaj!</div></div>`;
+}
+
+// ══════════════════════════════════════════
+// VA-BANK PLAYER
+// ══════════════════════════════════════════
+function renderVabankPlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.view==='board') {
+    c.innerHTML=`<div class="idle-card"><div class="idle-emoji">🎲</div><div class="idle-text">VA-BANK</div><div class="idle-sub">Prowadząca wybiera pytanie z tablicy.<br>Zaraz będziesz mogła licytować!</div></div>`;
+  } else {
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round" style="color:var(--gold);">VA-BANK · ${state.phase==='question'?'LICYTUJ!':'ODPOWIEDŹ!'}</div><div class="q-text">${esc(state.question||'')}</div></div>
+      ${state.phase==='question'?`
+        <div style="text-align:center;font-family:'Bebas Neue';font-size:.8rem;letter-spacing:3px;color:var(--muted);margin:8px 0;">POWIEDZ GŁOŚNO SWOJĄ PEWNOŚĆ:</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+          ${[10,20,30,50,75,100].map(p=>`<div onclick="showToast('Stawiam ${p}%!')" style="background:rgba(255,215,0,.1);border:2px solid rgba(255,215,0,.3);color:var(--gold);border-radius:8px;padding:10px 16px;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;cursor:pointer;">${p}%</div>`).join('')}
+        </div>` :
+        `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ ODPOWIEDŹ</div><div class="answer-val">${esc(state.answer||'')}</div></div>`}`;
+  }
+}
+
+// ══════════════════════════════════════════
+// 8 SEKUND PLAYER
+// ══════════════════════════════════════════
+function renderEightPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">⏱️ ZADANIE ${state.phase==='timer'?'· TIMER!':''}</div><div class="q-text">${esc(state.task||'')}</div></div>
+    ${state.phase==='timer'?`<div style="text-align:center;font-family:'Bebas Neue';font-size:3rem;color:var(--gold);margin:12px 0;" id="playerTimer">${state.seconds||8}</div>`:''}
+    <div class="idle-card" style="margin-top:8px;"><div class="idle-emoji">🎯</div><div class="idle-text">WYKONAJ ZADANIE!</div></div>`;
+  if(state.phase==='timer') startPlayerTimer(state.seconds||8);
+}
+let _playerTimerInterval = null;
+function startPlayerTimer(secs) {
+  clearInterval(_playerTimerInterval);
+  let left = secs;
+  _playerTimerInterval = setInterval(()=>{
+    left -= 0.1;
+    const el = document.getElementById('playerTimer');
+    if(!el){clearInterval(_playerTimerInterval);return;}
+    el.textContent = Math.ceil(left);
+    if(left<=secs*.35) el.style.color='var(--red)';
+    if(left<=0){clearInterval(_playerTimerInterval);el.textContent='💥';showToast('CZAS MINĄŁ!');}
+  },100);
+}
+
+// ══════════════════════════════════════════
+// AUKCJA PLAYER
+// ══════════════════════════════════════════
+function renderAuctionPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">${state.emoji||'💰'} AUKCJA · PRZEDMIOT ${(state.idx||0)+1}</div><div class="q-text">${esc(state.emoji||'')} ${esc(state.item||'')}</div></div>
+    ${state.phase==='bid'?`
+      <div style="text-align:center;">
+        <div style="font-family:'Bebas Neue';font-size:2.5rem;color:var(--gold);">${state.currentBid||0} 🪙</div>
+        <div style="font-size:.85rem;color:var(--muted);margin-bottom:12px;">${state.winner?'Licytuje: '+esc(state.winner):'Licytuj!'}</div>
+      </div>
+      <div style="text-align:center;font-size:.8rem;color:var(--muted);line-height:1.6;">Powiedz prowadzącej jaką kwotę chcesz podbić!<br>Ona wciśnie za Ciebie przycisk na TV.</div>`:
+    `<div class="answer-card correct"><div class="answer-lbl">🔨 SPRZEDANO!</div><div class="answer-val">${esc(state.winner||'—')}</div><div class="answer-note">za ${state.currentBid||0} monet</div></div>`}`;
+  if(state.phase==='sold') spawnConfetti(30);
+}
+
+// ══════════════════════════════════════════
+// IDLE
+// ══════════════════════════════════════════
+function renderIdleCard(txt) {
+  document.getElementById('gameContent').innerHTML=`<div class="idle-card"><div class="idle-emoji">🪩</div><div class="idle-text">${esc(txt)}</div><div class="idle-sub">Patrz na TV i kibicuj!</div></div>`;
+}
+
+// ══════════════════════════════════════════
+// GENERIC VOTED UI
+// ══════════════════════════════════════════
+function renderSimpleVoted() {
+  document.querySelector('.vote-grid')?.remove();
+  document.getElementById('gameContent').insertAdjacentHTML('beforeend','<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>');
+}
+
+// ══════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════
+function spawnConfetti(n=30) {
+  const ov=document.getElementById('confettiOverlay');
+  const cols=['#FFD700','#FF2D9C','#00CFFF','#ADFF2F','#FF6BC8'];
+  for(let i=0;i<n;i++){const d=document.createElement('div');d.className='confetti-piece';d.style.left=Math.random()*100+'%';d.style.background=cols[~~(Math.random()*cols.length)];d.style.width=(6+Math.random()*8)+'px';d.style.height=(6+Math.random()*8)+'px';d.style.borderRadius=Math.random()>.5?'50%':'2px';d.style.animationDuration=(1.2+Math.random()*1.5)+'s';d.style.animationDelay=(Math.random()*.5)+'s';ov.appendChild(d);}
+  setTimeout(()=>ov.innerHTML='',3000);
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+let _tt;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2200);}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+</script>
+</body>
+</html>
