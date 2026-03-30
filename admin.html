@@ -365,6 +365,20 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(255,215,0,.22);border-radius:2px;}
+
+/* ── PLAYERS PANEL ── */
+.players-panel{background:rgba(255,255,255,.04);border:1px solid rgba(57,255,20,.25);border-radius:14px;
+  padding:12px 16px;max-width:500px;width:90vw;margin-bottom:14px;}
+.players-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.players-panel-title{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;color:var(--green);}
+.players-panel-count{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold);letter-spacing:2px;}
+.players-chips{display:flex;flex-wrap:wrap;gap:5px;min-height:24px;}
+.player-chip{background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);border-radius:20px;
+  padding:3px 10px;font-family:'Bebas Neue';font-size:.72rem;letter-spacing:1px;color:#ADFF2F;
+  animation:chipPop .3s cubic-bezier(.34,1.56,.64,1);cursor:default;}
+@keyframes chipPop{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
+.players-empty{font-size:.75rem;color:var(--muted);font-style:italic;}
+
 </style>
 </head>
 <body>
@@ -385,8 +399,14 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       <div class="qr-label">LINK DLA GOŚCI</div>
       <div class="qr-url" id="playerUrl">ładowanie...</div>
       <div class="qr-hint">Goście wchodzą na <strong>gierka.rokulab.com</strong><br>Ty jesteś na <strong>.../admin.html</strong></div>
-      <div class="online-count" id="onlineCount">⬤ 0 graczy online</div>
     </div>
+  </div>
+  <div class="players-panel">
+    <div class="players-panel-header">
+      <div class="players-panel-title">⬤ GRACZE ONLINE</div>
+      <div class="players-panel-count"><span id="onlineNum">0</span> dołączyły</div>
+    </div>
+    <div class="players-chips" id="playersChips"><div class="players-empty">Czekam na graczy…</div></div>
   </div>
   <div class="games-grid">
     <div class="game-btn" onclick="hostStart('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div><div class="desc">Klikaj pola gdy się zdarzają</div></div>
@@ -421,9 +441,11 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       <button class="back-btn" onclick="hostBack()">← MENU</button>
     </div>
   </div>
+  <div id="gamePlayersStrip" style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;padding:5px 20px;border-bottom:1px solid rgba(255,215,0,.08);background:rgba(7,0,15,.5);flex-shrink:0;min-height:28px;"></div>
   <div class="game-stage-wrap">
     <div class="game-stage">
       <div class="game-body" id="gsBody"></div>
+      <div id="gsVotesZone" style="flex-shrink:0;padding:0 4px;"></div>
       <div class="nav-controls" id="gsControls"></div>
     </div>
     <div class="admin-panel" id="gsAdmin">
@@ -467,8 +489,27 @@ onValue(connRef, snap => {
 
 // ── ONLINE COUNT ──
 onValue(ref(db,'presence'), snap => {
-  const count = snap.val() ? Object.keys(snap.val()).length : 0;
-  document.getElementById('onlineCount').textContent = `⬤ ${count} graczy online`;
+  const raw = snap.val() || {};
+  const tsMap = {};
+  Object.values(raw).forEach(v => {
+    if(v && v.name && (!tsMap[v.name] || v.ts < tsMap[v.name])) tsMap[v.name] = v.ts || Date.now();
+  });
+  const namedList = [...new Set(Object.values(raw).map(v => v && v.name).filter(Boolean))].sort();
+  window._onlinePlayers = namedList;
+
+  const chips = document.getElementById('playersChips');
+  const num   = document.getElementById('onlineNum');
+  if(chips) chips.innerHTML = namedList.length
+    ? namedList.map(n => {
+        const ts = tsMap[n] || Date.now();
+        const m  = Math.floor((Date.now() - ts) / 60000);
+        const t  = m < 1 ? 'tylko co' : m === 1 ? '1 min' : m + 'm';
+        return `<div class="player-chip" title="Dołączyła ${t} temu">🪩 ${n} <span style="font-size:.55rem;opacity:.6;">${t}</span></div>`;
+      }).join('')
+    : '<div class="players-empty">Czekam na graczy…</div>';
+  if(num) num.textContent = namedList.length;
+
+  updateGamePlayersStrip(window._lastVotes || {});
 });
 
 // ── GAME STATE (what host broadcasts) ──
@@ -524,6 +565,8 @@ window.pushState = pushState;
 window.pushVotesReset = pushVotesReset;
 
 // ── BOOT ──
+window._lastVotes = {};
+window._onlinePlayers = [];
 window.dispatchEvent(new Event('fbReady'));
 </script>
 
@@ -635,6 +678,31 @@ window.addEventListener('fbReady', () => {
 // ════════════════════════════════════════════
 // HOST NAVIGATION
 // ════════════════════════════════════════════
+// ── IN-GAME PLAYERS STRIP ──
+function updateGamePlayersStrip(votes) {
+  const strip = document.getElementById('gamePlayersStrip');
+  if(!strip) return;
+  const players = window._onlinePlayers || [];
+  const multiGames = ['quiz','honornot','highlow','choice','neverhave'];
+  const isVoting = multiGames.includes(window._currentGame);
+  if(!players.length) { strip.innerHTML='<span style="font-family:Bebas Neue;font-size:.6rem;letter-spacing:2px;color:rgba(255,248,231,.3);">Brak graczy online</span>'; return; }
+  strip.innerHTML = '<span style="font-family:Bebas Neue;font-size:.6rem;letter-spacing:2px;color:rgba(255,248,231,.4);margin-right:4px;">GRACZE:</span>' +
+    players.map(name => {
+      const key = name.replace(/\s/g,'_');
+      const v = votes[key]!==undefined ? votes[key] : votes[name];
+      const voted = v !== undefined;
+      const cls = !isVoting ? 'online' : (voted ? 'voted' : 'waiting');
+      const vShort = voted&&isVoting ? (String(v).length>10?String(v).slice(0,9)+'…':String(v)) : '';
+      const style = cls==='voted'
+        ? 'background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.4);color:#FFD700;'
+        : cls==='waiting'
+        ? 'background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:rgba(255,248,231,.4);'
+        : 'background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);color:#ADFF2F;';
+      return `<div style="${style}padding:2px 8px;border-radius:10px;font-family:Bebas Neue;font-size:.65rem;letter-spacing:1px;transition:all .3s;" title="${voted?e(String(v)):''}">${e(name)}${voted?' ✓':isVoting?' ⏳':''}${vShort?' → '+e(vShort):''}</div>`;
+    }).join('');
+}
+window.updateGamePlayersStrip = updateGamePlayersStrip;
+
 function hostStart(game) {
   window._currentGame = game;
   document.getElementById('home').classList.remove('active');
@@ -658,6 +726,7 @@ function hostBack() {
   window._currentGame = '';
   window.FB?.setVotesCallback(null);
   window.FB?.pushState({game:'idle'});
+  const vz=document.getElementById('gsVotesZone');if(vz)vz.innerHTML='';
   document.getElementById('gameScreen').classList.remove('active');
   document.getElementById('home').classList.add('active');
 }
@@ -685,38 +754,64 @@ function toggleAdmin(game) {
 // LIVE VOTES RENDERER
 // ════════════════════════════════════════════
 function renderLiveVotes(game, votes) {
-  const body = document.getElementById('gsBody');
-  const existing = document.getElementById('liveVotesBar');
-  if(existing) existing.remove();
-  if(!votes || !Object.keys(votes).length) return;
-
-  const vArr = Object.values(votes);
-  const total = vArr.length;
-  let html = `<div id="liveVotesBar" class="live-bar"><div class="live-bar-title">⬤ GŁOSY NA ŻYWO (${total})</div>`;
-
-  if(game==='quiz'||game==='honornot'||game==='highlow'||game==='choice'||game==='neverhave') {
-    const counts = {};
-    vArr.forEach(v=>{ counts[v]=(counts[v]||0)+1; });
-    const colors = ['','pink','blue','green',''];
-    Object.entries(counts).sort((a,b)=>b[1]-a[1]).forEach(([key,cnt],i)=>{
-      const pct = Math.round(cnt/total*100);
-      html+=`<div class="live-option-row">
-        <div class="live-option-label">${e(key)}</div>
-        <div class="live-option-bar"><div class="live-option-fill ${colors[i]||''}" style="width:${pct}%"></div></div>
-        <div class="live-option-count">${cnt}</div>
+  const zone = document.getElementById('gsVotesZone');
+  if(!zone) return;
+  const entries = Object.entries(votes);
+  const total = entries.length;
+  const players = window._onlinePlayers || [];
+  const voteMap = {};
+  entries.forEach(([key, val]) => {
+    const name = key.replace(/_/g,' ');
+    if(!voteMap[val]) voteMap[val] = [];
+    voteMap[val].push(name);
+  });
+  let html = `<div class="votes-panel" style="margin:0 20px 4px;">
+    <div class="votes-panel-title">
+      <span>⬤ GŁOSY NA ŻYWO</span>
+      <span style="color:var(--gold)">${total}${players.length?' / '+players.length:''}</span>
+    </div>`;
+  if(players.length) {
+    html += `<div class="votes-pending-label">KTO ZAGŁOSOWAŁ:</div><div class="votes-pending">`;
+    players.forEach(p => {
+      const key = p.replace(/\s/g,'_');
+      const v = votes[key] !== undefined ? votes[key] : votes[p];
+      const hasVoted = v !== undefined;
+      const sv = hasVoted ? (String(v).length > 14 ? String(v).slice(0,13)+'…' : String(v)) : '';
+      html += `<div class="vote-who-chip ${hasVoted?'voted':'waiting'}" title="${hasVoted?e(String(v)):'nie zagłosowała'}">${e(p)}${hasVoted?' → '+e(sv):' ⏳'}</div>`;
+    });
+    html += `</div>`;
+  }
+  if(total > 0) {
+    const COLORS = ['c0','c1','c2','c3'];
+    const sorted = Object.entries(voteMap).sort((a,b)=>b[1].length-a[1].length);
+    html += `<div class="votes-breakdown">`;
+    sorted.forEach(([opt, names], i) => {
+      const pct = Math.round(names.length / (total||1) * 100);
+      const shortOpt = opt.length > 16 ? opt.slice(0,15)+'…' : opt;
+      html += `<div class="vote-opt-row">
+        <div class="vote-opt-label" title="${e(opt)}">${e(shortOpt)}</div>
+        <div class="vote-opt-bar-wrap"><div class="vote-opt-bar ${COLORS[i%4]}" style="width:${pct}%"></div></div>
+        <div class="vote-opt-count">${names.length}</div>
+        <div class="vote-opt-names" title="${e(names.join(', '))}">${e(names.join(', '))}</div>
       </div>`;
     });
+    html += `</div>`;
+  } else {
+    html += `<div style="font-size:.72rem;color:var(--muted);font-style:italic;margin-top:4px;">Czekam na głosy z telefonów…</div>`;
   }
   html += '</div>';
-  body.insertAdjacentHTML('beforeend', html);
+  zone.innerHTML = html;
 }
 
 // ════════════════════════════════════════════
 // PUSH CURRENT QUESTION TO FIREBASE
 // ════════════════════════════════════════════
-function pushQuestion(game, data) {
+function pushQuestion(game, data, resetVotes=true) {
   window.pushState?.({ game, ...data });
-  window.pushVotesReset?.();
+  if(resetVotes) {
+    window.pushVotesReset?.();
+    const vz=document.getElementById('gsVotesZone');if(vz)vz.innerHTML='';
+  }
 }
 
 // ════════════════════════════════════════════
@@ -763,7 +858,7 @@ function resetBingo() { S.bingo.marked=new Array(25).fill(false); renderBingo();
 // ════════════════════════════════════════════
 // QUIZ
 // ════════════════════════════════════════════
-function renderQuiz() {
+function renderQuiz(resetVotes=true) {
   const s=S.quiz, d=DATA.quiz[s.idx];
   document.getElementById('gsTitle').textContent='🎤 ZGADNIJ KASIĘ';
   document.getElementById('gsSubtitle').textContent=s.phase==='question'?`PYTANIE ${s.idx+1}/${DATA.quiz.length} · GOŚCIE ODPOWIADAJĄ`:`PYTANIE ${s.idx+1}/${DATA.quiz.length} · ODPOWIEDŹ`;
@@ -779,7 +874,7 @@ function renderQuiz() {
       <button class="ctrl-btn secondary" onclick="quizPrev()">◀ WSTECZ</button>
       <button class="ctrl-btn reveal-btn" onclick="quizReveal()">🔓 ODSŁOŃ ODPOWIEDŹ</button>
       <button class="ctrl-btn secondary" onclick="quizNext()">POMIŃ ▶</button>`;
-    pushQuestion('quiz',{idx:s.idx,phase:'question',question:d.q,opts:d.opts});
+    pushQuestion('quiz',{idx:s.idx,phase:'question',question:d.q,opts:d.opts},resetVotes);
   } else {
     body.innerHTML=`
       <div class="step-indicator">${dots}</div>
@@ -792,9 +887,9 @@ function renderQuiz() {
     pushQuestion('quiz',{idx:s.idx,phase:'answer',answer:d.answer,correctIdx:ci});
   }
 }
-function quizReveal(){S.quiz.phase='answer';flashResult('win');renderQuiz();}
+function quizReveal(){S.quiz.phase='answer';flashResult('win');renderQuiz(false);}
 function quizNext(){if(S.quiz.idx<DATA.quiz.length-1){S.quiz.idx++;S.quiz.phase='question';renderQuiz();}else showToast('Ostatnie!');}
-function quizPrev(){if(S.quiz.idx>0){S.quiz.idx--;S.quiz.phase='question';renderQuiz();}}
+function quizPrev(){if(S.quiz.idx>0){S.quiz.idx--;S.quiz.phase='question';renderQuiz(false);}}
 
 // ════════════════════════════════════════════
 // VA-BANK
@@ -811,7 +906,8 @@ function renderVabank() {
           ${vb.categories.map((cat,ci)=>`<div class="vb-cat-header" style="border-color:${cat.color}40;color:${cat.color};">${e(cat.name)}</div>`).join('')}
           ${vb.prices.map((price,pi)=>vb.categories.map((cat,ci)=>{
             const key=ci+'-'+pi, used=vb.used.includes(key);
-            return `<div class="vb-cell ${used?'used':''}" onclick="vbSelect(${ci},${pi})" style="${used?'':'border-color:'+cat.color+'55;color:'+cat.color+';">'}<span>${used?'':price}</span></div>`;
+            const st=used?'':'border-color:'+cat.color+'55;color:'+cat.color+';';
+            return `<div class="vb-cell ${used?'used':''}" onclick="vbSelect(${ci},${pi})" style="${st}"><span>${used?'✓':price}</span></div>`;
           }).join('')).join('')}
         </div>
       </div>`;
@@ -848,7 +944,7 @@ function hexToRgb(h){const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h)
 // ════════════════════════════════════════════
 // HOT OR NOT
 // ════════════════════════════════════════════
-function renderHon() {
+function renderHon(resetVotes=true) {
   const s=S.hon, txt=DATA.hon[s.idx];
   document.getElementById('gsTitle').textContent='🔥 HOT OR NOT';
   document.getElementById('gsSubtitle').textContent=`STWIERDZENIE ${s.idx+1}/${DATA.hon.length} · GŁOSUJCIE Z TELEFONÓW!`;
@@ -856,15 +952,12 @@ function renderHon() {
   document.getElementById('gsBody').innerHTML=`
     <div class="step-indicator">${dots}</div>
     <div class="hon-question">${e(txt)}</div>
-    <div class="hon-votes">
-      <button class="hon-vote-btn hot" onclick="window.FB&&window.FB.set(window.FB.ref(window.FB.db,'votes/host_hot'),{v:'🔥 HOT'})">🔥 HOT</button>
-      <button class="hon-vote-btn not" onclick="window.FB&&window.FB.set(window.FB.ref(window.FB.db,'votes/host_not'),{v:'❄️ NOT'})">❄️ NOT</button>
-    </div>`;
+    <div style="text-align:center;font-family:'Bebas Neue';font-size:.8rem;letter-spacing:3px;color:var(--muted);padding:8px 0;">📱 GOŚCIE GŁOSUJĄ Z TELEFONÓW</div>`;
   document.getElementById('gsControls').innerHTML=`
     <button class="ctrl-btn secondary" onclick="honPrev()">◀ WSTECZ</button>
     <span class="counter-badge">${s.idx+1}/${DATA.hon.length}</span>
     <button class="ctrl-btn primary" onclick="honNext()">NASTĘPNE ▶</button>`;
-  pushQuestion('honornot',{idx:s.idx,statement:txt,opts:['🔥 HOT','❄️ NOT']});
+  pushQuestion('honornot',{idx:s.idx,statement:txt,opts:['🔥 HOT','❄️ NOT']},resetVotes);
 }
 function honNext(){if(S.hon.idx<DATA.hon.length-1){S.hon.idx++;renderHon();}else showToast('Koniec!');}
 function honPrev(){if(S.hon.idx>0){S.hon.idx--;renderHon();}}
@@ -910,7 +1003,7 @@ function addAdvice(){
 // ════════════════════════════════════════════
 // WYŻEJ / NIŻEJ
 // ════════════════════════════════════════════
-function renderHL() {
+function renderHL(resetVotes=true) {
   const s=S.highlow, d=DATA.highlow[s.idx];
   document.getElementById('gsTitle').textContent='📊 WYŻEJ CZY NIŻEJ?';
   document.getElementById('gsSubtitle').textContent=s.phase==='question'?`PYTANIE ${s.idx+1}/${DATA.highlow.length} · GOŚCIE GŁOSUJĄ`:`PYTANIE ${s.idx+1}/${DATA.highlow.length} · ODPOWIEDŹ`;
@@ -928,7 +1021,7 @@ function renderHL() {
       <button class="ctrl-btn secondary" onclick="hlPrev()">◀ WSTECZ</button>
       <button class="ctrl-btn reveal-btn" onclick="hlReveal()">🔓 ODSŁOŃ</button>
       <button class="ctrl-btn secondary" onclick="hlNext()">POMIŃ ▶</button>`;
-    pushQuestion('highlow',{idx:s.idx,phase:'question',question:d.q,hint:d.hint,opts:['⬆️ WYŻEJ','⬇️ NIŻEJ']});
+    pushQuestion('highlow',{idx:s.idx,phase:'question',question:d.q,hint:d.hint,opts:['⬆️ WYŻEJ','⬇️ NIŻEJ']},resetVotes);
   } else {
     body.innerHTML=`
       <div class="step-indicator">${dots}</div>
@@ -940,9 +1033,9 @@ function renderHL() {
     pushQuestion('highlow',{idx:s.idx,phase:'answer',answer:d.answer});
   }
 }
-function hlReveal(){S.highlow.phase='answer';flashResult('win');renderHL();}
+function hlReveal(){S.highlow.phase='answer';flashResult('win');renderHL(false);}
 function hlNext(){if(S.highlow.idx<DATA.highlow.length-1){S.highlow.idx++;S.highlow.phase='question';renderHL();}else showToast('Koniec!');}
-function hlPrev(){if(S.highlow.idx>0){S.highlow.idx--;S.highlow.phase='question';renderHL();}}
+function hlPrev(){if(S.highlow.idx>0){S.highlow.idx--;S.highlow.phase='question';renderHL(false);}}
 
 // ════════════════════════════════════════════
 // 8 SEKUND
@@ -1005,7 +1098,7 @@ function runTimer(secs){
 // ════════════════════════════════════════════
 // CO WYBIERASZ
 // ════════════════════════════════════════════
-function renderChoice() {
+function renderChoice(resetVotes=true) {
   const s=S.choice, d=DATA.choice[s.idx];
   document.getElementById('gsTitle').textContent='⚡ CO WYBIERASZ?';
   document.getElementById('gsSubtitle').textContent=`WYBÓR ${s.idx+1}/${DATA.choice.length} · GŁOSUJCIE Z TELEFONÓW!`;
@@ -1021,10 +1114,10 @@ function renderChoice() {
     <button class="ctrl-btn secondary" onclick="choicePrev()">◀ WSTECZ</button>
     <span class="counter-badge">${s.idx+1}/${DATA.choice.length}</span>
     <button class="ctrl-btn primary" onclick="choiceNext()">NASTĘPNE ▶</button>`;
-  pushQuestion('choice',{idx:s.idx,a:d.a,b:d.b,opts:[d.a,d.b]});
+  pushQuestion('choice',{idx:s.idx,a:d.a,b:d.b,opts:[d.a,d.b]},resetVotes);
 }
 function choiceNext(){if(S.choice.idx<DATA.choice.length-1){S.choice.idx++;renderChoice();}else showToast('Koniec!');}
-function choicePrev(){if(S.choice.idx>0){S.choice.idx--;renderChoice();}}
+function choicePrev(){if(S.choice.idx>0){S.choice.idx--;renderChoice(false);}}
 
 // ════════════════════════════════════════════
 // DRAW
@@ -1074,7 +1167,7 @@ function drawRandom(){const p=DATA.drawPrompts[Math.floor(Math.random()*DATA.dra
 function renderTierList() {
   document.getElementById('gsTitle').textContent='🏆 TIER LIST';
   document.getElementById('gsSubtitle').textContent='PRZECIĄGNIJ LUB KLIKNIJ ABY UMIEŚCIĆ W TIERZE';
-  if(!Object.keys(S.tier).length) DATA.tierItems.forEach(it=>S.tier[it]='pool');
+  DATA.tierItems.forEach(it=>{ if(!(it in S.tier)) S.tier[it]='pool'; });
   const placed=DATA.tierItems.filter(it=>S.tier[it]!=='pool').length;
   document.getElementById('gsBody').innerHTML=`
     <div style="text-align:center;font-family:'Bebas Neue';font-size:.85rem;letter-spacing:3px;color:var(--gold);margin-bottom:4px;">${e(DATA.tierCategory)}</div>
@@ -1083,21 +1176,21 @@ function renderTierList() {
         <div class="tier-row">
           <div class="tier-label ${t}">${t}</div>
           <div class="tier-drop" data-tier="${t}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="tierDrop(event,'${t}')">
-            ${DATA.tierItems.filter(it=>S.tier[it]===t).map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem='${it.replace(/'/g,"\\'")}'" onclick="tierClick('${it.replace(/'/g,"\\'")}')"><b>${e(it)}</b></div>`).join('')}
+            ${DATA.tierItems.filter(it=>S.tier[it]===t).map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem=DATA.tierItems[${DATA.tierItems.indexOf(it)}];event.dataTransfer.setData('text/plain',it)" onclick="tierClick(it)"><b>${e(it)}</b></div>`).join('')}
           </div>
         </div>`).join('')}
     </div>
     <div class="tier-pool-wrap" ondragover="event.preventDefault()" ondrop="tierDrop(event,'pool')">
       <div class="tier-pool-label">PULA — PRZECIĄGNIJ DO TIERU (lub kliknij)</div>
-      <div class="tier-pool">${DATA.tierItems.filter(it=>S.tier[it]==='pool').map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem='${it.replace(/'/g,"\\'")}'" onclick="tierClick('${it.replace(/'/g,"\\'")}')"><b>${e(it)}</b></div>`).join('')}</div>
+      <div class="tier-pool">${DATA.tierItems.filter(it=>S.tier[it]==='pool').map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem=DATA.tierItems[${DATA.tierItems.indexOf(it)}];event.dataTransfer.setData('text/plain',it)" onclick="tierClick(it)"><b>${e(it)}</b></div>`).join('')}</div>
     </div>`;
   document.getElementById('gsControls').innerHTML=`
     <button class="ctrl-btn danger" onclick="S.tier={};renderTierList()">🔄 RESET</button>
     <span class="counter-badge">${placed}/${DATA.tierItems.length} umieszczonych</span>`;
   window.pushState?.({game:'tierlist',tier:S.tier,category:DATA.tierCategory,items:DATA.tierItems});
 }
-function tierDrop(ev,t){ev.preventDefault();ev.currentTarget.classList.remove('drag-over');if(!tierDragItem)return;S.tier[tierDragItem]=t;tierDragItem=null;renderTierList();window.pushState?.({game:'tierlist',tier:S.tier,category:DATA.tierCategory,items:DATA.tierItems});}
-function tierClick(it){const cur=S.tier[it]||'pool';const all=['pool',...TIERS];S.tier[it]=all[(all.indexOf(cur)+1)%all.length];renderTierList();}
+function tierDrop(ev,t){ev.preventDefault();ev.currentTarget.classList.remove('drag-over');const item=ev.dataTransfer?.getData('text/plain')||tierDragItem||'';if(!item)return;S.tier[item]=t;tierDragItem=null;renderTierList();window.pushState?.({game:'tierlist',tier:S.tier,category:DATA.tierCategory,items:DATA.tierItems});}
+function tierClick(it){if(typeof it !== 'string') return; const cur=S.tier[it]||'pool';const all=['pool',...TIERS];S.tier[it]=all[(all.indexOf(cur)+1)%all.length];renderTierList();}
 
 // ════════════════════════════════════════════
 // AUKCJA
@@ -1216,7 +1309,8 @@ function calcKids(){const name=document.getElementById('kn').value.trim();const 
 function renderCouples() {
   document.getElementById('gsTitle').textContent='💑 DOPASUJ PARĘ';
   document.getElementById('gsSubtitle').textContent=`${S.couples.matched.length}/${DATA.couples.length} par · GOŚCIE MOGĄ GŁOSOWAĆ Z TELEFONU`;
-  if(!S.couples.shuffledB) S.couples.shuffledB=[...DATA.couples].sort(()=>Math.random()-.5);
+  if(!S.couples.shuffledB||S.couples.shuffledB[0]?.origIdx===undefined)
+    S.couples.shuffledB=DATA.couples.map((p,i)=>({...p,origIdx:i})).sort(()=>Math.random()-.5);
   const sh=S.couples.shuffledB;
   document.getElementById('gsBody').innerHTML=`
     <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;text-align:center;color:var(--gold);margin-bottom:8px;">✅ ${S.couples.score} / ${DATA.couples.length} par dopasowanych</div>
@@ -1247,7 +1341,7 @@ function checkCouplesMatch(){
 // ════════════════════════════════════════════
 // NIGDY NIE
 // ════════════════════════════════════════════
-function renderNever() {
+function renderNever(resetVotes=true) {
   const s=S.never, txt=DATA.never[s.idx];
   document.getElementById('gsTitle').textContent='🙈 NIGDY NIE...';
   document.getElementById('gsSubtitle').textContent=`KARTA ${s.idx+1}/${DATA.never.length} · GOŚCIE GŁOSUJĄ Z TELEFONU!`;
@@ -1263,10 +1357,10 @@ function renderNever() {
     <button class="ctrl-btn secondary" onclick="neverPrev()">◀ WSTECZ</button>
     <span class="counter-badge">${s.idx+1}/${DATA.never.length}</span>
     <button class="ctrl-btn primary" onclick="neverNext()">NASTĘPNA ▶</button>`;
-  pushQuestion('neverhave',{idx:s.idx,statement:txt,opts:['🍹 ROBIŁAM!','😇 NIE JA!']});
+  pushQuestion('neverhave',{idx:s.idx,statement:txt,opts:['🍹 ROBIŁAM!','😇 NIE JA!']},resetVotes);
 }
 function neverNext(){if(S.never.idx<DATA.never.length-1){S.never.idx++;renderNever();}else showToast('Koniec kart!');}
-function neverPrev(){if(S.never.idx>0){S.never.idx--;renderNever();}}
+function neverPrev(){if(S.never.idx>0){S.never.idx--;renderNever(false);}}
 
 // ════════════════════════════════════════════
 // GŁUCHY TELEFON
