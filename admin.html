@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🪩 LAST DISCO – Admin / Host</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -26,7 +27,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .screen.active{display:flex;}
 
 /* ── HOME ── */
-50%{transform:translateY(-10px)rotate(5deg);}}
+50%{transform:translateY(-10px)rotate(5deg);}
 @media(max-width:900px){}
 @media(max-width:600px){}
 /* ── GAME LAYOUT ── */
@@ -338,7 +339,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(255,215,0,.22);border-radius:2px;}
 
-to{opacity:1;transform:scale(1);}}
+to{opacity:1;transform:scale(1);}
 /* ════════════════════════════════════════
    VOTES LIVE PANEL — rich graphics
 ════════════════════════════════════════ */
@@ -627,7 +628,7 @@ to{opacity:1;transform:scale(1);}}
   display:flex;align-items:center;justify-content:center;
   animation:eogIn .5s cubic-bezier(.34,1.2,.64,1);
 }
-@keyframes eogIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+@keyframes eogIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}
 .eog-panel{
   background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,45,156,.05));
   border:1px solid rgba(255,215,0,.3);border-radius:20px;
@@ -680,6 +681,79 @@ to{opacity:1;transform:scale(1);}}
 .eog-btn-next:hover{opacity:.85;transform:scale(1.03);}
 .eog-btn-home{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--muted);border-radius:10px;padding:12px 20px;font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
 .eog-btn-home:hover{border-color:var(--pink);color:var(--pink);}
+
+/* ══ GAME INTRO ══ */
+.intro-overlay{
+  position:fixed;inset:0;z-index:550;
+  background:rgba(7,0,15,.96);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  animation:introIn .35s ease;
+}
+@keyframes introIn{from{opacity:0;}to{opacity:1;}}
+.intro-panel{
+  background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,45,156,.04));
+  border:1px solid rgba(255,215,0,.25);border-radius:20px;
+  padding:30px 36px 26px;width:min(520px,88vw);
+  display:flex;flex-direction:column;gap:18px;
+}
+.intro-emoji{font-size:3rem;text-align:center;animation:introBounce .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes introBounce{from{transform:scale(0);}to{transform:scale(1);}}
+.intro-title{
+  font-family:'Bebas Neue';font-size:2rem;letter-spacing:5px;text-align:center;
+  background:linear-gradient(90deg,var(--gold),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.intro-subtitle{
+  font-size:.72rem;letter-spacing:3px;color:var(--muted);text-align:center;margin-top:-12px;
+}
+.intro-rules{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;
+  padding:14px 18px;display:flex;flex-direction:column;gap:8px;
+}
+.intro-rule{display:flex;align-items:flex-start;gap:10px;}
+.intro-rule-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
+.intro-rule-text{font-size:.82rem;color:var(--text);line-height:1.5;}
+.intro-rule-text strong{color:var(--gold);}
+.intro-score-info{
+  display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:rgba(57,255,20,.06);border:1px solid rgba(57,255,20,.2);border-radius:8px;
+}
+.intro-score-icon{font-size:1rem;flex-shrink:0;}
+.intro-score-text{font-size:.75rem;color:var(--green2);line-height:1.4;}
+.intro-btns{display:flex;gap:10px;}
+.intro-start-btn{
+  flex:1;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);
+  border:none;border-radius:10px;padding:14px;
+  font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:3px;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 20px rgba(255,215,0,.3);
+}
+.intro-start-btn:hover{opacity:.85;transform:scale(1.02);}
+.intro-back-btn{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  color:var(--muted);border-radius:10px;padding:14px 18px;
+  font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all .2s;
+}
+.intro-back-btn:hover{border-color:var(--pink);color:var(--pink);}
+
+/* ══ EXCEL EXPORT/IMPORT ══ */
+.xlsx-bar{
+  display:flex;align-items:center;gap:6px;padding:6px 14px 8px;
+  border-top:1px solid rgba(255,215,0,.08);flex-shrink:0;
+  background:rgba(7,0,15,.4);flex-wrap:wrap;
+}
+.xlsx-label{font-family:'Bebas Neue';font-size:.58rem;letter-spacing:3px;color:rgba(255,248,231,.3);margin-right:4px;}
+.xlsx-btn{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(57,163,0,.1);border:1px solid rgba(57,163,0,.3);
+  color:#7CFC00;border-radius:6px;padding:5px 11px;
+  font-family:'Bebas Neue';font-size:.72rem;letter-spacing:2px;cursor:pointer;transition:all .2s;
+}
+.xlsx-btn:hover{background:rgba(57,163,0,.22);border-color:#7CFC00;}
+.xlsx-btn.import{background:rgba(0,140,255,.08);border-color:rgba(0,140,255,.3);color:#00CFFF;}
+.xlsx-btn.import:hover{background:rgba(0,140,255,.2);border-color:#00CFFF;}
+.xlsx-btn.global{background:rgba(255,215,0,.07);border-color:rgba(255,215,0,.3);color:#FFD700;}
+.xlsx-btn.global:hover{background:rgba(255,215,0,.18);border-color:#FFD700;}
+.xlsx-file-input{display:none;}
 </style>
 </head>
 <body>
@@ -702,21 +776,21 @@ to{opacity:1;transform:scale(1);}}
         </div>
       </div>
       <div class="games-grid" id="gamesGrid">
-        <div class="game-btn" onclick="hostStart('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div></div>
-        <div class="game-btn" onclick="hostStart('quiz')"><span class="icon">🎤</span><div class="name">ZGADNIJ KASIĘ</div></div>
-        <div class="game-btn" onclick="hostStart('vabank')"><span class="icon">🎲</span><div class="name">VA-BANK</div></div>
-        <div class="game-btn" onclick="hostStart('honornot')"><span class="icon">🔥</span><div class="name">HOT OR NOT</div></div>
-        <div class="game-btn" onclick="hostStart('advice')"><span class="icon">💌</span><div class="name">RADY DLA KASI</div></div>
-        <div class="game-btn" onclick="hostStart('highlow')"><span class="icon">📊</span><div class="name">WYŻEJ CZY NIŻEJ</div></div>
-        <div class="game-btn" onclick="hostStart('eight')"><span class="icon">⏱️</span><div class="name">MASZ 8 SEKUND</div></div>
-        <div class="game-btn" onclick="hostStart('choice')"><span class="icon">⚡</span><div class="name">CO WYBIERASZ?</div></div>
-        <div class="game-btn" onclick="hostStart('draw')"><span class="icon">✏️</span><div class="name">DORYSUJ TO</div></div>
-        <div class="game-btn" onclick="hostStart('tierlist')"><span class="icon">🏆</span><div class="name">TIER LIST</div></div>
-        <div class="game-btn" onclick="hostStart('auction')"><span class="icon">💰</span><div class="name">AUKCJA ZALET</div></div>
-        <div class="game-btn" onclick="hostStart('wrozby')"><span class="icon">🔮</span><div class="name">WRÓŻBY</div></div>
-        <div class="game-btn" onclick="hostStart('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARĘ</div></div>
-        <div class="game-btn" onclick="hostStart('neverhave')"><span class="icon">🙈</span><div class="name">NIGDY NIE...</div></div>
-        <div class="game-btn" onclick="hostStart('telephone')"><span class="icon">📞</span><div class="name">GŁUCHY TELEFON</div></div>
+        <div class="game-btn" onclick="showGameIntro('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div></div>
+        <div class="game-btn" onclick="showGameIntro('quiz')"><span class="icon">🎤</span><div class="name">ZGADNIJ KASIĘ</div></div>
+        <div class="game-btn" onclick="showGameIntro('vabank')"><span class="icon">🎲</span><div class="name">VA-BANK</div></div>
+        <div class="game-btn" onclick="showGameIntro('honornot')"><span class="icon">🔥</span><div class="name">HOT OR NOT</div></div>
+        <div class="game-btn" onclick="showGameIntro('advice')"><span class="icon">💌</span><div class="name">RADY DLA KASI</div></div>
+        <div class="game-btn" onclick="showGameIntro('highlow')"><span class="icon">📊</span><div class="name">WYŻEJ CZY NIŻEJ</div></div>
+        <div class="game-btn" onclick="showGameIntro('eight')"><span class="icon">⏱️</span><div class="name">MASZ 8 SEKUND</div></div>
+        <div class="game-btn" onclick="showGameIntro('choice')"><span class="icon">⚡</span><div class="name">CO WYBIERASZ?</div></div>
+        <div class="game-btn" onclick="showGameIntro('draw')"><span class="icon">✏️</span><div class="name">DORYSUJ TO</div></div>
+        <div class="game-btn" onclick="showGameIntro('tierlist')"><span class="icon">🏆</span><div class="name">TIER LIST</div></div>
+        <div class="game-btn" onclick="showGameIntro('auction')"><span class="icon">💰</span><div class="name">AUKCJA ZALET</div></div>
+        <div class="game-btn" onclick="showGameIntro('wrozby')"><span class="icon">🔮</span><div class="name">WRÓŻBY</div></div>
+        <div class="game-btn" onclick="showGameIntro('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARĘ</div></div>
+        <div class="game-btn" onclick="showGameIntro('neverhave')"><span class="icon">🙈</span><div class="name">NIGDY NIE...</div></div>
+        <div class="game-btn" onclick="showGameIntro('telephone')"><span class="icon">📞</span><div class="name">GŁUCHY TELEFON</div></div>
       </div>
     </div>
 
@@ -774,6 +848,7 @@ to{opacity:1;transform:scale(1);}}
       <div class="game-body" id="gsBody"></div>
       <div id="gsVotesZone" style="flex-shrink:0;padding:0 4px;"></div>
       <div id="localSBPanel" style="flex-shrink:0;"></div>
+      <div class="xlsx-bar" id="xlsxBar"></div>
       <div class="nav-controls" id="gsControls"></div>
     </div>
     <div class="admin-panel" id="gsAdmin">
@@ -1073,11 +1148,7 @@ function toggleSB() {
   if(d.classList.contains('open')) { renderGlobalSB(); renderLocalSB(window._currentGame); }
 }
 
-function resetScores() {
-  SCORES = {};
 
-  showToast('Wyniki zresetowane!');
-}
 
 const GAME_LABELS = {
   quiz:'🎤 Quiz', honornot:'🔥 Hot or Not', highlow:'📊 Wyżej/Niżej',
@@ -1252,6 +1323,380 @@ function closeEOG() {
   document.getElementById('eogOverlay')?.remove();
 }
 
+
+
+// ════════════════════════════════════════════════════════
+// EXCEL EXPORT / IMPORT
+// ════════════════════════════════════════════════════════
+
+// ── Builders per game ──
+function _gameToRows(game) {
+  switch(game) {
+    case 'quiz':
+      return [['Pytanie','A','B','C','D','Poprawna','Notatka'],
+        ...DATA.quiz.map(q=>[q.q, ...q.opts, q.answer, q.answerNote||''])];
+    case 'honornot':
+      return [['Stwierdzenie'], ...DATA.hon.map(h=>[h])];
+    case 'highlow':
+      return [['Pytanie','Wskazówka','Odpowiedź'],
+        ...DATA.highlow.map(h=>[h.q, h.hint, h.answer])];
+    case 'eight':
+      return [['Zadanie','Sekundy'], ...DATA.eight.map(d=>[d.task, d.seconds])];
+    case 'choice':
+      return [['Opcja A','Opcja B'], ...DATA.choice.map(c=>[c.a, c.b])];
+    case 'neverhave':
+      return [['Stwierdzenie'], ...DATA.never.map(n=>[n])];
+    case 'couples':
+      return [['Lewa strona','Prawa strona'], ...DATA.couples.map(p=>[p.a, p.b])];
+    case 'tierlist':
+      return [['Kategoria'], [DATA.tierCategory], [''], ['Elementy'], ...DATA.tierItems.map(i=>[i])];
+    case 'bingo':
+      return [['Pola bingo'], ...DATA.bingo.map(b=>[b])];
+    case 'vabank':
+      const catNames = DATA.vabank.categories.map(c=>c.name);
+      const rows = [['Cena / Kategoria', ...catNames]];
+      DATA.vabank.prices.forEach((price, pi) => {
+        rows.push([price, ...DATA.vabank.categories.map((_,ci) => DATA.vabank.questions[ci][pi].q)]);
+        rows.push(['Odpowiedzi', ...DATA.vabank.categories.map((_,ci) => DATA.vabank.questions[ci][pi].a)]);
+      });
+      return rows;
+    case 'auction':
+      return [['Cecha','Emoji'], ...DATA.auctionItems.map(i=>[i.name, i.emoji])];
+    default:
+      return [['Brak danych do eksportu']];
+  }
+}
+
+function xlsxExportGame(game) {
+  if(typeof XLSX === 'undefined') { showToast('Ładowanie biblioteki…'); return; }
+  const label = (GAME_LABELS[game]||game).replace(/[🎤🎲🔥💌📊⏱️⚡✏️🏆💰🔮💑🙈📞🎰]/gu,'').trim();
+  const rows = _gameToRows(game);
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  // Auto column width
+  const cols = rows[0]?.length || 1;
+  ws['!cols'] = Array(cols).fill({wch:32});
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, label.slice(0,31)||'Dane');
+  XLSX.writeFile(wb, 'lastdisco_' + game + '.xlsx');
+  showToast('📥 Zapisano: lastdisco_' + game + '.xlsx');
+}
+
+function xlsxExportAll() {
+  if(typeof XLSX === 'undefined') { showToast('Ładowanie biblioteki…'); return; }
+  const wb = XLSX.utils.book_new();
+  const games = ['quiz','honornot','highlow','eight','choice','neverhave','couples',
+                 'tierlist','bingo','vabank','auction'];
+  games.forEach(game => {
+    const label = (GAME_LABELS[game]||game).replace(/[🎤🎲🔥💌📊⏱️⚡✏️🏆💰🔮💑🙈📞🎰]/gu,'').trim().slice(0,31)||game;
+    const rows = _gameToRows(game);
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    const cols = rows[0]?.length || 1;
+    ws['!cols'] = Array(cols).fill({wch:30});
+    XLSX.utils.book_append_sheet(wb, ws, label);
+  });
+  XLSX.writeFile(wb, 'lastdisco_ALL_pytania.xlsx');
+  showToast('📥 Zapisano wszystkie pytania!');
+}
+
+function xlsxImportGame(game, file) {
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      const data = rows.slice(1).filter(r => r.some(c=>String(c).trim()));
+      _importRows(game, data);
+      renderGame(window._currentGame);
+      showToast('✅ Import OK! ' + data.length + ' wierszy');
+    } catch(err) {
+      showToast('❌ Błąd importu: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function xlsxImportAll(file) {
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      let imported = 0;
+      wb.SheetNames.forEach(sheetName => {
+        // Match sheet name to game
+        const game = Object.entries(GAME_LABELS).find(([g,l]) =>
+          l.replace(/[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g,'').toLowerCase().includes(
+            sheetName.replace(/[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g,'').toLowerCase().slice(0,6)
+          )
+        )?.[0];
+        if(!game) return;
+        const ws = wb.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+        const data = rows.slice(1).filter(r => r.some(c=>String(c).trim()));
+        _importRows(game, data);
+        imported++;
+      });
+      renderGame(window._currentGame);
+      showToast('✅ Zaimportowano ' + imported + ' arkuszy!');
+    } catch(err) {
+      showToast('❌ Błąd importu: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function _importRows(game, rows) {
+  switch(game) {
+    case 'quiz':
+      DATA.quiz = rows.map(r=>({q:r[0]||'',opts:[r[1]||'',r[2]||'',r[3]||'',r[4]||''],answer:r[5]||'',answerNote:r[6]||''})).filter(q=>q.q);
+      break;
+    case 'honornot': DATA.hon = rows.map(r=>r[0]).filter(Boolean); break;
+    case 'highlow': DATA.highlow = rows.map(r=>({q:r[0]||'',hint:r[1]||'',answer:r[2]||''})).filter(h=>h.q); break;
+    case 'eight': DATA.eight = rows.map(r=>({task:r[0]||'',seconds:+r[1]||8})).filter(d=>d.task); break;
+    case 'choice': DATA.choice = rows.map(r=>({a:r[0]||'',b:r[1]||''})).filter(c=>c.a); break;
+    case 'neverhave': DATA.never = rows.map(r=>r[0]).filter(Boolean); break;
+    case 'couples': DATA.couples = rows.map(r=>({a:r[0]||'',b:r[1]||''})).filter(p=>p.a); break;
+    case 'tierlist':
+      const catRow = rows.find(r=>r[0]==='Kategoria');
+      const itemsStart = rows.findIndex(r=>r[0]==='Elementy');
+      if(catRow) DATA.tierCategory = rows[rows.indexOf(catRow)+1]?.[0]||DATA.tierCategory;
+      if(itemsStart>=0) DATA.tierItems = rows.slice(itemsStart+1).map(r=>r[0]).filter(Boolean);
+      break;
+    case 'bingo': DATA.bingo = rows.map(r=>r[0]).filter(Boolean).slice(0,25); break;
+    case 'auction': DATA.auctionItems = rows.map(r=>({name:r[0]||'',emoji:r[1]||'⭐'})).filter(i=>i.name); break;
+    case 'vabank':
+      // Rebuild from paired rows (question/answer)
+      rows.forEach((row,ri) => {
+        if(ri%2!==0) return;
+        const pi = ri/2;
+        if(pi >= DATA.vabank.prices.length) return;
+        DATA.vabank.categories.forEach((_,ci) => {
+          if(!DATA.vabank.questions[ci]) DATA.vabank.questions[ci] = [];
+          if(!DATA.vabank.questions[ci][pi]) DATA.vabank.questions[ci][pi] = {q:'',a:''};
+          DATA.vabank.questions[ci][pi].q = row[ci+1]||'';
+          if(rows[ri+1]) DATA.vabank.questions[ci][pi].a = rows[ri+1][ci+1]||'';
+        });
+      });
+      break;
+  }
+}
+
+function xlsxTriggerImport(game) {
+  const inp = document.getElementById('xlsxFileInput');
+  inp.dataset.game = game;
+  inp.click();
+}
+function xlsxTriggerImportAll() {
+  const inp = document.getElementById('xlsxFileInputAll');
+  inp.click();
+}
+// ════════════════════════════════════════════════════════
+// GAME INTRO DEFINITIONS
+// ════════════════════════════════════════════════════════
+const GAME_INTROS = {
+  bingo: {
+    emoji: '🎰', title: 'BINGO',
+    subtitle: 'Obserwuj, klikaj, wygrywaj!',
+    rules: [
+      {icon:'👁️', text:'Obserwuj co się dzieje na imprezie'},
+      {icon:'🖱️', text:'Klikaj pola gdy sytuacja pasuje do opisu'},
+      {icon:'🎯', text:'Ułóż <strong>linię 5 pól</strong> — poziom, pion lub skos'},
+      {icon:'🪩', text:'Środkowe pole FREE jest zawsze zaznaczone'},
+    ],
+    score: null,
+  },
+  quiz: {
+    emoji: '🎤', title: 'ZGADNIJ KASIĘ',
+    subtitle: 'Ile znasz Panią Młodą?',
+    rules: [
+      {icon:'📱', text:'Goście wybierają odpowiedź <strong>na telefonie</strong>'},
+      {icon:'🔓', text:'Kliknij <strong>ODSŁOŃ</strong> żeby pokazać właściwą odpowiedź'},
+      {icon:'↔️', text:'Nawiguj strzałkami klawiatury lub przyciskami'},
+      {icon:'📊', text:'Wyniki głosowania widoczne na żywo'},
+    ],
+    score: '✅ 2 pkt za poprawną · 0.5 pkt za uczestnictwo',
+  },
+  vabank: {
+    emoji: '🎲', title: 'VA-BANK',
+    subtitle: 'Teleturniej na 50–1000 punktów',
+    rules: [
+      {icon:'🗂️', text:'Wybierz <strong>kategorię i wartość</strong> z tablicy'},
+      {icon:'🎙️', text:'Przeczytaj pytanie głośno wszystkim graczom'},
+      {icon:'💰', text:'Gracze licytują pewność: 10%, 25%, 50%, 100%'},
+      {icon:'✅', text:'Po odpowiedzi kliknij kto odpowiedział poprawnie'},
+    ],
+    score: 'Ręcznie przyznawane — kliknij imię gracza po odsłonięciu',
+  },
+  honornot: {
+    emoji: '🔥', title: 'HOT OR NOT',
+    subtitle: 'Głosuj czy to gorące czy nie!',
+    rules: [
+      {icon:'📺', text:'Na TV wyświetla się stwierdzenie'},
+      {icon:'📱', text:'Każdy głosuje <strong>🔥 HOT</strong> lub <strong>❄️ NOT</strong> na telefonie'},
+      {icon:'▶️', text:'Kliknij NASTĘPNE żeby przejść dalej i zaliczyć punkty'},
+      {icon:'📊', text:'Widzisz podział głosów na żywo'},
+    ],
+    score: '2 pkt za głos zgodny z większością · 1 pkt za uczestnictwo',
+  },
+  advice: {
+    emoji: '💌', title: 'RADY DLA KASI',
+    subtitle: 'Mądrości życiowe dla Panny Młodej',
+    rules: [
+      {icon:'📱', text:'Goście wpisują rady <strong>na swoich telefonach</strong>'},
+      {icon:'📺', text:'Rady pojawiają się na ekranie TV w czasie rzeczywistym'},
+      {icon:'➕', text:'Możesz też dodać radę ręcznie jako host'},
+      {icon:'🗑️', text:'Usuń niepasujące klikając ✕ przy każdej radzie'},
+    ],
+    score: null,
+  },
+  highlow: {
+    emoji: '📊', title: 'WYŻEJ CZY NIŻEJ?',
+    subtitle: 'Statystyki o miłości i życiu',
+    rules: [
+      {icon:'📖', text:'Przeczytaj pytanie z podpowiedzią'},
+      {icon:'📱', text:'Goście głosują ⬆️ lub ⬇️ <strong>na telefonie</strong>'},
+      {icon:'🎯', text:'Zaznacz poprawny kierunek przyciskiem ⬆️/⬇️'},
+      {icon:'🔓', text:'Kliknij ODSŁOŃ żeby pokazać odpowiedź'},
+    ],
+    score: '3 pkt za poprawny kierunek',
+  },
+  eight: {
+    emoji: '⏱️', title: 'MASZ 8 SEKUND',
+    subtitle: 'Szybkie wyzwania pod presją czasu',
+    rules: [
+      {icon:'📖', text:'Przeczytaj zadanie głośno wskazanej osobie'},
+      {icon:'▶️', text:'Kliknij START żeby uruchomić odliczanie'},
+      {icon:'⏰', text:'Gracz musi wykonać zadanie zanim czas minie'},
+      {icon:'🎭', text:'Wszyscy widzą co się dzieje na TV — śmiejcie się razem!'},
+    ],
+    score: null,
+  },
+  choice: {
+    emoji: '⚡', title: 'CO WYBIERASZ?',
+    subtitle: 'Dwa wyjścia, jeden wybór',
+    rules: [
+      {icon:'📺', text:'Na TV pojawiają się dwie opcje do wyboru'},
+      {icon:'📱', text:'Goście głosują <strong>na telefonie</strong> którą preferują'},
+      {icon:'▶️', text:'Kliknij NASTĘPNE żeby zaliczyć punkty i przejść dalej'},
+      {icon:'💬', text:'Po głosowaniu porozmawiajcie dlaczego taki wybór!'},
+    ],
+    score: '2 pkt za wybór z większością · 1 pkt za każdy głos',
+  },
+  draw: {
+    emoji: '✏️', title: 'DORYSUJ TO',
+    subtitle: 'Kalambury na rysowanie',
+    rules: [
+      {icon:'🎲', text:'Kliknij LOSUJ żeby wylosować hasło do narysowania'},
+      {icon:'🖌️', text:'Rysuj na ekranie TV — goście zgadują głosem'},
+      {icon:'🎨', text:'Zmień kolor i grubość pędzla według potrzeb'},
+      {icon:'🗑️', text:'Kliknij 🗑️ żeby wyczyścić tablicę'},
+    ],
+    score: null,
+  },
+  tierlist: {
+    emoji: '🏆', title: 'TIER LIST',
+    subtitle: 'Uszereguj od najlepszego do najgorszego',
+    rules: [
+      {icon:'🖱️', text:'Przeciągnij lub kliknij elementy z puli do tierów S–F'},
+      {icon:'👑', text:'S = najlepszy, F = najgorszy — wspólnie zdecydujcie'},
+      {icon:'💬', text:'Uzasadniajcie każdy wybór głośno!'},
+      {icon:'🔄', text:'RESET czyści planszę i zaczyna od nowa'},
+    ],
+    score: null,
+  },
+  auction: {
+    emoji: '💰', title: 'AUKCJA ZALET',
+    subtitle: 'Kup cechy idealnego partnera!',
+    rules: [
+      {icon:'💰', text:'Każdy gracz startuje z <strong>500 monetami</strong>'},
+      {icon:'🎙️', text:'Wybierz gracza i klikaj + żeby podbijać cenę'},
+      {icon:'🔨', text:'Kliknij SPRZEDANO! żeby zamknąć licytację'},
+      {icon:'🏆', text:'Wygrywa osoba z najlepszą kolekcją cech!'},
+    ],
+    score: '5 pkt za każdą wygraną cechę',
+  },
+  wrozby: {
+    emoji: '🔮', title: 'WRÓŻBY',
+    subtitle: 'Los przepowiada przyszłość',
+    rules: [
+      {icon:'🔥', text:'<strong>FLAMES</strong> — wpisz dwa imiona i odkryj relację'},
+      {icon:'💍', text:'<strong>Kiedy ślub?</strong> — wpisz imię i poznaj datę'},
+      {icon:'🌟', text:'<strong>Przepowiednia</strong> — losuj życiową wróżbę'},
+      {icon:'👶', text:'<strong>Ile dzieci?</strong> — wpisz imię i rok urodzenia'},
+    ],
+    score: null,
+  },
+  couples: {
+    emoji: '💑', title: 'DOPASUJ PARĘ',
+    subtitle: 'Kto do kogo pasuje?',
+    rules: [
+      {icon:'🖱️', text:'Kliknij osobę z lewej kolumny, potem z prawej'},
+      {icon:'✅', text:'Poprawna para zostanie oznaczona zielonym'},
+      {icon:'❌', text:'Błędna para zamiga czerwonym — spróbuj ponownie'},
+      {icon:'🎉', text:'Połącz wszystkie pary żeby wygrać!'},
+    ],
+    score: '3 pkt dla wszystkich za każdą dopasowaną parę (kooperacja)',
+  },
+  neverhave: {
+    emoji: '🙈', title: 'NIGDY NIE...',
+    subtitle: 'Kto co przeżył?',
+    rules: [
+      {icon:'📖', text:'Na TV wyświetla się stwierdzenie "Nigdy nie..."'},
+      {icon:'📱', text:'Goście głosują 🍹 ROBIŁAM! lub 😇 NIE JA! na telefonie'},
+      {icon:'💬', text:'Po głosowaniu poproś kogoś żeby opowiedziała historię!'},
+      {icon:'▶️', text:'Kliknij NASTĘPNA żeby przejść do kolejnej karty'},
+    ],
+    score: '1 pkt za każde "🍹 Robiłam!" (im więcej tym lepiej 😄)',
+  },
+  telephone: {
+    emoji: '📞', title: 'GŁUCHY TELEFON',
+    subtitle: 'Rysowany głuchy telefon',
+    rules: [
+      {icon:'✏️', text:'Pierwsza osoba rysuje hasło startowe'},
+      {icon:'👀', text:'Następna osoba patrzy na rysunek i zgaduje co to'},
+      {icon:'🔄', text:'Kolejna rysuje to co poprzednia napisała'},
+      {icon:'😂', text:'Na końcu porównajcie hasło z efektem końcowym!'},
+    ],
+    score: null,
+  },
+};
+
+function showGameIntro(game) {
+  const info = GAME_INTROS[game];
+  if(!info) { hostStart(game); return; }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'intro-overlay';
+  overlay.id = 'introOverlay';
+
+  const rulesHtml = info.rules.map(r => `
+    <div class="intro-rule">
+      <span class="intro-rule-icon">${r.icon}</span>
+      <span class="intro-rule-text">${r.text}</span>
+    </div>`).join('');
+
+  const scoreHtml = info.score ? `
+    <div class="intro-score-info">
+      <span class="intro-score-icon">🏆</span>
+      <span class="intro-score-text"><strong>PUNKTY:</strong> ${info.score}</span>
+    </div>` : '';
+
+  overlay.innerHTML = `
+    <div class="intro-panel">
+      <div class="intro-emoji">${info.emoji}</div>
+      <div class="intro-title">${info.title}</div>
+      <div class="intro-subtitle">${info.subtitle}</div>
+      <div class="intro-rules">${rulesHtml}</div>
+      ${scoreHtml}
+      <div class="intro-btns">
+        <button class="intro-back-btn" onclick="document.getElementById('introOverlay')?.remove()">← MENU</button>
+        <button class="intro-start-btn" onclick="document.getElementById('introOverlay')?.remove();hostStart('${game}')">▶ START!</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
 // ── IN-GAME PLAYERS STRIP ──
 function updateGamePlayersStrip(votes) {
   const strip = document.getElementById('gamePlayersStrip');
@@ -1318,6 +1763,23 @@ function hostBack() {
 }
 
 function renderGame(game) {
+  // Update xlsx bar
+  const xlsxBar = document.getElementById('xlsxBar');
+  if(xlsxBar) {
+    const hasData = ['quiz','honornot','highlow','eight','choice','neverhave',
+                     'couples','tierlist','bingo','vabank','auction'].includes(game);
+    if(hasData) {
+      xlsxBar.innerHTML = `
+        <span class="xlsx-label">PYTANIA:</span>
+        <button class="xlsx-btn" onclick="xlsxExportGame('${game}')">📥 EKSPORT XLSX</button>
+        <button class="xlsx-btn import" onclick="xlsxTriggerImport('${game}')">📤 IMPORT XLSX</button>
+        <span style="flex:1"></span>
+        <button class="xlsx-btn global" onclick="xlsxExportAll()" title="Eksportuj wszystkie gry">📦 EKSPORT WSZYSTKICH</button>
+        <button class="xlsx-btn import global" onclick="xlsxTriggerImportAll()" title="Importuj wszystkie gry z jednego pliku">📦 IMPORT WSZYSTKICH</button>`;
+    } else {
+      xlsxBar.innerHTML = '';
+    }
+  }
   const renders = {
     bingo:renderBingo, quiz:renderQuiz, vabank:renderVabank, honornot:renderHon,
     advice:renderAdvice, highlow:renderHL, eight:renderEight, choice:renderChoice,
