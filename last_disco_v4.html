@@ -1,0 +1,2799 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🪩 LAST DISCO – Wieczór Panieński Kasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#FFD700; --gold2:#FFA500;
+  --pink:#FF2D9C; --pink2:#FF6BC8;
+  --blue:#00CFFF; --blue2:#0080FF;
+  --green:#39FF14; --green2:#ADFF2F;
+  --red:#FF3333;
+  --dark:#07000F; --dark2:#120025;
+  --card:rgba(255,255,255,.06); --card2:rgba(255,255,255,.1);
+  --border:rgba(255,215,0,.2);
+  --text:#FFF8E7; --muted:rgba(255,248,231,.5);
+  --admin-bg:#0D001A; --admin-border:rgba(255,45,156,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow:hidden;}
+
+/* ══ BACKGROUNDS ══ */
+.disco-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 10% 15%,rgba(255,45,156,.2) 0%,transparent 40%),
+    radial-gradient(ellipse at 90% 85%,rgba(0,207,255,.16) 0%,transparent 40%),
+    radial-gradient(ellipse at 50% 50%,rgba(255,215,0,.05) 0%,transparent 55%);}
+.disco-dots{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.6;
+  background-image:radial-gradient(circle,rgba(255,215,0,.15) 1px,transparent 1px);
+  background-size:32px 32px;}
+
+/* ══ SCREENS ══ */
+.screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;overflow:hidden;}
+.screen.active{display:flex;}
+
+/* ══════════════════════════════
+   HOME
+══════════════════════════════ */
+#home{align-items:center;justify-content:center;gap:0;position:relative;}
+.home-crown{font-size:4rem;margin-bottom:6px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-12px) rotate(5deg);}}
+.home-title{
+  font-family:'Bebas Neue';font-size:clamp(4rem,10vw,9rem);
+  letter-spacing:10px;line-height:.88;text-align:center;
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 35%,var(--pink) 70%,var(--pink2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(255,215,0,.25));
+}
+.home-sub{
+  font-family:'Playfair Display';font-style:italic;color:var(--blue);
+  font-size:1.2rem;letter-spacing:3px;margin:12px 0 36px;
+}
+.games-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  width:min(1100px,94vw);max-height:62vh;overflow-y:auto;padding:4px;
+}
+.game-btn{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:20px 14px;cursor:pointer;text-align:center;transition:all .25s;
+  position:relative;overflow:hidden;
+}
+.game-btn::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent,rgba(255,215,0,.05));
+  opacity:0;transition:opacity .25s;}
+.game-btn:hover{border-color:var(--gold);transform:translateY(-3px);
+  box-shadow:0 10px 40px rgba(255,215,0,.18);}
+.game-btn:hover::before{opacity:1;}
+.game-btn .icon{font-size:2.4rem;margin-bottom:6px;display:block;}
+.game-btn .name{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;color:var(--gold);}
+.game-btn .desc{font-size:.68rem;color:var(--muted);margin-top:4px;line-height:1.4;}
+
+/* ══════════════════════════════
+   GAME LAYOUT
+══════════════════════════════ */
+.game-header{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px 12px;
+  border-bottom:1px solid var(--border);flex-shrink:0;gap:14px;
+  background:rgba(7,0,15,.6);backdrop-filter:blur(10px);
+}
+.game-header-left{display:flex;flex-direction:column;}
+.game-header-title{
+  font-family:'Bebas Neue';font-size:2rem;letter-spacing:5px;
+  background:linear-gradient(90deg,var(--gold),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.game-header-sub{font-size:.72rem;color:var(--muted);letter-spacing:2px;margin-top:2px;text-transform:uppercase;}
+.header-btns{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.back-btn{background:rgba(255,45,156,.1);border:1px solid rgba(255,45,156,.4);color:var(--pink);
+  border-radius:8px;padding:8px 20px;font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;
+  cursor:pointer;transition:all .2s;}
+.back-btn:hover{background:rgba(255,45,156,.25);}
+.admin-toggle-btn{background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.3);color:var(--gold);
+  border-radius:8px;padding:8px 20px;font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;
+  cursor:pointer;transition:all .2s;}
+.admin-toggle-btn:hover,.admin-toggle-btn.active{background:rgba(255,215,0,.18);border-color:var(--gold);}
+
+/* Stage + Admin */
+.game-stage-wrap{flex:1;display:flex;overflow:hidden;position:relative;z-index:2;}
+.game-stage{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.game-body{flex:1;overflow-y:auto;padding:22px 32px;display:flex;flex-direction:column;gap:16px;}
+.game-body::-webkit-scrollbar{width:4px;}
+.game-body::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px;}
+
+/* Bottom bar */
+.nav-controls{
+  display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;
+  flex-shrink:0;padding:12px 28px 16px;
+  border-top:1px solid var(--border);
+  background:rgba(7,0,15,.6);backdrop-filter:blur(10px);
+}
+.ctrl-btn{
+  padding:12px 28px;border-radius:10px;
+  font-family:'Bebas Neue';font-size:1.15rem;letter-spacing:2px;
+  cursor:pointer;transition:all .2s;border:none;
+}
+.ctrl-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);font-size:1.2rem;}
+.ctrl-btn.primary:hover{opacity:.85;transform:scale(1.02);}
+.ctrl-btn.secondary{background:var(--card);border:1px solid var(--border);color:var(--text);}
+.ctrl-btn.secondary:hover{border-color:var(--gold);}
+.ctrl-btn.danger{background:rgba(255,45,156,.12);border:1px solid rgba(255,45,156,.4);color:var(--pink);}
+.ctrl-btn.danger:hover{background:rgba(255,45,156,.28);}
+.ctrl-btn.reveal-btn{
+  background:linear-gradient(135deg,var(--pink),#8B0055);
+  color:white;font-size:1.3rem;padding:14px 40px;
+  box-shadow:0 4px 24px rgba(255,45,156,.4);
+}
+.ctrl-btn.reveal-btn:hover{transform:scale(1.03);box-shadow:0 6px 32px rgba(255,45,156,.6);}
+.counter-badge{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;color:var(--muted);padding:10px 14px;}
+
+/* ══════════════════════════════
+   ADMIN PANEL
+══════════════════════════════ */
+.admin-panel{
+  width:0;overflow:hidden;background:var(--admin-bg);
+  border-left:1px solid var(--admin-border);
+  transition:width .3s ease;flex-shrink:0;display:flex;flex-direction:column;
+}
+.admin-panel.open{width:360px;}
+.admin-inner{width:360px;display:flex;flex-direction:column;height:100%;}
+.admin-header{padding:16px 18px 12px;border-bottom:1px solid var(--admin-border);flex-shrink:0;}
+.admin-title{font-family:'Bebas Neue';font-size:1.15rem;letter-spacing:3px;color:var(--pink);}
+.admin-subtitle{font-size:.62rem;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+.admin-scroll{flex:1;overflow-y:auto;padding:14px 16px;}
+.admin-scroll::-webkit-scrollbar{width:3px;}
+.admin-scroll::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px;}
+.admin-section{margin-bottom:18px;}
+.admin-label{font-family:'Bebas Neue';font-size:.7rem;letter-spacing:3px;color:var(--gold);margin-bottom:5px;}
+.admin-input,.admin-textarea{width:100%;background:rgba(255,255,255,.06);
+  border:1px solid var(--admin-border);border-radius:6px;
+  color:var(--text);font-family:'Outfit';font-size:.82rem;padding:8px 10px;
+  outline:none;transition:border-color .2s;}
+.admin-input:focus,.admin-textarea:focus{border-color:var(--pink);}
+.admin-textarea{resize:vertical;min-height:50px;line-height:1.5;}
+.admin-row{display:flex;gap:6px;margin-bottom:6px;align-items:flex-start;}
+.admin-save-btn{width:100%;background:linear-gradient(135deg,var(--pink),#8B0055);border:none;
+  color:white;padding:9px;border-radius:6px;font-family:'Bebas Neue';font-size:.95rem;
+  letter-spacing:2px;cursor:pointer;transition:opacity .2s;margin-top:4px;}
+.admin-save-btn:hover{opacity:.85;}
+.admin-delete-btn{background:rgba(255,45,156,.1);border:1px solid rgba(255,45,156,.3);
+  color:var(--pink);border-radius:4px;padding:5px 9px;font-size:.7rem;cursor:pointer;
+  font-family:'Bebas Neue';letter-spacing:1px;white-space:nowrap;transition:all .2s;}
+.admin-delete-btn:hover{background:rgba(255,45,156,.25);}
+.admin-add-btn{background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.3);
+  color:var(--green2);border-radius:6px;padding:8px 12px;font-family:'Bebas Neue';font-size:.85rem;
+  letter-spacing:2px;cursor:pointer;transition:all .2s;width:100%;margin-top:6px;}
+.admin-add-btn:hover{background:rgba(57,255,20,.16);}
+.admin-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.1);
+  border-radius:8px;padding:12px;margin-bottom:8px;}
+.admin-item-footer{display:flex;justify-content:flex-end;margin-top:6px;}
+.admin-divider{height:1px;background:var(--admin-border);margin:12px 0;}
+.admin-note{font-size:.65rem;color:var(--muted);line-height:1.6;font-style:italic;
+  background:rgba(255,215,0,.05);border-radius:6px;padding:8px 10px;}
+
+/* ══════════════════════════════
+   BIG QUESTION CARD
+══════════════════════════════ */
+.big-card{
+  background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,45,156,.05));
+  border:1px solid rgba(255,215,0,.3);border-radius:18px;
+  padding:36px 44px;text-align:center;position:relative;overflow:hidden;
+  flex-shrink:0;
+}
+.big-card::before{content:'';position:absolute;top:-40%;right:-15%;
+  width:250px;height:250px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,215,0,.06),transparent 70%);pointer-events:none;}
+.round-badge{
+  font-family:'Bebas Neue';font-size:.85rem;letter-spacing:4px;
+  color:var(--pink);margin-bottom:10px;
+}
+.main-text{
+  font-family:'Outfit';font-weight:800;
+  font-size:clamp(1.8rem,3.5vw,3.4rem);
+  line-height:1.15;color:var(--text);
+}
+.sub-text{font-size:1rem;color:var(--muted);margin-top:12px;line-height:1.6;font-style:italic;}
+
+/* ══════════════════════════════
+   OPTIONS
+══════════════════════════════ */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.opt-btn{
+  background:rgba(255,255,255,.05);border:2px solid rgba(255,215,0,.2);
+  border-radius:12px;padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
+  transition:all .25s;
+}
+.opt-btn.correct-opt{
+  border-color:var(--green);background:rgba(57,255,20,.1);
+  animation:correctPulse .5s ease;
+}
+.opt-btn.wrong-opt{border-color:var(--red);background:rgba(255,51,51,.08);}
+@keyframes correctPulse{
+  0%{transform:scale(1);}40%{transform:scale(1.04);}100%{transform:scale(1);}
+}
+.opt-letter{
+  font-family:'Bebas Neue';font-size:1.8rem;min-width:30px;text-align:center;
+  color:var(--blue);flex-shrink:0;
+}
+.opt-letter.correct-letter{color:var(--green);}
+.opt-text{font-size:1rem;line-height:1.4;font-weight:600;}
+
+/* ══════════════════════════════
+   ANSWER REVEAL
+══════════════════════════════ */
+.answer-box{
+  border-radius:16px;padding:28px 36px;text-align:center;
+  animation:revealBounce .5s cubic-bezier(.34,1.56,.64,1);
+  flex-shrink:0;
+}
+.answer-box.correct{
+  background:linear-gradient(135deg,rgba(57,255,20,.12),rgba(0,207,255,.08));
+  border:2px solid rgba(57,255,20,.5);
+  box-shadow:0 0 40px rgba(57,255,20,.15),inset 0 0 40px rgba(57,255,20,.05);
+}
+.answer-box.neutral{
+  background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,207,255,.06));
+  border:2px solid rgba(255,215,0,.4);
+  box-shadow:0 0 40px rgba(255,215,0,.12);
+}
+@keyframes revealBounce{
+  from{opacity:0;transform:scale(.85) translateY(20px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+.answer-label{font-family:'Bebas Neue';font-size:.85rem;letter-spacing:5px;color:var(--green);margin-bottom:8px;}
+.answer-label.neutral{color:var(--gold);}
+.answer-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.8rem,3.5vw,3.2rem);color:var(--text);line-height:1.1;}
+.answer-sub{font-size:.9rem;color:var(--muted);margin-top:10px;line-height:1.6;}
+
+/* ══════════════════════════════
+   STEP DOTS
+══════════════════════════════ */
+.step-indicator{display:flex;gap:5px;justify-content:center;padding:4px 0;flex-wrap:wrap;}
+.step-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.12);transition:all .3s;}
+.step-dot.done{background:var(--pink);}
+.step-dot.active{background:var(--gold);transform:scale(1.4);}
+
+/* ══════════════════════════════
+   SCORE BAR
+══════════════════════════════ */
+.score-bar{
+  display:flex;gap:24px;flex-wrap:wrap;justify-content:center;
+  background:rgba(255,215,0,.04);border:1px solid var(--border);
+  border-radius:12px;padding:12px 20px;flex-shrink:0;
+}
+.score-item{text-align:center;}
+.score-label{font-family:'Bebas Neue';font-size:.7rem;letter-spacing:2px;color:var(--muted);display:block;}
+.score-value{font-family:'Bebas Neue';font-size:1.6rem;color:var(--gold);line-height:1;}
+.score-value.blue{color:var(--blue);}
+.score-value.green{color:var(--green);}
+.score-value.pink{color:var(--pink);}
+
+/* ══════════════════════════════
+   CONFETTI OVERLAY
+══════════════════════════════ */
+.confetti-overlay{
+  position:fixed;inset:0;z-index:500;pointer-events:none;overflow:hidden;
+}
+.confetti-piece{
+  position:absolute;width:10px;height:10px;border-radius:2px;
+  animation:confettiFall linear forwards;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
+
+/* WIN / LOSE FLASH */
+.result-flash{
+  position:fixed;inset:0;z-index:400;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  animation:flashOut .8s ease forwards;
+}
+.result-flash.win{background:radial-gradient(ellipse at center,rgba(57,255,20,.25),transparent 70%);}
+.result-flash.lose{background:radial-gradient(ellipse at center,rgba(255,51,51,.25),transparent 70%);}
+@keyframes flashOut{0%{opacity:1;}100%{opacity:0;}}
+.result-flash .result-emoji{font-size:8rem;animation:emojiBounce .6s cubic-bezier(.34,1.56,.64,1);}
+@keyframes emojiBounce{from{transform:scale(0)rotate(-20deg);}to{transform:scale(1)rotate(0deg);}}
+
+/* ══════════════════════════════
+   BINGO
+══════════════════════════════ */
+.bingo-letters{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:580px;margin:0 auto 6px;}
+.b-letter{text-align:center;font-family:'Bebas Neue';font-size:2.2rem;}
+.b-letter:nth-child(1){color:var(--pink);}
+.b-letter:nth-child(2){color:var(--gold);}
+.b-letter:nth-child(3){color:var(--blue);}
+.b-letter:nth-child(4){color:var(--green2);}
+.b-letter:nth-child(5){color:var(--pink);}
+.bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:580px;margin:0 auto;}
+.b-cell{
+  aspect-ratio:1;border:1px solid var(--border);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:8px;font-size:.64rem;font-weight:600;color:var(--text);line-height:1.35;
+  cursor:pointer;transition:all .25s;background:var(--card);position:relative;overflow:hidden;
+}
+.b-cell:hover{border-color:var(--gold);background:rgba(255,215,0,.09);}
+.b-cell.marked{
+  background:linear-gradient(135deg,var(--pink),#7B0044);
+  border-color:var(--gold);color:white;
+  animation:cellMark .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes cellMark{from{transform:scale(.85);}to{transform:scale(1);}}
+.b-cell.marked::after{content:'✓';position:absolute;top:3px;right:5px;font-size:1rem;color:var(--gold);}
+.b-cell.free{
+  background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,45,156,.12));
+  border-color:var(--gold);font-family:'Bebas Neue';font-size:1rem;letter-spacing:1px;color:var(--gold);
+}
+
+/* ══════════════════════════════
+   HOT OR NOT
+══════════════════════════════ */
+.hon-question{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:40px 32px;text-align:center;
+  font-family:'Outfit';font-weight:700;
+  font-size:clamp(1.4rem,3vw,2.6rem);line-height:1.4;color:var(--text);
+  min-height:160px;display:flex;align-items:center;justify-content:center;
+}
+.hon-votes{display:flex;gap:16px;justify-content:center;}
+.hon-vote-btn{
+  flex:1;max-width:260px;padding:18px;border-radius:14px;
+  font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:3px;
+  cursor:pointer;transition:all .25s;border:2px solid transparent;
+}
+.hon-vote-btn.hot{background:rgba(255,45,156,.12);border-color:rgba(255,45,156,.4);color:var(--pink);}
+.hon-vote-btn.not{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
+.hon-vote-btn:hover{transform:scale(1.05);}
+.hon-vote-btn.active-hot{background:rgba(255,45,156,.3);border-color:var(--pink);box-shadow:0 0 20px rgba(255,45,156,.3);}
+.hon-vote-btn.active-not{background:rgba(0,207,255,.2);border-color:var(--blue);box-shadow:0 0 20px rgba(0,207,255,.2);}
+
+/* ══════════════════════════════
+   CO WYBIERASZ
+══════════════════════════════ */
+.choice-vs-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;}
+.choice-side{
+  background:var(--card);border:2px solid var(--border);border-radius:16px;
+  padding:28px 20px;text-align:center;cursor:pointer;transition:all .25s;min-height:160px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;font-weight:700;line-height:1.5;
+}
+.choice-side:hover{transform:scale(1.02);}
+.choice-side.picked-a{border-color:var(--gold);background:rgba(255,215,0,.1);box-shadow:0 0 20px rgba(255,215,0,.15);}
+.choice-side.picked-b{border-color:var(--pink);background:rgba(255,45,156,.1);box-shadow:0 0 20px rgba(255,45,156,.15);}
+.vs-badge{font-family:'Bebas Neue';font-size:2.4rem;color:var(--muted);}
+
+/* ══════════════════════════════
+   RADY
+══════════════════════════════ */
+.advice-input-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
+.advice-input-wrap textarea{width:100%;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Outfit';font-size:1.05rem;resize:none;min-height:80px;
+  line-height:1.6;caret-color:var(--gold);}
+.advice-input-wrap textarea::placeholder{color:var(--muted);}
+.advice-add-row{display:flex;justify-content:flex-end;margin-top:8px;}
+.advice-list{display:flex;flex-direction:column;gap:10px;}
+.advice-item{
+  background:var(--card);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;
+  padding:14px 44px 14px 16px;
+  font-family:'Playfair Display';font-style:italic;font-size:1.05rem;
+  color:var(--text);line-height:1.6;position:relative;
+  animation:adviceSlide .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes adviceSlide{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+.advice-del{position:absolute;top:10px;right:12px;background:none;border:none;
+  color:var(--muted);cursor:pointer;font-size:1.1rem;padding:2px 6px;}
+.advice-del:hover{color:var(--pink);}
+.section-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:4px;color:var(--muted);margin-bottom:6px;}
+
+/* ══════════════════════════════
+   TIMER
+══════════════════════════════ */
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.timer-ring{width:160px;height:160px;position:relative;display:flex;align-items:center;justify-content:center;}
+.timer-ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.timer-ring circle{fill:none;stroke-width:8;stroke-linecap:round;}
+.timer-bg{stroke:rgba(255,255,255,.08);}
+.timer-fill{stroke:var(--gold);stroke-dasharray:408;stroke-dashoffset:0;transition:stroke-dashoffset .1s linear;}
+.timer-fill.danger{stroke:var(--red);filter:drop-shadow(0 0 6px var(--red));}
+.timer-number{font-family:'Bebas Neue';font-size:3.6rem;color:var(--text);z-index:1;transition:color .3s;}
+.timer-number.danger{color:var(--red);}
+
+/* ══════════════════════════════
+   DRAW
+══════════════════════════════ */
+.draw-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:4px 0;flex-shrink:0;}
+.color-dot{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s;flex-shrink:0;}
+.color-dot.active{border-color:white;transform:scale(1.3);}
+.brush-btn{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 12px;
+  font-family:'Bebas Neue';font-size:.88rem;letter-spacing:1px;color:var(--text);cursor:pointer;transition:all .2s;}
+.brush-btn:hover,.brush-btn.active{border-color:var(--gold);color:var(--gold);}
+.draw-area{background:#F0EBF8;border-radius:12px;flex:1;min-height:280px;touch-action:none;cursor:crosshair;}
+.draw-prompt-bar{display:flex;align-items:center;gap:12px;flex-shrink:0;padding:6px 0;}
+.draw-prompt-text{font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:2px;color:var(--gold);}
+
+/* ══════════════════════════════
+   ██ VA-BANK BOARD ██
+══════════════════════════════ */
+.vabank-screen{position:relative;z-index:2;}
+
+/* Board = categories + questions grid */
+.vabank-board{
+  display:flex;flex-direction:column;gap:6px;
+  padding:18px 28px;
+  flex:1;
+}
+.vabank-board-grid{
+  display:grid;
+  gap:8px;
+  flex:1;
+}
+
+.vb-cat-header{
+  background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,45,156,.1));
+  border:1px solid rgba(255,215,0,.35);border-radius:12px;
+  padding:14px 12px;text-align:center;
+  font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;color:var(--gold);
+  line-height:1.2;
+}
+
+.vb-cell{
+  background:linear-gradient(135deg,rgba(0,128,255,.15),rgba(0,70,180,.2));
+  border:2px solid rgba(0,207,255,.3);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue';font-size:1.5rem;letter-spacing:2px;
+  color:var(--gold);cursor:pointer;transition:all .25s;
+  position:relative;overflow:hidden;
+  text-shadow:0 2px 8px rgba(0,0,0,.5);
+  min-height:64px;
+}
+.vb-cell::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,215,0,.06),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.vb-cell:hover:not(.used){
+  border-color:var(--gold);transform:scale(1.04);
+  box-shadow:0 6px 30px rgba(0,207,255,.25);
+}
+.vb-cell:hover::before{opacity:1;}
+.vb-cell.used{
+  background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);
+  color:rgba(255,255,255,.15);cursor:default;pointer-events:none;
+}
+.vb-cell.used::after{content:'✓';position:absolute;font-size:1.4rem;color:rgba(57,255,20,.3);}
+
+/* Va-bank active question overlay */
+.vabank-question-view{
+  flex:1;display:flex;flex-direction:column;gap:16px;
+  padding:22px 32px;overflow-y:auto;
+}
+.vb-price-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:4px;
+  padding:8px 28px;border-radius:50px;margin:0 auto;
+  background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,165,0,.15));
+  border:2px solid var(--gold);color:var(--gold);
+  box-shadow:0 0 20px rgba(255,215,0,.2);
+  flex-shrink:0;
+}
+.vb-stakes{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  flex-shrink:0;
+}
+.vb-stake-chip{
+  font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;
+  padding:8px 16px;border-radius:8px;
+  background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);
+  color:var(--gold);cursor:pointer;transition:all .2s;
+}
+.vb-stake-chip:hover{background:rgba(255,215,0,.2);transform:scale(1.05);}
+.vb-stake-chip.selected{background:rgba(255,215,0,.25);border-color:var(--gold);
+  box-shadow:0 0 12px rgba(255,215,0,.3);}
+
+/* ══════════════════════════════
+   TOAST
+══════════════════════════════ */
+.toast{
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(110px);
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--dark);font-family:'Bebas Neue';font-size:1.25rem;letter-spacing:3px;
+  padding:14px 36px;border-radius:50px;z-index:9999;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;
+  box-shadow:0 8px 32px rgba(255,215,0,.4);
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ══ MISC ══ */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:rgba(255,215,0,.25);border-radius:2px;}
+
+/* ══════════════════════════════
+   TIER LIST
+══════════════════════════════ */
+.tier-board{display:flex;flex-direction:column;gap:8px;}
+.tier-row{display:flex;align-items:stretch;gap:8px;min-height:80px;}
+.tier-label{
+  width:80px;flex-shrink:0;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue';font-size:2rem;letter-spacing:2px;
+  border:2px solid rgba(255,255,255,.15);
+}
+.tier-label.S{background:linear-gradient(135deg,#FF215A,#FF6B9D);color:white;}
+.tier-label.A{background:linear-gradient(135deg,#FF8C00,#FFC96B);color:white;}
+.tier-label.B{background:linear-gradient(135deg,#FFD700,#FFF07A);color:#333;}
+.tier-label.C{background:linear-gradient(135deg,#39C26E,#7FFFB3);color:white;}
+.tier-label.D{background:linear-gradient(135deg,#00CFFF,#7FE6FF);color:white;}
+.tier-label.F{background:linear-gradient(135deg,#7B2D8B,#C06BE8);color:white;}
+.tier-drop{
+  flex:1;border:2px dashed rgba(255,215,0,.2);border-radius:10px;
+  display:flex;flex-wrap:wrap;gap:6px;padding:8px;
+  min-height:80px;transition:border-color .2s;background:rgba(255,255,255,.03);
+}
+.tier-drop.drag-over{border-color:var(--gold);background:rgba(255,215,0,.06);}
+.tier-item{
+  background:var(--card2);border:1px solid var(--border);border-radius:8px;
+  padding:8px 14px;font-size:.85rem;font-weight:600;cursor:grab;
+  transition:all .2s;user-select:none;
+  animation:itemAppear .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes itemAppear{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
+.tier-item:hover{border-color:var(--gold);transform:scale(1.05);}
+.tier-item:active{cursor:grabbing;transform:scale(.95);}
+.tier-pool-wrap{
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:12px;padding:12px;
+}
+.tier-pool{display:flex;flex-wrap:wrap;gap:6px;min-height:50px;}
+.tier-pool-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+
+/* ══════════════════════════════
+   AUKCJA ZALET
+══════════════════════════════ */
+.auction-item{
+  background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,45,156,.05));
+  border:1px solid rgba(255,215,0,.3);border-radius:16px;
+  padding:28px 36px;text-align:center;position:relative;flex-shrink:0;
+}
+.auction-item-name{font-family:'Outfit';font-weight:800;font-size:clamp(1.8rem,3.5vw,3.2rem);line-height:1.1;}
+.auction-current-bid{
+  font-family:'Bebas Neue';font-size:3rem;color:var(--gold);
+  text-shadow:0 0 20px rgba(255,215,0,.4);
+  animation:bidPulse .3s ease;
+}
+@keyframes bidPulse{from{transform:scale(1.15);}to{transform:scale(1);}}
+.auction-bidder{font-size:.85rem;color:var(--muted);margin-top:4px;}
+.bid-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.bid-chip{
+  background:rgba(255,215,0,.1);border:2px solid rgba(255,215,0,.35);
+  color:var(--gold);border-radius:10px;padding:12px 20px;
+  font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:2px;
+  cursor:pointer;transition:all .2s;
+}
+.bid-chip:hover{background:rgba(255,215,0,.25);transform:scale(1.05);}
+.bid-chip.top{border-color:var(--gold);background:rgba(255,215,0,.2);
+  box-shadow:0 0 14px rgba(255,215,0,.3);}
+.player-budgets{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.player-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:10px 16px;text-align:center;cursor:pointer;transition:all .2s;min-width:90px;
+}
+.player-card.active{border-color:var(--gold);background:rgba(255,215,0,.1);}
+.player-card .p-name{font-family:'Bebas Neue';font-size:.9rem;letter-spacing:2px;color:var(--gold);}
+.player-card .p-budget{font-family:'Bebas Neue';font-size:1.4rem;color:var(--text);}
+
+/* ══════════════════════════════
+   WRÓŻBY
+══════════════════════════════ */
+.wrozba-card{
+  background:linear-gradient(135deg,rgba(173,0,255,.12),rgba(255,45,156,.08));
+  border:1px solid rgba(173,0,255,.4);border-radius:16px;
+  padding:32px 36px;text-align:center;flex-shrink:0;
+  box-shadow:0 0 40px rgba(173,0,255,.1);
+}
+.wrozba-title{font-family:'Bebas Neue';font-size:1rem;letter-spacing:4px;color:#C06BE8;margin-bottom:12px;}
+.wrozba-result{
+  font-family:'Bebas Neue';font-size:clamp(2rem,5vw,5rem);
+  background:linear-gradient(135deg,#C06BE8,var(--gold),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.1;letter-spacing:3px;
+  animation:wrozbaReveal .6s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes wrozbaReveal{from{opacity:0;transform:scale(.7) rotate(-5deg);}to{opacity:1;transform:scale(1) rotate(0deg);}}
+.wrozba-sub{font-size:.9rem;color:var(--muted);margin-top:10px;font-style:italic;}
+.wrozba-input-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.wrozba-input{
+  flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;
+  color:var(--text);font-family:'Outfit';font-size:1rem;padding:12px 16px;
+  outline:none;transition:border-color .2s;
+}
+.wrozba-input:focus{border-color:var(--pink);}
+
+/* ══════════════════════════════
+   DOPASUJ PARĘ
+══════════════════════════════ */
+.couples-board{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.couples-col-label{font-family:'Bebas Neue';font-size:.85rem;letter-spacing:3px;text-align:center;margin-bottom:8px;}
+.couple-item{
+  background:var(--card);border:2px solid var(--border);border-radius:12px;
+  padding:14px 16px;cursor:pointer;transition:all .25s;text-align:center;
+  font-size:.95rem;font-weight:600;line-height:1.4;
+}
+.couple-item:hover{border-color:var(--gold);}
+.couple-item.selected-a{border-color:var(--gold);background:rgba(255,215,0,.12);}
+.couple-item.selected-b{border-color:var(--pink);background:rgba(255,45,156,.12);}
+.couple-item.matched{border-color:var(--green);background:rgba(57,255,20,.08);cursor:default;}
+.couple-item.wrong{border-color:var(--red);background:rgba(255,51,51,.08);
+  animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.couples-score{font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:3px;text-align:center;color:var(--gold);}
+
+/* ══════════════════════════════
+   NIGDY NIE
+══════════════════════════════ */
+.never-card{
+  background:linear-gradient(135deg,rgba(0,207,255,.08),rgba(255,45,156,.06));
+  border:1px solid rgba(0,207,255,.3);border-radius:16px;
+  padding:40px 40px;text-align:center;flex-shrink:0;
+}
+.never-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.6rem,3.2vw,3rem);line-height:1.3;color:var(--text);}
+.never-votes{display:flex;gap:12px;justify-content:center;}
+.never-vote-btn{
+  flex:1;max-width:240px;padding:16px;border-radius:12px;
+  font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:2px;
+  cursor:pointer;transition:all .25s;border:2px solid transparent;
+}
+.never-vote-btn.yes{background:rgba(57,255,20,.1);border-color:rgba(57,255,20,.4);color:var(--green);}
+.never-vote-btn.no{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
+.never-vote-btn:hover{transform:scale(1.04);}
+.never-vote-btn.active-yes{background:rgba(57,255,20,.25);border-color:var(--green);}
+.never-vote-btn.active-no{background:rgba(0,207,255,.2);border-color:var(--blue);}
+
+/* ══════════════════════════════
+   GŁUCHY TELEFON
+══════════════════════════════ */
+.telephone-round{
+  display:flex;gap:14px;align-items:center;justify-content:center;
+  flex-wrap:wrap;margin-bottom:8px;flex-shrink:0;
+}
+.tel-player{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:10px 16px;text-align:center;min-width:80px;transition:all .25s;
+}
+.tel-player.active{border-color:var(--gold);background:rgba(255,215,0,.12);}
+.tel-player.done{border-color:var(--green);background:rgba(57,255,20,.06);}
+.tel-player .p-num{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold);}
+.tel-player .p-lbl{font-size:.6rem;color:var(--muted);letter-spacing:1px;}
+.telephone-canvas-wrap{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;}
+.tel-prompt{font-family:'Playfair Display';font-style:italic;font-size:1.1rem;color:var(--gold);
+  text-align:center;padding:8px;flex-shrink:0;}
+.tel-canvas{background:#F0EBF8;border-radius:12px;flex:1;touch-action:none;cursor:crosshair;min-height:200px;}
+.tel-guesses{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;}
+.tel-guess-item{
+  background:var(--card);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;
+  padding:8px 12px;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;
+}
+.tel-guess-player{font-family:'Bebas Neue';font-size:.75rem;color:var(--blue);letter-spacing:2px;margin-right:10px;}
+
+/* ══════════════════════════════
+   PRINT STYLES
+══════════════════════════════ */
+.print-btn{
+  background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.4);color:var(--green2);
+  border-radius:8px;padding:8px 20px;font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;
+  cursor:pointer;transition:all .2s;
+}
+.print-btn:hover{background:rgba(57,255,20,.22);}
+
+/* Print page — hidden on screen, shown only when printing */
+.print-page{display:none;}
+
+@media print {
+  body *{visibility:hidden;}
+  .print-page{display:block!important;}
+  .print-page,.print-page *{visibility:visible;}
+  .print-page{
+    position:fixed;inset:0;
+    background:white;color:#111;
+    font-family:Georgia,serif;
+    padding:16mm 18mm;
+  }
+  .print-page .pp-title{
+    font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:6px;
+    color:#1a0033;text-align:center;margin-bottom:4px;
+  }
+  .print-page .pp-sub{font-size:.8rem;text-align:center;color:#666;letter-spacing:3px;margin-bottom:16px;}
+  .print-page .pp-divider{border:none;border-top:2px solid #FF2D9C;margin:10px 0;}
+  .print-page .pp-grid{display:grid;gap:10px;}
+  .print-page .pp-card{
+    border:1.5px solid #ddd;border-radius:8px;padding:12px 14px;
+    page-break-inside:avoid;
+  }
+  .print-page .pp-label{font-size:.6rem;letter-spacing:3px;color:#FF2D9C;text-transform:uppercase;margin-bottom:4px;}
+  .print-page .pp-text{font-size:1rem;font-weight:bold;line-height:1.4;}
+  .print-page .pp-line{border-bottom:1px dashed #bbb;margin:6px 0;}
+  .print-page .pp-row{display:flex;gap:12px;}
+  .print-page .pp-col{flex:1;}
+  .print-page .pp-tier-row{display:flex;gap:8px;align-items:stretch;min-height:48px;margin-bottom:6px;}
+  .print-page .pp-tier-lbl{width:36px;display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:1.1rem;border-radius:6px;flex-shrink:0;}
+  .print-page .pp-tier-box{flex:1;border:1.5px dashed #ccc;border-radius:6px;padding:6px;}
+  @page{margin:0;size:A4;}
+}
+</style>
+</head>
+<body>
+<div class="disco-bg"></div>
+<div class="disco-dots"></div>
+<div class="confetti-overlay" id="confettiOverlay"></div>
+
+<!-- ══════════════════════════════════════
+     HOME
+══════════════════════════════════════ -->
+<div class="screen active" id="home">
+  <div class="home-crown">🪩</div>
+  <div class="home-title">LAST DISCO</div>
+  <div class="home-sub">Wieczór Panieński Kasi · Panel Prowadzącego</div>
+  <div class="games-grid">
+    <div class="game-btn" onclick="show('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div><div class="desc">Klikaj pola gdy się zdarzają</div></div>
+    <div class="game-btn" onclick="show('quiz')"><span class="icon">🎤</span><div class="name">ZGADNIJ KASIĘ</div><div class="desc">Quiz — pytanie → odpowiedź</div></div>
+    <div class="game-btn" onclick="show('vabank')"><span class="icon">🎲</span><div class="name">VA-BANK</div><div class="desc">Tablica pytań za 50–1000 pkt</div></div>
+    <div class="game-btn" onclick="show('honornot')"><span class="icon">🔥</span><div class="name">HOT OR NOT</div><div class="desc">Głosowanie: hot czy not?</div></div>
+    <div class="game-btn" onclick="show('advice')"><span class="icon">💌</span><div class="name">RADY DLA KASI</div><div class="desc">Zbieraj rady na żywo</div></div>
+    <div class="game-btn" onclick="show('highlow')"><span class="icon">📊</span><div class="name">WYŻEJ CZY NIŻEJ</div><div class="desc">Pytanie → zgaduj → odpowiedź</div></div>
+    <div class="game-btn" onclick="show('eight')"><span class="icon">⏱️</span><div class="name">MASZ 8 SEKUND</div><div class="desc">Zadanie → timer → wynik</div></div>
+    <div class="game-btn" onclick="show('choice')"><span class="icon">⚡</span><div class="name">CO WYBIERASZ?</div><div class="desc">A vs B — głosujcie!</div></div>
+    <div class="game-btn" onclick="show('draw')"><span class="icon">✏️</span><div class="name">DORYSUJ TO</div><div class="desc">Rysuj na TV, reszta zgaduje</div></div>
+    <div class="game-btn" onclick="show('tierlist')"><span class="icon">🏆</span><div class="name">TIER LIST</div><div class="desc">Układaj sławnych facetów w tiers S–F</div></div>
+    <div class="game-btn" onclick="show('auction')"><span class="icon">💰</span><div class="name">AUKCJA ZALET</div><div class="desc">Licytuj cechy idealnego partnera</div></div>
+    <div class="game-btn" onclick="show('wrozby')"><span class="icon">🔮</span><div class="name">WRÓŻBY</div><div class="desc">FLAMES, ślubna data, przyszłość pary</div></div>
+    <div class="game-btn" onclick="show('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARĘ</div><div class="desc">Połącz sławne pary filmowe i prawdziwe</div></div>
+    <div class="game-btn" onclick="show('neverhave')"><span class="icon">🙈</span><div class="name">NIGDY NIE...</div><div class="desc">Kto to robiła? Pij lub przyznaj się!</div></div>
+    <div class="game-btn" onclick="show('telephone')"><span class="icon">📞</span><div class="name">GŁUCHY TELEFON</div><div class="desc">Rysowany telefon — przekazuj dalej!</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     BINGO
+══════════════════════════════════════ -->
+<div class="screen" id="bingo">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">🎰 BINGO</div>
+      <div class="game-header-sub">KLIKAJ POLA GDY SIĘ ZDARZAJĄ · AUTO-WYKRYWA BINGO</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="bingoAdminBtn" onclick="toggleAdmin('bingo')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body">
+        <div class="bingo-letters">
+          <div class="b-letter">B</div><div class="b-letter">I</div><div class="b-letter">N</div>
+          <div class="b-letter">G</div><div class="b-letter">O</div>
+        </div>
+        <div class="bingo-grid" id="bingoGrid"></div>
+      </div>
+      <div class="nav-controls">
+        <button class="ctrl-btn secondary" onclick="resetBingo()">🔄 RESET BINGO</button>
+        <span class="counter-badge" id="bingoMarked">0 / 25</span>
+      </div>
+    </div>
+    <div class="admin-panel" id="bingoAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ EDYCJA BINGO</div><div class="admin-subtitle">TREŚĆ KAŻDEGO POLA</div></div>
+      <div class="admin-scroll" id="bingoAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     QUIZ
+══════════════════════════════════════ -->
+<div class="screen" id="quiz">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">🎤 ZGADNIJ KASIĘ</div>
+      <div class="game-header-sub" id="quizPhaseLabel">FAZA: PYTANIE</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="quizAdminBtn" onclick="toggleAdmin('quiz')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="quizBody"></div>
+      <div class="nav-controls" id="quizControls"></div>
+    </div>
+    <div class="admin-panel" id="quizAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ EDYCJA PYTAŃ</div><div class="admin-subtitle">PYTANIE · OPCJE · ODPOWIEDŹ</div></div>
+      <div class="admin-scroll" id="quizAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     VA-BANK
+══════════════════════════════════════ -->
+<div class="screen" id="vabank">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">🎲 VA-BANK</div>
+      <div class="game-header-sub" id="vabankPhaseLabel">WYBIERZ KATEGORIĘ I WARTOŚĆ</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="vabankAdminBtn" onclick="toggleAdmin('vabank')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage" id="vabankStage">
+      <!-- board rendered here -->
+    </div>
+    <div class="admin-panel" id="vabankAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ EDYCJA VA-BANK</div><div class="admin-subtitle">KATEGORIE I PYTANIA</div></div>
+      <div class="admin-scroll" id="vabankAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     HOT OR NOT
+══════════════════════════════════════ -->
+<div class="screen" id="honornot">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">🔥 HOT OR NOT</div>
+      <div class="game-header-sub" id="honPhaseLabel">GŁOSUJCIE!</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="honornotAdminBtn" onclick="toggleAdmin('honornot')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="honBody"></div>
+      <div class="nav-controls" id="honControls"></div>
+    </div>
+    <div class="admin-panel" id="honornotAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ HOT OR NOT</div><div class="admin-subtitle">STWIERDZENIA DO OCENY</div></div>
+      <div class="admin-scroll" id="honornotAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     RADY
+══════════════════════════════════════ -->
+<div class="screen" id="advice">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">💌 RADY DLA KASI</div>
+      <div class="game-header-sub">WPISUJ RADY · WYŚWIETLAJĄ SIĘ NA EKRANIE</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="adviceAdminBtn" onclick="toggleAdmin('advice')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body">
+        <div class="advice-input-wrap">
+          <div class="section-label">WPISZ RADĘ</div>
+          <textarea id="adviceInput" placeholder="Np. Nigdy nie kładź się spać z żalem w sercu…" rows="3"></textarea>
+          <div class="advice-add-row">
+            <button class="ctrl-btn primary" style="padding:10px 24px;" onclick="addAdvice()">+ DODAJ RADĘ</button>
+          </div>
+        </div>
+        <div class="section-label">ZEBRANE RADY (<span id="adviceCount">0</span>)</div>
+        <div class="advice-list" id="adviceList"></div>
+      </div>
+    </div>
+    <div class="admin-panel" id="adviceAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ RADY</div><div class="admin-subtitle">GOTOWE RADY I USTAWIENIA</div></div>
+      <div class="admin-scroll" id="adviceAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     WYŻEJ CZY NIŻEJ
+══════════════════════════════════════ -->
+<div class="screen" id="highlow">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">📊 WYŻEJ CZY NIŻEJ?</div>
+      <div class="game-header-sub" id="hlPhaseLabel">FAZA: PYTANIE</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="highlowAdminBtn" onclick="toggleAdmin('highlow')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="hlBody"></div>
+      <div class="nav-controls" id="hlControls"></div>
+    </div>
+    <div class="admin-panel" id="highlowAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ WYŻEJ / NIŻEJ</div><div class="admin-subtitle">PYTANIE + PODPOWIEDŹ + ODPOWIEDŹ</div></div>
+      <div class="admin-scroll" id="highlowAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     8 SEKUND
+══════════════════════════════════════ -->
+<div class="screen" id="eight">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">⏱️ MASZ 8 SEKUND</div>
+      <div class="game-header-sub" id="eightPhaseLabel">FAZA: ZADANIE</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="eightAdminBtn" onclick="toggleAdmin('eight')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="eightBody"></div>
+      <div class="nav-controls" id="eightControls"></div>
+    </div>
+    <div class="admin-panel" id="eightAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ ZADANIA</div><div class="admin-subtitle">TREŚĆ I CZAS</div></div>
+      <div class="admin-scroll" id="eightAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CO WYBIERASZ
+══════════════════════════════════════ -->
+<div class="screen" id="choice">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">⚡ CO WYBIERASZ?</div>
+      <div class="game-header-sub" id="choicePhaseLabel">KAŻDA GŁOSUJE!</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="choiceAdminBtn" onclick="toggleAdmin('choice')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="choiceBody"></div>
+      <div class="nav-controls" id="choiceControls"></div>
+    </div>
+    <div class="admin-panel" id="choiceAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ CO WYBIERASZ</div><div class="admin-subtitle">OPCJA A I OPCJA B</div></div>
+      <div class="admin-scroll" id="choiceAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DRAW
+══════════════════════════════════════ -->
+<div class="screen" id="draw">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">✏️ DORYSUJ TO</div>
+      <div class="game-header-sub">RYSUJ NA TV · RESZTA ZGADUJE</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="drawAdminBtn" onclick="toggleAdmin('draw')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" style="gap:8px;">
+        <div class="draw-tools">
+          <div class="color-dot active" style="background:#1a1a2e" data-color="#1a1a2e" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#FF2D9C" data-color="#FF2D9C" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#FFD700" data-color="#FFD700" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#00CFFF" data-color="#00CFFF" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#FF4500" data-color="#FF4500" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#22BB33" data-color="#22BB33" onclick="setColor(this)"></div>
+          <div class="color-dot" style="background:#fff;border:1px solid #aaa" data-color="#ffffff" onclick="setColor(this)"></div>
+          <div style="width:1px;height:24px;background:var(--border);margin:0 4px;"></div>
+          <button class="brush-btn active" data-size="4" onclick="setBrush(this,4)">S</button>
+          <button class="brush-btn" data-size="10" onclick="setBrush(this,10)">M</button>
+          <button class="brush-btn" data-size="20" onclick="setBrush(this,20)">L</button>
+          <button class="brush-btn" data-size="40" onclick="setBrush(this,40)">XL</button>
+          <button class="ctrl-btn danger" style="margin-left:auto;padding:7px 16px;font-size:.85rem;" onclick="clearCanvas()">🗑</button>
+        </div>
+        <canvas class="draw-area" id="drawCanvas"></canvas>
+        <div class="draw-prompt-bar">
+          <span style="font-size:.65rem;color:var(--muted);letter-spacing:2px;">TEMAT:</span>
+          <button class="ctrl-btn secondary" style="padding:7px 16px;font-size:.85rem;" onclick="drawPromptRandom()">🎲 LOSUJ</button>
+          <span class="draw-prompt-text" id="drawPromptText"></span>
+        </div>
+      </div>
+      <div class="nav-controls"><button class="ctrl-btn secondary" onclick="clearCanvas()">🗑 WYCZYŚĆ TABLICĘ</button></div>
+    </div>
+    <div class="admin-panel" id="drawAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ TEMATY</div><div class="admin-subtitle">PULA LOSOWYCH TEMATÓW</div></div>
+      <div class="admin-scroll" id="drawAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TIER LIST
+══════════════════════════════════════ -->
+<div class="screen" id="tierlist">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">🏆 TIER LIST</div>
+      <div class="game-header-sub">PRZECIĄGNIJ KAŻDĄ OSOBĘ DO ODPOWIEDNIEGO TIERU · S = IDEAŁ, F = NIE MA SZANS</div>
+    </div>
+    <div class="header-btns">
+      <button class="print-btn" onclick="printTierList()">🖨️ DRUKUJ</button>
+      <button class="admin-toggle-btn" id="tierlistAdminBtn" onclick="toggleAdmin('tierlist')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="tierBody"></div>
+      <div class="nav-controls">
+        <button class="ctrl-btn danger" onclick="resetTierList()">🔄 RESET</button>
+        <span class="counter-badge" id="tierCounter"></span>
+      </div>
+    </div>
+    <div class="admin-panel" id="tierlistAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ TIER LIST</div><div class="admin-subtitle">EDYTUJ OSOBY I KATEGORIE</div></div>
+      <div class="admin-scroll" id="tierlistAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUKCJA ZALET
+══════════════════════════════════════ -->
+<div class="screen" id="auction">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">💰 AUKCJA ZALET</div>
+      <div class="game-header-sub" id="auctionPhaseLabel">KAŻDA MA 500 MONET · LICYTUJ CECHY IDEALNEGO PARTNERA</div>
+    </div>
+    <div class="header-btns">
+      <button class="print-btn" onclick="printAuction()">🖨️ DRUKUJ KARTY</button>
+      <button class="admin-toggle-btn" id="auctionAdminBtn" onclick="toggleAdmin('auction')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="auctionBody"></div>
+      <div class="nav-controls" id="auctionControls"></div>
+    </div>
+    <div class="admin-panel" id="auctionAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ AUKCJA</div><div class="admin-subtitle">CECHY I GRACZE</div></div>
+      <div class="admin-scroll" id="auctionAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     WRÓŻBY
+══════════════════════════════════════ -->
+<div class="screen" id="wrozby">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">🔮 WRÓŻBY</div>
+      <div class="game-header-sub">FLAMES · DATA ŚLUBU · CO CIĘ CZEKA?</div>
+    </div>
+    <div class="header-btns">
+      <button class="print-btn" onclick="printWrozby()">🖨️ DRUKUJ WRÓŻBY</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="wrozbyBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DOPASUJ PARĘ
+══════════════════════════════════════ -->
+<div class="screen" id="couples">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">💑 DOPASUJ PARĘ</div>
+      <div class="game-header-sub" id="couplesPhaseLabel">POŁĄCZ PARY — KLIKNIJ JEDNĄ OSOBĘ, POTEM DRUGĄ</div>
+    </div>
+    <div class="header-btns">
+      <button class="print-btn" onclick="printCouples()">🖨️ DRUKUJ</button>
+      <button class="admin-toggle-btn" id="couplesAdminBtn" onclick="toggleAdmin('couples')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="couplesBody"></div>
+      <div class="nav-controls" id="couplesControls"></div>
+    </div>
+    <div class="admin-panel" id="couplesAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ PARY</div><div class="admin-subtitle">EDYTUJ PARY DO DOPASOWANIA</div></div>
+      <div class="admin-scroll" id="couplesAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     NIGDY NIE
+══════════════════════════════════════ -->
+<div class="screen" id="neverhave">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">🙈 NIGDY NIE...</div>
+      <div class="game-header-sub" id="neverPhaseLabel">WYŚWIETL STWIERDZENIE · KTO TO ROBIŁA — PIJE!</div>
+    </div>
+    <div class="header-btns">
+      <button class="print-btn" onclick="printNever()">🖨️ DRUKUJ KARTY</button>
+      <button class="admin-toggle-btn" id="neverhaveAdminBtn" onclick="toggleAdmin('neverhave')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="neverBody"></div>
+      <div class="nav-controls" id="neverControls"></div>
+    </div>
+    <div class="admin-panel" id="neverhaveAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ NIGDY NIE</div><div class="admin-subtitle">STWIERDZENIA DO GRY</div></div>
+      <div class="admin-scroll" id="neverhaveAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     GŁUCHY TELEFON
+══════════════════════════════════════ -->
+<div class="screen" id="telephone">
+  <div class="disco-bg"></div><div class="disco-dots"></div>
+  <div class="game-header">
+    <div class="game-header-left">
+      <div class="game-header-title">📞 GŁUCHY TELEFON</div>
+      <div class="game-header-sub" id="telPhaseLabel">RUNDA 1 · RYSUJ I PRZEKAZUJ DALEJ!</div>
+    </div>
+    <div class="header-btns">
+      <button class="admin-toggle-btn" id="telephoneAdminBtn" onclick="toggleAdmin('telephone')">⚙ ADMIN</button>
+      <button class="back-btn" onclick="show('home')">← MENU</button>
+    </div>
+  </div>
+  <div class="game-stage-wrap">
+    <div class="game-stage">
+      <div class="game-body" id="telBody"></div>
+      <div class="nav-controls" id="telControls"></div>
+    </div>
+    <div class="admin-panel" id="telephoneAdmin"><div class="admin-inner">
+      <div class="admin-header"><div class="admin-title">⚙ GŁUCHY TELEFON</div><div class="admin-subtitle">GRACZE I PIERWSZE HASŁO</div></div>
+      <div class="admin-scroll" id="telephoneAdminContent"></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- PRINT PAGES (hidden, shown only on print) -->
+<div class="print-page" id="printPage"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════
+let DATA = {
+  bingo: [
+    "Ktoś śpiewa do szczotki","Kasia płacze ze śmiechu","Kogoś bolą nogi od tańca",
+    "Selfie z ochroniarzem","Kelner dostaje numer","Ktoś zakłada tiare",
+    "Foto bez filtra","Kasia opowiada jak się poznali","Pada: tylko jeden drink",
+    "Ktoś gubi szpilkę","Disco polo po 1 w nocy","Cola dla trzeźwości",
+    "FREE\n🪩\nDISCO","Ktoś dzwoni do chłopaka","Improwizowany choreograf",
+    "Kasia tańczy na stole","Ktoś płacze wzruszony","Kolejka bez pytania",
+    "Ktoś mówi: chodźmy jeszcze","Nieznajomy z kwiatem","Ktoś tańczy ABBA",
+    "Zgubiona torebka","Wszyscy śpiewają razem","Taksówkarz pyta co świętujemy","Ktoś wysyła mema"
+  ],
+  quiz: [
+    { q:"Jak Kasia poznała swojego Narzeczonego?", opts:["Na imprezie","Przez znajomych","Na aplikacji","W pracy"], answer:"Przez znajomych", answerNote:"" },
+    { q:"Co Kasia robi jako pierwsze po przebudzeniu?", opts:["Sprawdza telefon","Pije kawę","Pod prysznic","Śpi 5 min dłużej"], answer:"Sprawdza telefon", answerNote:"" },
+    { q:"Ulubiony utwór Kasi do tańca?", opts:["ABBA – Dancing Queen","Disco polo hit","Coś z lat 80/90","Pop teraz"], answer:"ABBA – Dancing Queen", answerNote:"" },
+    { q:"Gdyby mogła zjeść jeden posiłek do końca życia?", opts:["Pizza","Sushi","Polskie jedzenie","Słodycze"], answer:"Polskie jedzenie", answerNote:"" },
+    { q:"Jak Kasia opisuje Narzeczonego jednym słowem?", opts:["Śmieszny","Przystojny","Mój spokój","Mój chaos"], answer:"Mój spokój", answerNote:"" },
+    { q:"Czego Kasia boi się w dniu ślubu?", opts:["Że się spóźni","Że będzie płakać","Że coś pójdzie nie tak","Niczego!"], answer:"Że będzie płakać", answerNote:"" },
+  ],
+  // VA-BANK: categories with questions per price tier
+  vabank: {
+    categories: [
+      { name:"O Kasi 💛", color:"#FF2D9C" },
+      { name:"Miłość & Ślub 💍", color:"#FFD700" },
+      { name:"Disco & Muzyka 🪩", color:"#00CFFF" },
+      { name:"Kobiety & Fakty 💪", color:"#ADFF2F" },
+    ],
+    prices: [50, 100, 200, 500, 1000],
+    // questions[catIdx][priceIdx]
+    questions: [
+      [
+        { q:"Jak ma na imię mama Kasi?", a:"Podaj odpowiedź!" },
+        { q:"Gdzie Kasia chodziła do szkoły?", a:"Podaj odpowiedź!" },
+        { q:"Jaki jest ulubiony kolor Kasi?", a:"Podaj odpowiedź!" },
+        { q:"Jaka jest największa wada Kasi wg niej samej?", a:"Podaj odpowiedź!" },
+        { q:"Co Kasia powiedziałaby swojemu 16-letniemu 'ja'?", a:"Podaj odpowiedź!" },
+      ],
+      [
+        { q:"Gdzie odbyło się pierwsze randka Kasi z Narzeczonym?", a:"Podaj odpowiedź!" },
+        { q:"Po ilu miesiącach znajomości padło 'kocham cię'?", a:"Podaj odpowiedź!" },
+        { q:"Kto zaproponował pierwszą randkę — ona czy on?", a:"Podaj odpowiedź!" },
+        { q:"Ile osób będzie na weselu Kasi?", a:"Podaj odpowiedź!" },
+        { q:"Co Kasia planuje jako niespodziankę dla Narzeczonego w dniu ślubu?", a:"Podaj odpowiedź!" },
+      ],
+      [
+        { q:"Jaki gatunek muzyczny był na TikToku najbardziej viralowy w 2024?", a:"Phonk / Hyperpop" },
+        { q:"W którym roku ABBA wydała 'Dancing Queen'?", a:"1976 r." },
+        { q:"Ile płyt sprzedała ABBA łącznie na świecie?", a:"Ponad 385 milionów" },
+        { q:"Kto zaśpiewał 'Stayin Alive' — hymn disco?", a:"Bee Gees" },
+        { q:"W którym filmie John Travolta zatańczył kultową scenę disco?", a:"Gorączka sobotniej nocy (1977)" },
+      ],
+      [
+        { q:"Ile % kobiet mówi 'nie' na pierwsze oświadczyny, a potem zmienia zdanie?", a:"Około 10%" },
+        { q:"Ile par w Polsce bierze ślub rocznie?", a:"Około 180 000 par" },
+        { q:"Ile wynosi średnia długość małżeństwa przed rozwodem w Polsce?", a:"Około 14 lat" },
+        { q:"Który kraj ma najwyższy wskaźnik zadowolenia z małżeństwa w Europie?", a:"Dania i Finlandia" },
+        { q:"Ile razy statystyczna kobieta mówi 'kocham cię' dziennie?", a:"Średnio 3–5 razy" },
+      ],
+    ],
+    used: [], // "catIdx-priceIdx"
+  },
+  hon: [
+    "Tańczyć całą noc w szpilkach","Wyznanie miłości przez megafon",
+    "Ślub w kostiumach z lat 70s disco","First dance do Dancing Queen ABBA",
+    "Tort w kształcie kuli disco","Mąż który gotuje lepiej niż ty",
+    "Podróż poślubna na Ibizę","Oświadczyny na stadionie podczas meczu",
+    "Wesele z 200 gośćmi","Tatuaż z inicjałami partnera",
+    "Przeprowadzka do jego rodzinnego miasta","Wspólne konto od pierwszego dnia",
+  ],
+  highlow: [
+    { q:"Ile krajów uznaje równouprawnienie małżeńskie?", hint:"Wskazówka: więcej czy mniej niż 30?", answer:"35 krajów (stan 2024)" },
+    { q:"W jakim wieku Polki wychodzą za mąż?", hint:"Wskazówka: wyżej czy niżej niż 28 lat?", answer:"Średnio 29,5 roku" },
+    { q:"Ile % związków zaczyna się w miejscu pracy?", hint:"Wskazówka: wyżej czy niżej niż 15%?", answer:"Około 22%" },
+    { q:"Ile razy dziennie mąż mówi 'kocham cię'?", hint:"Wskazówka: więcej czy mniej niż 3 razy?", answer:"Średnio 1,5 raza dziennie" },
+    { q:"Ile kosztuje przeciętny pierścionek zaręczynowy?", hint:"Wskazówka: wyżej czy niżej niż 3 000 zł?", answer:"Około 4 500 – 6 000 zł" },
+    { q:"Ile % ludzi twierdzi że pierwsze wrażenie decyduje?", hint:"Wskazówka: więcej czy mniej niż 50%?", answer:"Około 55% — pierwsze 4 minuty!" },
+    { q:"Ile lat trwa statystyczne małżeństwo w Polsce?", hint:"Wskazówka: więcej czy mniej niż 15 lat?", answer:"Średnio 14,6 lat" },
+    { q:"Ile piosenek ABBA trafiło w różne top 10?", hint:"Wskazówka: więcej czy mniej niż 5?", answer:"9 przebojów w różnych top 10" },
+  ],
+  eight: [
+    { task:"Wymień 5 filmów romantycznych zanim minie czas!", seconds:8 },
+    { task:"Zatańcz jak Travolta przez całe 8 sekund!", seconds:8 },
+    { task:"Powiedz toast dla Kasi po włosku (możesz zmyślić)!", seconds:8 },
+    { task:"Napisz w powietrzu imię Narzeczonego całym ciałem!", seconds:8 },
+    { task:"Wymień 3 zalety bycia mężatką!", seconds:8 },
+    { task:"Zaśpiewaj 8 sekund ulubionej piosenki Kasi!", seconds:8 },
+    { task:"Zrób najlepszą minę ślubną!", seconds:8 },
+    { task:"Powiedz kompliment Kasi tak szybko jak możesz!", seconds:8 },
+    { task:"Udaj że tańczysz solo na weselu!", seconds:8 },
+    { task:"Wymień 4 miejsca idealne na podróż poślubną!", seconds:8 },
+    { task:"Zrób 5 podskoków (jumping jacks)!", seconds:8 },
+    { task:"Powiedz 'szczęście' po 5 różnych językach!", seconds:8 },
+  ],
+  choice: [
+    { a:"Wesele dla 20 osób w górach", b:"Wesele dla 200 osób w pałacu" },
+    { a:"Partner który gotuje", b:"Partner który sprząta" },
+    { a:"Wiedzieć wszystko o przyszłości", b:"Nie wiedzieć nic" },
+    { a:"Podróż poślubna: plaża & rum", b:"Podróż poślubna: góry & wino" },
+    { a:"Ślub latem w plenerze", b:"Ślub zimą w zamku" },
+    { a:"Mąż lepszy w tańcu niż ty", b:"Mąż który w ogóle nie tańczy" },
+    { a:"Para która nigdy się nie kłóci", b:"Para która kłóci się i rozwiązuje" },
+    { a:"Powiedzieć 'kocham cię' jako pierwsza", b:"Czekać aż on powie pierwszy" },
+    { a:"Oświadczyny prywatnie tylko we dwoje", b:"Oświadczyny z wielkim show publicznie" },
+    { a:"Razem oglądać horror w kinie", b:"Razem oglądać romance w domu" },
+  ],
+  drawPrompts: [
+    "Idealne wesele 💒","Panna Młoda na parkiecie 💃","Kula disco 🪩",
+    "Tort weselny 🎂","Bukiet ślubny 💐","Pierwszy taniec 🕺",
+    "Obrączki 💍","Kielich szampana 🥂","Suknia ślubna",
+    "DJ na weselu 🎧","Limuzyna ślubna 🚗","Serce z fajerwerkami",
+    "Buty na obcasie 👠","Gwiazdka 70s disco ✨","Kucharz weselny 👨‍🍳",
+    "Coś co zaczyna się na literę K...","Połowa penisa 😏",
+  ],
+};
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+const S = {
+  quiz:    { idx:0, phase:'question' },
+  vabank:  { view:'board', catIdx:0, priceIdx:0, phase:'question' },
+  hon:     { idx:0, hot:0, not:0 },
+  highlow: { idx:0, phase:'question' },
+  eight:   { idx:0, phase:'task', interval:null },
+  choice:  { idx:0, vA:0, vB:0 },
+  bingo:   { marked: new Array(25).fill(false) },
+  draw:    { color:'#1a1a2e', brush:4, drawing:false, lx:0, ly:0 },
+};
+window._advices = [];
+
+// ════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  ({bingo:renderBingo,quiz:renderQuiz,vabank:renderVabank,honornot:renderHon,
+    advice:renderAdvice,highlow:renderHL,eight:renderEight,choice:renderChoice,draw:initCanvas})[id]?.();
+}
+
+// ════════════════════════════════════════════
+// ADMIN
+// ════════════════════════════════════════════
+function toggleAdmin(g) {
+  const p=document.getElementById(g+'Admin');
+  const b=document.getElementById(g+'AdminBtn');
+  if(!p)return;
+  const open=p.classList.toggle('open');
+  b?.classList.toggle('active',open);
+  if(open) buildAdmin(g);
+}
+function buildAdmin(g) {
+  const c=document.getElementById(g+'AdminContent');
+  if(!c)return;
+  if(g==='bingo'){
+    c.innerHTML=DATA.bingo.map((t,i)=>i===12?'':
+      `<div class="admin-item"><div class="admin-label">POLE ${i+1}</div>
+       <input class="admin-input" value="${e(t)}" oninput="DATA.bingo[${i}]=this.value;renderBingo()" style="font-size:.76rem;"></div>`
+    ).join('')+'<div class="admin-note">Środkowe pole (FREE) jest stałe.</div>';
+    return;
+  }
+  if(g==='quiz'){
+    c.innerHTML=DATA.quiz.map((q,i)=>`
+      <div class="admin-item">
+        <div class="admin-label">PYTANIE ${i+1}</div>
+        <textarea class="admin-textarea" rows="2" oninput="DATA.quiz[${i}].q=this.value;if(S.quiz.idx===${i})renderQuiz()">${e(q.q)}</textarea>
+        ${q.opts.map((o,j)=>`
+          <div class="admin-row" style="margin-top:4px;">
+            <span style="font-family:'Bebas Neue';color:var(--blue);font-size:.95rem;align-self:center;min-width:18px;">${'ABCD'[j]}</span>
+            <input class="admin-input" value="${e(o)}" oninput="DATA.quiz[${i}].opts[${j}]=this.value;if(S.quiz.idx===${i})renderQuiz()">
+          </div>`).join('')}
+        <div style="font-size:.62rem;color:var(--green2);margin:6px 0 3px;">✅ POPRAWNA:</div>
+        <input class="admin-input" value="${e(q.answer)}" oninput="DATA.quiz[${i}].answer=this.value" style="border-color:rgba(57,255,20,.35);">
+        <div style="font-size:.62rem;color:var(--muted);margin:5px 0 3px;">📝 NOTATKA:</div>
+        <input class="admin-input" value="${e(q.answerNote||'')}" oninput="DATA.quiz[${i}].answerNote=this.value" placeholder="opcjonalny komentarz...">
+        <div class="admin-item-footer"><button class="admin-delete-btn" onclick="delItem('quiz',${i})">🗑 USUŃ</button></div>
+      </div>`).join('')+`<button class="admin-add-btn" onclick="addItem('quiz')">+ DODAJ PYTANIE</button>`;
+    return;
+  }
+  if(g==='vabank'){
+    c.innerHTML=`
+      <div class="admin-note">4 kategorie × 5 poziomów cenowych. Edytuj pytania i odpowiedzi poniżej.</div>
+      <div class="admin-divider"></div>
+      ${DATA.vabank.categories.map((cat,ci)=>`
+        <div class="admin-item">
+          <div class="admin-label" style="color:${cat.color}">KATEGORIA ${ci+1}</div>
+          <input class="admin-input" value="${e(cat.name)}" oninput="DATA.vabank.categories[${ci}].name=this.value;renderVabank()" style="margin-bottom:8px;">
+          ${DATA.vabank.prices.map((p,pi)=>`
+            <div style="font-size:.62rem;color:var(--gold);margin:6px 0 3px;">${p} PKT — PYTANIE:</div>
+            <textarea class="admin-textarea" rows="2" oninput="DATA.vabank.questions[${ci}][${pi}].q=this.value">${e(DATA.vabank.questions[ci][pi].q)}</textarea>
+            <div style="font-size:.62rem;color:var(--green2);margin:4px 0 3px;">✅ ODPOWIEDŹ:</div>
+            <input class="admin-input" value="${e(DATA.vabank.questions[ci][pi].a)}" oninput="DATA.vabank.questions[${ci}][${pi}].a=this.value" style="border-color:rgba(57,255,20,.3);margin-bottom:6px;">
+          `).join('')}
+        </div>`).join('')}
+      <button class="admin-add-btn" onclick="DATA.vabank.prices.push(2000);DATA.vabank.questions.forEach(q=>q.push({q:'Nowe pytanie?',a:'Odpowiedź'}));buildAdmin('vabank')">+ DODAJ POZIOM CENOWY</button>`;
+    return;
+  }
+  if(g==='honornot'){
+    c.innerHTML=DATA.hon.map((h,i)=>`
+      <div class="admin-item">
+        <div class="admin-label">STWIERDZENIE ${i+1}</div>
+        <textarea class="admin-textarea" rows="2" oninput="DATA.hon[${i}]=this.value;if(S.hon.idx===${i})renderHon()">${e(h)}</textarea>
+        <div class="admin-item-footer"><button class="admin-delete-btn" onclick="delItem('hon',${i})">🗑 USUŃ</button></div>
+      </div>`).join('')+`<button class="admin-add-btn" onclick="addItem('hon')">+ DODAJ</button>`;
+    return;
+  }
+  if(g==='highlow'){
+    c.innerHTML=DATA.highlow.map((h,i)=>`
+      <div class="admin-item">
+        <div class="admin-label">PYTANIE ${i+1}</div>
+        <textarea class="admin-textarea" rows="2" oninput="DATA.highlow[${i}].q=this.value;if(S.highlow.idx===${i})renderHL()">${e(h.q)}</textarea>
+        <div style="font-size:.62rem;color:var(--muted);margin:5px 0 3px;">💡 PODPOWIEDŹ:</div>
+        <input class="admin-input" value="${e(h.hint)}" oninput="DATA.highlow[${i}].hint=this.value">
+        <div style="font-size:.62rem;color:var(--green2);margin:5px 0 3px;">✅ ODPOWIEDŹ:</div>
+        <input class="admin-input" value="${e(h.answer)}" oninput="DATA.highlow[${i}].answer=this.value" style="border-color:rgba(57,255,20,.3);">
+        <div class="admin-item-footer"><button class="admin-delete-btn" onclick="delItem('highlow',${i})">🗑 USUŃ</button></div>
+      </div>`).join('')+`<button class="admin-add-btn" onclick="addItem('highlow')">+ DODAJ</button>`;
+    return;
+  }
+  if(g==='eight'){
+    c.innerHTML=DATA.eight.map((d,i)=>`
+      <div class="admin-item">
+        <div class="admin-label">ZADANIE ${i+1}</div>
+        <textarea class="admin-textarea" rows="2" oninput="DATA.eight[${i}].task=this.value;if(S.eight.idx===${i})renderEight()">${e(d.task)}</textarea>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+          <span style="font-size:.7rem;color:var(--gold);">⏱ SEK:</span>
+          <input class="admin-input" type="number" min="3" max="60" value="${d.seconds}" oninput="DATA.eight[${i}].seconds=+this.value||8" style="width:70px;">
+          <button class="admin-delete-btn" onclick="delItem('eight',${i})">🗑</button>
+        </div>
+      </div>`).join('')+`<button class="admin-add-btn" onclick="addItem('eight')">+ DODAJ ZADANIE</button>`;
+    return;
+  }
+  if(g==='choice'){
+    c.innerHTML=DATA.choice.map((ch,i)=>`
+      <div class="admin-item">
+        <div class="admin-label">WYBÓR ${i+1}</div>
+        <div style="font-size:.62rem;color:var(--gold);margin-bottom:3px;">OPCJA A:</div>
+        <textarea class="admin-textarea" rows="2" oninput="DATA.choice[${i}].a=this.value;if(S.choice.idx===${i})renderChoice()">${e(ch.a)}</textarea>
+        <div style="font-size:.62rem;color:var(--pink);margin:5px 0 3px;">OPCJA B:</div>
+        <textarea class="admin-textarea" rows="2" oninput="DATA.choice[${i}].b=this.value;if(S.choice.idx===${i})renderChoice()">${e(ch.b)}</textarea>
+        <div class="admin-item-footer"><button class="admin-delete-btn" onclick="delItem('choice',${i})">🗑</button></div>
+      </div>`).join('')+`<button class="admin-add-btn" onclick="addItem('choice')">+ DODAJ</button>`;
+    return;
+  }
+  if(g==='advice'){
+    c.innerHTML=`<div class="admin-note">Dodaj gotowe rady, lub wpisz je na żywo na głównym ekranie.</div>
+      <div class="admin-divider"></div>
+      <div id="adminAdviceItems"></div>
+      <textarea class="admin-textarea" id="adminAdviceNew" rows="2" placeholder="Wpisz gotową radę..." style="margin-top:8px;"></textarea>
+      <button class="admin-add-btn" onclick="adminAddAdvice()">+ DODAJ RADĘ</button>`;
+    renderAdminAdviceItems();return;
+  }
+  if(g==='draw'){
+    c.innerHTML=DATA.drawPrompts.map((p,i)=>`
+      <div class="admin-row" style="margin-bottom:6px;">
+        <input class="admin-input" value="${e(p)}" oninput="DATA.drawPrompts[${i}]=this.value" style="font-size:.76rem;">
+        <button class="admin-delete-btn" onclick="DATA.drawPrompts.splice(${i},1);buildAdmin('draw')">✕</button>
+      </div>`).join('')+`<button class="admin-add-btn" onclick="DATA.drawPrompts.push('Nowy temat…');buildAdmin('draw')">+ DODAJ</button>`;
+    return;
+  }
+}
+function delItem(type, i) {
+  const arr=type==='hon'?DATA.hon:DATA[type];
+  if(arr.length<=1){showToast('Min. 1 element!');return;}
+  arr.splice(i,1);
+  if(S[type]?.idx>=arr.length) S[type].idx=arr.length-1;
+  buildAdmin(type==='honornot'?'honornot':type);
+  ({quiz:renderQuiz,hon:renderHon,highlow:renderHL,eight:renderEight,choice:renderChoice})[type]?.();
+  showToast('Usunięto!');
+}
+function addItem(type) {
+  if(type==='quiz') DATA.quiz.push({q:'Nowe pytanie?',opts:['A','B','C','D'],answer:'A',answerNote:''});
+  else if(type==='hon') DATA.hon.push('Nowe stwierdzenie');
+  else if(type==='highlow') DATA.highlow.push({q:'Nowe pytanie?',hint:'Wskazówka…',answer:'Odpowiedź'});
+  else if(type==='eight') DATA.eight.push({task:'Nowe zadanie!',seconds:8});
+  else if(type==='choice') DATA.choice.push({a:'Opcja A',b:'Opcja B'});
+  buildAdmin(type==='hon'?'honornot':type);
+  showToast('Dodano!');
+}
+function renderAdminAdviceItems(){
+  const el=document.getElementById('adminAdviceItems');
+  if(!el)return;
+  el.innerHTML=window._advices.map((a,i)=>`
+    <div class="admin-row" style="margin-bottom:4px;">
+      <span style="font-size:.72rem;flex:1;color:var(--text)">${e(a)}</span>
+      <button class="admin-delete-btn" onclick="window._advices.splice(${i},1);renderAdviceDisplay();renderAdminAdviceItems()">✕</button>
+    </div>`).join('');
+}
+function adminAddAdvice(){
+  const v=document.getElementById('adminAdviceNew')?.value.trim();
+  if(!v)return;
+  window._advices.push(v);
+  document.getElementById('adminAdviceNew').value='';
+  renderAdviceDisplay();renderAdminAdviceItems();
+}
+function e(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+// ════════════════════════════════════════════
+// ANIMATIONS
+// ════════════════════════════════════════════
+function spawnConfetti(count=60) {
+  const ov=document.getElementById('confettiOverlay');
+  ov.innerHTML='';
+  const colors=['#FFD700','#FF2D9C','#00CFFF','#ADFF2F','#FF6BC8','#FFA500'];
+  for(let i=0;i<count;i++){
+    const d=document.createElement('div');
+    d.className='confetti-piece';
+    d.style.left=Math.random()*100+'%';
+    d.style.background=colors[Math.floor(Math.random()*colors.length)];
+    d.style.width=(8+Math.random()*10)+'px';
+    d.style.height=(8+Math.random()*10)+'px';
+    d.style.borderRadius=Math.random()>.5?'50%':'2px';
+    d.style.animationDuration=(1.5+Math.random()*2)+'s';
+    d.style.animationDelay=(Math.random()*.8)+'s';
+    ov.appendChild(d);
+  }
+  setTimeout(()=>ov.innerHTML='',4000);
+}
+function flashResult(type) { // 'win' | 'lose'
+  const div=document.createElement('div');
+  div.className='result-flash '+type;
+  div.innerHTML=`<div class="result-emoji">${type==='win'?'🎉':'😬'}</div>`;
+  document.body.appendChild(div);
+  if(type==='win') spawnConfetti();
+  setTimeout(()=>div.remove(),900);
+}
+
+// ════════════════════════════════════════════
+// BINGO
+// ════════════════════════════════════════════
+function renderBingo(){
+  const g=document.getElementById('bingoGrid');
+  g.innerHTML='';
+  DATA.bingo.forEach((txt,i)=>{
+    const d=document.createElement('div');
+    d.className='b-cell'+(i===12?' free':'')+(S.bingo.marked[i]?' marked':'');
+    d.textContent=txt;
+    if(i!==12) d.onclick=()=>toggleBingo(i);
+    g.appendChild(d);
+  });
+  document.getElementById('bingoMarked').textContent=S.bingo.marked.filter(Boolean).length+' / 25';
+}
+function toggleBingo(i){
+  S.bingo.marked[i]=!S.bingo.marked[i];
+  renderBingo();
+  if(S.bingo.marked[i]){showToast('✓ Zaznaczono!');checkBingo();}
+}
+function checkBingo(){
+  const lines=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],
+    [0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],
+    [0,6,12,18,24],[4,8,12,16,20]];
+  for(const l of lines)
+    if(l.every(i=>S.bingo.marked[i]||i===12)){showToast('🎉 BINGO! WYGRAŁA!');spawnConfetti();return;}
+}
+function resetBingo(){S.bingo.marked=new Array(25).fill(false);renderBingo();showToast('Reset!');}
+
+// ════════════════════════════════════════════
+// QUIZ
+// ════════════════════════════════════════════
+function renderQuiz(){
+  const s=S.quiz,d=DATA.quiz[s.idx];
+  const body=document.getElementById('quizBody');
+  const ctrl=document.getElementById('quizControls');
+  document.getElementById('quizPhaseLabel').textContent=
+    s.phase==='question'?`PYTANIE ${s.idx+1}/${DATA.quiz.length} · KAŻDA ZGADUJE`:`PYTANIE ${s.idx+1}/${DATA.quiz.length} · ODPOWIEDŹ`;
+
+  const dots=DATA.quiz.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
+  const correctIdx=d.opts.findIndex(o=>o===d.answer);
+
+  if(s.phase==='question'){
+    body.innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card">
+        <div class="round-badge">PYTANIE ${s.idx+1} / ${DATA.quiz.length}</div>
+        <div class="main-text">${e(d.q)}</div>
+      </div>
+      <div class="options-grid">
+        ${d.opts.map((o,j)=>`
+          <div class="opt-btn">
+            <span class="opt-letter">${'ABCD'[j]}</span>
+            <span class="opt-text">${e(o)}</span>
+          </div>`).join('')}
+      </div>`;
+    ctrl.innerHTML=`
+      <button class="ctrl-btn secondary" onclick="quizPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn reveal-btn" onclick="quizReveal()">🔓 ODSŁOŃ ODPOWIEDŹ</button>
+      <button class="ctrl-btn secondary" onclick="quizNext()">POMIŃ ▶</button>`;
+  } else {
+    body.innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card">
+        <div class="round-badge">PYTANIE ${s.idx+1} / ${DATA.quiz.length}</div>
+        <div class="main-text">${e(d.q)}</div>
+      </div>
+      <div class="options-grid">
+        ${d.opts.map((o,j)=>`
+          <div class="opt-btn ${j===correctIdx?'correct-opt':'wrong-opt'}">
+            <span class="opt-letter ${j===correctIdx?'correct-letter':''}">${'ABCD'[j]}</span>
+            <span class="opt-text">${e(o)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="answer-box correct">
+        <div class="answer-label">✅ ODPOWIEDŹ KASI</div>
+        <div class="answer-text">${e(d.answer)}</div>
+        ${d.answerNote?`<div class="answer-sub">${e(d.answerNote)}</div>`:''}
+      </div>`;
+    ctrl.innerHTML=`
+      <button class="ctrl-btn secondary" onclick="quizPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn primary" onclick="quizNext()">NASTĘPNE ▶</button>`;
+  }
+}
+function quizReveal(){S.quiz.phase='answer';flashResult('win');renderQuiz();}
+function quizNext(){
+  if(S.quiz.idx<DATA.quiz.length-1){S.quiz.idx++;S.quiz.phase='question';renderQuiz();}
+  else showToast('Ostatnie pytanie!');
+}
+function quizPrev(){if(S.quiz.idx>0){S.quiz.idx--;S.quiz.phase='question';renderQuiz();}}
+
+// ════════════════════════════════════════════
+// VA-BANK — teleturniej board
+// ════════════════════════════════════════════
+function renderVabank(){
+  const stage=document.getElementById('vabankStage');
+  const vb=DATA.vabank;
+  if(S.vabank.view==='board'){
+    document.getElementById('vabankPhaseLabel').textContent='WYBIERZ KATEGORIĘ I WARTOŚĆ';
+    const cols=vb.categories.length;
+    const rows=vb.prices.length;
+    stage.innerHTML=`
+      <div class="vabank-board">
+        <div class="vabank-board-grid" style="grid-template-columns:repeat(${cols},1fr);grid-template-rows:auto repeat(${rows},1fr);">
+          ${vb.categories.map((cat,ci)=>`
+            <div class="vb-cat-header" style="border-color:${cat.color}40;color:${cat.color};">${e(cat.name)}</div>`).join('')}
+          ${vb.prices.map((price,pi)=>
+            vb.categories.map((cat,ci)=>{
+              const key=ci+'-'+pi;
+              const used=vb.used.includes(key);
+              return `<div class="vb-cell ${used?'used':''}" onclick="vbSelect(${ci},${pi})"
+                style="${used?'':'background:linear-gradient(135deg,rgba('+hexToRgb(cat.color)+',.12),rgba('+hexToRgb(cat.color)+',.05));border-color:'+cat.color+'44;color:'+cat.color+';'}">
+                ${used?'':'<span>'+price+'</span>'}
+              </div>`;
+            }).join('')
+          ).join('')}
+        </div>
+      </div>
+      <div class="nav-controls">
+        <button class="ctrl-btn secondary" onclick="DATA.vabank.used=[];renderVabank()">🔄 NOWA GRA</button>
+        <span class="counter-badge">${vb.used.length} / ${vb.categories.length*vb.prices.length} pytań</span>
+      </div>`;
+  } else {
+    // Question view
+    const ci=S.vabank.catIdx, pi=S.vabank.priceIdx;
+    const qdata=vb.questions[ci][pi];
+    const price=vb.prices[pi];
+    const cat=vb.categories[ci];
+    const phase=S.vabank.phase;
+    document.getElementById('vabankPhaseLabel').textContent=
+      phase==='question'?`${cat.name} · ${price} PKT · LICYTUJCIE PEWNOŚĆ!`:`${cat.name} · ${price} PKT · ODPOWIEDŹ!`;
+
+    stage.innerHTML=`
+      <div class="vabank-question-view">
+        <div class="vb-price-badge" style="border-color:${cat.color};color:${cat.color};background:rgba(${hexToRgb(cat.color)},.15);">
+          ${e(cat.name)} · ${price} PKT
+        </div>
+        <div class="big-card">
+          <div class="round-badge" style="color:${cat.color};">PYTANIE ZA ${price} PUNKTÓW</div>
+          <div class="main-text">${e(qdata.q)}</div>
+        </div>
+        ${phase==='question'?`
+          <div class="vb-stakes">
+            ${[10,20,30,50,75,100].map(s=>`<div class="vb-stake-chip">${s}%</div>`).join('')}
+          </div>
+          <div style="text-align:center;font-size:.85rem;color:var(--muted);line-height:1.8;">
+            Każda licytuje swoją pewność odpowiedzi.<br>
+            🎯 Trafiona = zgarniasz stawkę × ${price} pkt.&nbsp;&nbsp;💥 Błąd = tracisz tę samą kwotę!
+          </div>
+        `:
+        `<div class="answer-box neutral">
+          <div class="answer-label neutral">✅ ODPOWIEDŹ</div>
+          <div class="answer-text">${e(qdata.a)}</div>
+        </div>`}
+      </div>
+      <div class="nav-controls">
+        <button class="ctrl-btn secondary" onclick="S.vabank.view='board';renderVabank()">← WRÓĆ DO TABLICY</button>
+        ${phase==='question'?
+          `<button class="ctrl-btn reveal-btn" onclick="vbReveal()">🔓 ODSŁOŃ ODPOWIEDŹ</button>`:
+          `<button class="ctrl-btn primary" onclick="S.vabank.view='board';renderVabank()">WRÓĆ DO TABLICY ▶</button>`
+        }
+      </div>`;
+  }
+}
+function vbSelect(ci, pi){
+  const key=ci+'-'+pi;
+  if(DATA.vabank.used.includes(key))return;
+  S.vabank.catIdx=ci;S.vabank.priceIdx=pi;
+  S.vabank.view='question';S.vabank.phase='question';
+  renderVabank();
+}
+function vbReveal(){
+  const key=S.vabank.catIdx+'-'+S.vabank.priceIdx;
+  if(!DATA.vabank.used.includes(key)) DATA.vabank.used.push(key);
+  S.vabank.phase='answer';
+  flashResult('win');
+  renderVabank();
+}
+function hexToRgb(hex){
+  const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return r?`${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}`:'255,215,0';
+}
+
+// ════════════════════════════════════════════
+// HOT OR NOT
+// ════════════════════════════════════════════
+function renderHon(){
+  const s=S.hon,txt=DATA.hon[s.idx];
+  const tot=s.hot+s.not;
+  document.getElementById('honPhaseLabel').textContent=`STWIERDZENIE ${s.idx+1}/${DATA.hon.length} · GŁOSUJCIE!`;
+  document.getElementById('honBody').innerHTML=`
+    <div class="step-indicator">${DATA.hon.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('')}</div>
+    <div class="hon-question">${e(txt)}</div>
+    <div class="hon-votes">
+      <button class="hon-vote-btn hot ${s.hot>0?'active-hot':''}" onclick="honVote('hot')">
+        🔥 HOT${s.hot>0?' ('+s.hot+')':''}
+      </button>
+      <button class="hon-vote-btn not ${s.not>0?'active-not':''}" onclick="honVote('not')">
+        ❄️ NOT${s.not>0?' ('+s.not+')':''}
+      </button>
+    </div>
+    <div class="score-bar">
+      <div class="score-item"><span class="score-label">🔥 HOT</span><span class="score-value pink">${tot?Math.round(s.hot/tot*100)+'%':'—'}</span></div>
+      <div class="score-item"><span class="score-label">❄️ NOT</span><span class="score-value blue">${tot?Math.round(s.not/tot*100)+'%':'—'}</span></div>
+      <div class="score-item"><span class="score-label">GŁOSÓW</span><span class="score-value">${tot}</span></div>
+    </div>`;
+  document.getElementById('honControls').innerHTML=`
+    <button class="ctrl-btn secondary" onclick="honPrev()">◀ WSTECZ</button>
+    <span class="counter-badge">${s.idx+1} / ${DATA.hon.length}</span>
+    <button class="ctrl-btn primary" onclick="honNext()">NASTĘPNE ▶</button>`;
+}
+function honVote(v){v==='hot'?S.hon.hot++:S.hon.not++;renderHon();}
+function honNext(){if(S.hon.idx<DATA.hon.length-1){S.hon.idx++;S.hon.hot=0;S.hon.not=0;renderHon();}else showToast('Koniec!');}
+function honPrev(){if(S.hon.idx>0){S.hon.idx--;S.hon.hot=0;S.hon.not=0;renderHon();}}
+
+// ════════════════════════════════════════════
+// RADY
+// ════════════════════════════════════════════
+function renderAdvice(){renderAdviceDisplay();}
+function renderAdviceDisplay(){
+  const list=document.getElementById('adviceList');
+  if(!list)return;
+  document.getElementById('adviceCount').textContent=window._advices.length;
+  list.innerHTML=window._advices.map((a,i)=>`
+    <div class="advice-item">"${e(a)}"
+      <button class="advice-del" onclick="window._advices.splice(${i},1);renderAdviceDisplay()">✕</button>
+    </div>`).join('');
+  list.scrollTop=list.scrollHeight;
+}
+function addAdvice(){
+  const v=document.getElementById('adviceInput').value.trim();
+  if(!v)return;
+  window._advices.push(v);
+  document.getElementById('adviceInput').value='';
+  renderAdviceDisplay();showToast('Rada dodana! 💌');
+}
+
+// ════════════════════════════════════════════
+// WYŻEJ / NIŻEJ
+// ════════════════════════════════════════════
+function renderHL(){
+  const s=S.highlow,d=DATA.highlow[s.idx];
+  document.getElementById('hlPhaseLabel').textContent=
+    s.phase==='question'?`PYTANIE ${s.idx+1}/${DATA.highlow.length} · ZGADUJCIE`:`PYTANIE ${s.idx+1}/${DATA.highlow.length} · ODPOWIEDŹ`;
+  const dots=DATA.highlow.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
+
+  if(s.phase==='question'){
+    document.getElementById('hlBody').innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card">
+        <div class="round-badge">PYTANIE ${s.idx+1} / ${DATA.highlow.length}</div>
+        <div class="main-text">${e(d.q)}</div>
+        <div class="sub-text">${e(d.hint)}</div>
+      </div>
+      <div class="hon-votes">
+        <button class="hon-vote-btn hot" style="flex:1;font-size:1.3rem;" onclick="showToast('⬆️ Więcej mówi: WYŻEJ!')">⬆️ WYŻEJ</button>
+        <button class="hon-vote-btn not" style="flex:1;font-size:1.3rem;" onclick="showToast('⬇️ Więcej mówi: NIŻEJ!')">⬇️ NIŻEJ</button>
+      </div>`;
+    document.getElementById('hlControls').innerHTML=`
+      <button class="ctrl-btn secondary" onclick="hlPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn reveal-btn" onclick="hlReveal()">🔓 ODSŁOŃ ODPOWIEDŹ</button>
+      <button class="ctrl-btn secondary" onclick="hlNext()">POMIŃ ▶</button>`;
+  } else {
+    document.getElementById('hlBody').innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card">
+        <div class="round-badge">PYTANIE ${s.idx+1} / ${DATA.highlow.length}</div>
+        <div class="main-text">${e(d.q)}</div>
+        <div class="sub-text">${e(d.hint)}</div>
+      </div>
+      <div class="answer-box correct">
+        <div class="answer-label">✅ ODPOWIEDŹ</div>
+        <div class="answer-text">${e(d.answer)}</div>
+      </div>`;
+    document.getElementById('hlControls').innerHTML=`
+      <button class="ctrl-btn secondary" onclick="hlPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn primary" onclick="hlNext()">NASTĘPNE ▶</button>`;
+  }
+}
+function hlReveal(){S.highlow.phase='answer';flashResult('win');renderHL();}
+function hlNext(){if(S.highlow.idx<DATA.highlow.length-1){S.highlow.idx++;S.highlow.phase='question';renderHL();}else showToast('Koniec!');}
+function hlPrev(){if(S.highlow.idx>0){S.highlow.idx--;S.highlow.phase='question';renderHL();}}
+
+// ════════════════════════════════════════════
+// 8 SEKUND
+// ════════════════════════════════════════════
+function renderEight(){
+  const s=S.eight,d=DATA.eight[s.idx];
+  document.getElementById('eightPhaseLabel').textContent=
+    s.phase==='task'?`ZADANIE ${s.idx+1}/${DATA.eight.length} · PRZECZYTAJ`:`ZADANIE ${s.idx+1}/${DATA.eight.length} · TIMER!`;
+  const dots=DATA.eight.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
+
+  if(s.phase==='task'){
+    document.getElementById('eightBody').innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card">
+        <div class="round-badge">ZADANIE ${s.idx+1} / ${DATA.eight.length}</div>
+        <div class="main-text">${e(d.task)}</div>
+      </div>
+      <div class="timer-wrap">
+        <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;color:var(--muted);">TIMER: ${d.seconds} SEKUND</div>
+      </div>`;
+    document.getElementById('eightControls').innerHTML=`
+      <button class="ctrl-btn secondary" onclick="eightPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn reveal-btn" onclick="eightStartTimer()">▶ START! (${d.seconds}s)</button>
+      <button class="ctrl-btn secondary" onclick="eightNext()">POMIŃ ▶</button>`;
+  } else {
+    const r=54*2*Math.PI;
+    document.getElementById('eightBody').innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card">
+        <div class="round-badge">ZADANIE ${s.idx+1} / ${DATA.eight.length}</div>
+        <div class="main-text">${e(d.task)}</div>
+      </div>
+      <div class="timer-wrap">
+        <div class="timer-ring">
+          <svg viewBox="0 0 120 120" width="160" height="160">
+            <circle class="timer-bg" cx="60" cy="60" r="54"/>
+            <circle class="timer-fill" id="timerCircle" cx="60" cy="60" r="54" stroke-dasharray="${r}" stroke-dashoffset="0"/>
+          </svg>
+          <span class="timer-number" id="timerNum">${d.seconds}</span>
+        </div>
+      </div>`;
+    document.getElementById('eightControls').innerHTML=`
+      <button class="ctrl-btn danger" onclick="eightStop()">⏹ STOP</button>
+      <button class="ctrl-btn secondary" onclick="eightNext()">NASTĘPNE ▶</button>`;
+    runTimer(d.seconds);
+  }
+}
+function eightStartTimer(){S.eight.phase='timer';renderEight();}
+function eightStop(){clearInterval(S.eight.interval);S.eight.phase='task';showToast('Zatrzymano');renderEight();}
+function eightNext(){clearInterval(S.eight.interval);if(S.eight.idx<DATA.eight.length-1){S.eight.idx++;S.eight.phase='task';renderEight();}else showToast('Koniec!');}
+function eightPrev(){clearInterval(S.eight.interval);if(S.eight.idx>0){S.eight.idx--;S.eight.phase='task';renderEight();}}
+function runTimer(secs){
+  let left=secs;
+  const r=54*2*Math.PI;
+  clearInterval(S.eight.interval);
+  S.eight.interval=setInterval(()=>{
+    left-=.1;
+    const c=document.getElementById('timerCircle');
+    const n=document.getElementById('timerNum');
+    if(!c||!n){clearInterval(S.eight.interval);return;}
+    c.style.strokeDashoffset=r*(1-left/secs);
+    n.textContent=Math.ceil(left);
+    const danger=left<=secs*.35;
+    c.classList.toggle('danger',danger);
+    n.classList.toggle('danger',danger);
+    if(left<=0){
+      clearInterval(S.eight.interval);
+      n.textContent='💥';
+      showToast('⏱ CZAS MINĄŁ!');
+      flashResult('lose');
+    }
+  },100);
+}
+
+// ════════════════════════════════════════════
+// CO WYBIERASZ
+// ════════════════════════════════════════════
+function renderChoice(){
+  const s=S.choice,d=DATA.choice[s.idx];
+  const tot=s.vA+s.vB;
+  document.getElementById('choicePhaseLabel').textContent=`WYBÓR ${s.idx+1}/${DATA.choice.length} · KAŻDA GŁOSUJE!`;
+  document.getElementById('choiceBody').innerHTML=`
+    <div class="step-indicator">${DATA.choice.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('')}</div>
+    <div class="choice-vs-wrap">
+      <div class="choice-side ${s.vA>s.vB&&tot>0?'picked-a':''}" onclick="choiceVote('a')">${e(d.a)}</div>
+      <div class="vs-badge">VS</div>
+      <div class="choice-side ${s.vB>s.vA&&tot>0?'picked-b':''}" onclick="choiceVote('b')">${e(d.b)}</div>
+    </div>
+    <div class="score-bar">
+      <div class="score-item"><span class="score-label">OPCJA A</span><span class="score-value">${s.vA}</span></div>
+      <div class="score-item"><span class="score-label">OPCJA B</span><span class="score-value pink">${s.vB}</span></div>
+      <div class="score-item"><span class="score-label">RAZEM</span><span class="score-value green">${tot}</span></div>
+      ${tot>0?`<div class="score-item"><span class="score-label">WYGRYWA</span><span class="score-value ${s.vA>=s.vB?'':'pink'}">${s.vA>=s.vB?'A 🥇':'B 🥇'}</span></div>`:''}
+    </div>`;
+  document.getElementById('choiceControls').innerHTML=`
+    <button class="ctrl-btn secondary" onclick="choicePrev()">◀ WSTECZ</button>
+    <span class="counter-badge">${s.idx+1} / ${DATA.choice.length}</span>
+    <button class="ctrl-btn primary" onclick="choiceNext()">NASTĘPNE ▶</button>`;
+}
+function choiceVote(v){v==='a'?S.choice.vA++:S.choice.vB++;renderChoice();}
+function choiceNext(){if(S.choice.idx<DATA.choice.length-1){S.choice.idx++;S.choice.vA=0;S.choice.vB=0;renderChoice();}else showToast('Koniec!');}
+function choicePrev(){if(S.choice.idx>0){S.choice.idx--;S.choice.vA=0;S.choice.vB=0;renderChoice();}}
+
+// ════════════════════════════════════════════
+// CANVAS
+// ════════════════════════════════════════════
+function initCanvas(){
+  const canvas=document.getElementById('drawCanvas');
+  if(!canvas)return;
+  const par=canvas.parentElement;
+  canvas.width=par.clientWidth-2;
+  canvas.height=Math.max(280,par.clientHeight-180);
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#F0EBF8';ctx.fillRect(0,0,canvas.width,canvas.height);
+  const D=S.draw;
+  const gp=(e)=>{const r=canvas.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top];};
+  canvas.onmousedown=e=>{D.drawing=true;[D.lx,D.ly]=gp(e);};
+  canvas.onmousemove=e=>{if(D.drawing){const[x,y]=gp(e);const ctx2=canvas.getContext('2d');ctx2.beginPath();ctx2.moveTo(D.lx,D.ly);ctx2.lineTo(x,y);ctx2.strokeStyle=D.color;ctx2.lineWidth=D.brush;ctx2.lineCap='round';ctx2.lineJoin='round';ctx2.stroke();[D.lx,D.ly]=[x,y];}};
+  canvas.onmouseup=canvas.onmouseleave=()=>D.drawing=false;
+  canvas.ontouchstart=ev=>{ev.preventDefault();D.drawing=true;[D.lx,D.ly]=gp(ev.touches[0]);};
+  canvas.ontouchmove=ev=>{ev.preventDefault();if(D.drawing){const[x,y]=gp(ev.touches[0]);const ctx2=canvas.getContext('2d');ctx2.beginPath();ctx2.moveTo(D.lx,D.ly);ctx2.lineTo(x,y);ctx2.strokeStyle=D.color;ctx2.lineWidth=D.brush;ctx2.lineCap='round';ctx2.lineJoin='round';ctx2.stroke();[D.lx,D.ly]=[x,y];}};
+  canvas.ontouchend=()=>D.drawing=false;
+}
+function clearCanvas(){const c=document.getElementById('drawCanvas');const ctx=c.getContext('2d');ctx.fillStyle='#F0EBF8';ctx.fillRect(0,0,c.width,c.height);}
+function setColor(el){S.draw.color=el.dataset.color;document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));el.classList.add('active');}
+function setBrush(el,s){S.draw.brush=s;document.querySelectorAll('.brush-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
+function drawPromptRandom(){const p=DATA.drawPrompts[Math.floor(Math.random()*DATA.drawPrompts.length)];document.getElementById('drawPromptText').textContent=p;showToast('Temat: '+p);}
+
+// ════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════
+let _tt;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ════════════════════════════════════════════
+// NEW GAME DATA
+// ════════════════════════════════════════════
+DATA.tierItems = [
+  "Ryan Gosling","Zac Efron","Chris Hemsworth","Pedro Pascal","Timothée Chalamet",
+  "Harry Styles","Jason Momoa","Idris Elba","Keanu Reeves","Adam Driver",
+  "Sławny facet z Polski","Narzeczony Kasi 😏"
+];
+DATA.tierCategory = "Idealni mężowie wg mnie 💍";
+
+DATA.auctionItems = [
+  { name:"Gotuje i sprząta", emoji:"🍳" },
+  { name:"Zawsze cię słucha", emoji:"👂" },
+  { name:"Świetny w łóżku", emoji:"🔥" },
+  { name:"Bogaty AF", emoji:"💎" },
+  { name:"Przystojny jak aktor", emoji:"😍" },
+  { name:"Robi masaże", emoji:"💆" },
+  { name:"Uwielbia twoje koleżanki", emoji:"🥰" },
+  { name:"Nigdy nie zazdrości", emoji:"🕊️" },
+  { name:"Pamięta każdą rocznicę", emoji:"📅" },
+  { name:"Tańczy jak Travolta", emoji:"🕺" },
+  { name:"Robi kawę do łóżka", emoji:"☕" },
+  { name:"Nie ogląda footballu", emoji:"⚽" },
+];
+DATA.auctionPlayers = ["Gracz 1","Gracz 2","Gracz 3","Gracz 4","Gracz 5","Gracz 6"];
+DATA.auctionBudget = 500;
+
+DATA.couples = [
+  { a:"Romeo", b:"Julia" },
+  { a:"Jack", b:"Rose (Titanic)" },
+  { a:"Beyoncé", b:"Jay-Z" },
+  { a:"Kim K", b:"Kanye West" },
+  { a:"Shrek", b:"Fiona" },
+  { a:"Mr Big", b:"Carrie Bradshaw" },
+  { a:"Edward Cullen", b:"Bella Swan" },
+  { a:"Dirty Dancing — Johnny", b:"Baby" },
+  { a:"Barack Obama", b:"Michelle Obama" },
+  { a:"Pitt & Jolie", b:"Brangelina era" },
+];
+
+DATA.never = [
+  "Nigdy nie... całowałam kogoś na pierwszej randce",
+  "Nigdy nie... pisałam do ex o 3 w nocy",
+  "Nigdy nie... okłamałam chłopaka o tym gdzie byłam",
+  "Nigdy nie... płakałam przez film romantyczny",
+  "Nigdy nie... śledziłam ex na instagramie",
+  "Nigdy nie... tańczyłam na stole lub barze",
+  "Nigdy nie... dałam fałszywy numer telefonu",
+  "Nigdy nie... pisałam SMS do niewłaściwej osoby",
+  "Nigdy nie... robiłam coś głupiego przez zazdrość",
+  "Nigdy nie... zrobiłam sobie zdjęcie w przymierzalni i kupiłam online",
+  "Nigdy nie... kłamałam ile kosztują buty",
+  "Nigdy nie... udawałam że mi się podoba prezent",
+  "Nigdy nie... śpiewałam głośno w samochodzie jakby to był koncert",
+  "Nigdy nie... zgadywałam hasło do czyjegoś telefonu",
+  "Nigdy nie... zjadłam jedzenie partnera i zaprzeczałam",
+];
+
+DATA.telPlayers = ["Zosia","Ania","Marta","Kasia","Ela","Basia"];
+DATA.telStartWord = "Zakochana para tańczy disco 🕺💃";
+
+// ════════════════════════════════════════════
+// EXTEND show() to handle new games
+// ════════════════════════════════════════════
+const _origShow = show;
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  const map = {
+    bingo:renderBingo, quiz:renderQuiz, vabank:renderVabank, honornot:renderHon,
+    advice:renderAdvice, highlow:renderHL, eight:renderEight, choice:renderChoice, draw:initCanvas,
+    tierlist:renderTierList, auction:renderAuction, wrozby:renderWrozby,
+    couples:renderCouples, neverhave:renderNever, telephone:renderTelephone
+  };
+  map[id]?.();
+}
+
+// ════════════════════════════════════════════
+// EXTEND buildAdmin() for new games
+// ════════════════════════════════════════════
+const _origBuildAdmin = buildAdmin;
+function buildAdmin(g) {
+  // Try original first
+  const handled = ['bingo','quiz','vabank','honornot','highlow','eight','choice','advice','draw'];
+  if(handled.includes(g)){ _origBuildAdmin(g); return; }
+
+  const c = document.getElementById(g+'AdminContent');
+  if(!c) return;
+
+  if(g==='tierlist'){
+    c.innerHTML=`
+      <div class="admin-label">KATEGORIA / TYTUŁ</div>
+      <input class="admin-input" value="${e(DATA.tierCategory)}" oninput="DATA.tierCategory=this.value;renderTierList()" style="margin-bottom:12px;">
+      <div class="admin-label">OSOBY DO RANKOWANIA</div>
+      ${DATA.tierItems.map((it,i)=>`
+        <div class="admin-row" style="margin-bottom:5px;">
+          <input class="admin-input" value="${e(it)}" oninput="DATA.tierItems[${i}]=this.value;renderTierList()">
+          <button class="admin-delete-btn" onclick="DATA.tierItems.splice(${i},1);resetTierList();buildAdmin('tierlist')">✕</button>
+        </div>`).join('')}
+      <button class="admin-add-btn" onclick="DATA.tierItems.push('Nowa osoba');resetTierList();buildAdmin('tierlist')">+ DODAJ OSOBĘ</button>`;
+    return;
+  }
+  if(g==='auction'){
+    c.innerHTML=`
+      <div class="admin-label">BUDŻET NA GRACZA (monet)</div>
+      <input class="admin-input" type="number" value="${DATA.auctionBudget}" oninput="DATA.auctionBudget=+this.value" style="width:100px;margin-bottom:12px;">
+      <div class="admin-label">GRACZE</div>
+      ${DATA.auctionPlayers.map((p,i)=>`
+        <div class="admin-row" style="margin-bottom:5px;">
+          <input class="admin-input" value="${e(p)}" oninput="DATA.auctionPlayers[${i}]=this.value">
+          <button class="admin-delete-btn" onclick="DATA.auctionPlayers.splice(${i},1);buildAdmin('auction')">✕</button>
+        </div>`).join('')}
+      <button class="admin-add-btn" onclick="DATA.auctionPlayers.push('Gracz '+(DATA.auctionPlayers.length+1));buildAdmin('auction')" style="margin-bottom:12px;">+ DODAJ GRACZA</button>
+      <div class="admin-divider"></div>
+      <div class="admin-label">CECHY DO LICYTACJI</div>
+      ${DATA.auctionItems.map((it,i)=>`
+        <div class="admin-item">
+          <div class="admin-row"><span style="font-size:1.2rem;margin-right:4px;">${it.emoji}</span>
+            <input class="admin-input" value="${e(it.name)}" oninput="DATA.auctionItems[${i}].name=this.value">
+            <button class="admin-delete-btn" onclick="DATA.auctionItems.splice(${i},1);buildAdmin('auction')">✕</button>
+          </div>
+          <input class="admin-input" value="${e(it.emoji)}" oninput="DATA.auctionItems[${i}].emoji=this.value" style="width:60px;margin-top:4px;" placeholder="emoji">
+        </div>`).join('')}
+      <button class="admin-add-btn" onclick="DATA.auctionItems.push({name:'Nowa cecha',emoji:'⭐'});buildAdmin('auction')">+ DODAJ CECHĘ</button>`;
+    return;
+  }
+  if(g==='couples'){
+    c.innerHTML=DATA.couples.map((p,i)=>`
+      <div class="admin-item">
+        <div class="admin-label">PARA ${i+1}</div>
+        <div style="font-size:.62rem;color:var(--gold);margin-bottom:3px;">LEWA STRONA:</div>
+        <input class="admin-input" value="${e(p.a)}" oninput="DATA.couples[${i}].a=this.value">
+        <div style="font-size:.62rem;color:var(--pink);margin:5px 0 3px;">PRAWA STRONA:</div>
+        <input class="admin-input" value="${e(p.b)}" oninput="DATA.couples[${i}].b=this.value">
+        <div class="admin-item-footer"><button class="admin-delete-btn" onclick="DATA.couples.splice(${i},1);buildAdmin('couples')">🗑</button></div>
+      </div>`).join('')+
+      `<button class="admin-add-btn" onclick="DATA.couples.push({a:'Osoba A',b:'Osoba B'});buildAdmin('couples')">+ DODAJ PARĘ</button>`;
+    return;
+  }
+  if(g==='neverhave'){
+    c.innerHTML=DATA.never.map((n,i)=>`
+      <div class="admin-item">
+        <textarea class="admin-textarea" rows="2" oninput="DATA.never[${i}]=this.value;if(S.never?.idx===${i})renderNever()">${e(n)}</textarea>
+        <div class="admin-item-footer"><button class="admin-delete-btn" onclick="DATA.never.splice(${i},1);buildAdmin('neverhave')">🗑</button></div>
+      </div>`).join('')+
+      `<button class="admin-add-btn" onclick="DATA.never.push('Nigdy nie...');buildAdmin('neverhave')">+ DODAJ</button>`;
+    return;
+  }
+  if(g==='telephone'){
+    c.innerHTML=`
+      <div class="admin-label">PIERWSZE HASŁO DO NARYSOWANIA</div>
+      <input class="admin-input" value="${e(DATA.telStartWord)}" oninput="DATA.telStartWord=this.value" style="margin-bottom:12px;">
+      <div class="admin-label">GRACZE (kolejność rund)</div>
+      ${DATA.telPlayers.map((p,i)=>`
+        <div class="admin-row" style="margin-bottom:5px;">
+          <input class="admin-input" value="${e(p)}" oninput="DATA.telPlayers[${i}]=this.value">
+          <button class="admin-delete-btn" onclick="DATA.telPlayers.splice(${i},1);buildAdmin('telephone')">✕</button>
+        </div>`).join('')}
+      <button class="admin-add-btn" onclick="DATA.telPlayers.push('Gracz '+(DATA.telPlayers.length+1));buildAdmin('telephone')">+ DODAJ GRACZA</button>`;
+    return;
+  }
+}
+
+// ════════════════════════════════════════════
+// TIER LIST
+// ════════════════════════════════════════════
+const TIERS = ['S','A','B','C','D','F'];
+const TIER_LABELS = { S:'S – IDEAŁ',A:'A – Super',B:'B – OK',C:'C – Ujdzie',D:'D – Nie...',F:'F – Nigdy w życiu' };
+let tierState = {}; // item -> tier or 'pool'
+let tierDragItem = null;
+
+function resetTierList(){
+  tierState={};
+  DATA.tierItems.forEach(it=>tierState[it]='pool');
+  renderTierList();
+}
+function renderTierList(){
+  if(!Object.keys(tierState).length) resetTierList();
+  const body=document.getElementById('tierBody');
+  const inPool=DATA.tierItems.filter(it=>tierState[it]==='pool');
+  const placed=DATA.tierItems.filter(it=>tierState[it]!=='pool').length;
+  document.getElementById('tierCounter').textContent=`${placed} / ${DATA.tierItems.length} umieszczonych`;
+
+  body.innerHTML=`
+    <div style="text-align:center;font-family:'Bebas Neue';font-size:.85rem;letter-spacing:3px;color:var(--gold);margin-bottom:6px;">${e(DATA.tierCategory)}</div>
+    <div class="tier-board" id="tierBoard">
+      ${TIERS.map(t=>`
+        <div class="tier-row">
+          <div class="tier-label ${t}" title="${TIER_LABELS[t]}">${t}</div>
+          <div class="tier-drop" data-tier="${t}" id="tierDrop_${t}"
+            ondragover="event.preventDefault();this.classList.add('drag-over')"
+            ondragleave="this.classList.remove('drag-over')"
+            ondrop="tierDrop(event,'${t}')">
+            ${DATA.tierItems.filter(it=>tierState[it]===t).map(it=>tierItemHTML(it)).join('')}
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="tier-pool-wrap" id="tierPool"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="tierDrop(event,'pool')">
+      <div class="tier-pool-label">PULA — PRZECIĄGNIJ DO TIERU</div>
+      <div class="tier-pool">
+        ${inPool.map(it=>tierItemHTML(it)).join('')}
+      </div>
+    </div>`;
+}
+function tierItemHTML(it){
+  return `<div class="tier-item" draggable="true"
+    ondragstart="tierDragItem='${it.replace(/'/g,"\\'")}'"
+    onclick="tierItemClick('${it.replace(/'/g,"\\'")}')">
+    ${e(it)}
+  </div>`;
+}
+function tierDrop(ev, targetTier){
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('drag-over');
+  if(!tierDragItem)return;
+  tierState[tierDragItem]=targetTier;
+  tierDragItem=null;
+  renderTierList();
+}
+function tierItemClick(it){
+  // Cycle through tiers on click (fallback for non-drag devices)
+  const cur=tierState[it]||'pool';
+  const all=['pool',...TIERS];
+  const idx=all.indexOf(cur);
+  tierState[it]=all[(idx+1)%all.length];
+  renderTierList();
+}
+
+// ════════════════════════════════════════════
+// AUKCJA ZALET
+// ════════════════════════════════════════════
+let auctionState = {};
+function initAuctionState(){
+  auctionState = {
+    idx: 0,
+    phase: 'bid', // bid | sold
+    currentBid: 0,
+    currentWinner: null,
+    budgets: {},
+    wins: {},
+  };
+  DATA.auctionPlayers.forEach(p=>{
+    auctionState.budgets[p]=DATA.auctionBudget;
+    auctionState.wins[p]=[];
+  });
+}
+function renderAuction(){
+  if(!auctionState.budgets||Object.keys(auctionState.budgets).length===0) initAuctionState();
+  const st=auctionState;
+  const item=DATA.auctionItems[st.idx];
+  const body=document.getElementById('auctionBody');
+  const ctrl=document.getElementById('auctionControls');
+  document.getElementById('auctionPhaseLabel').textContent=
+    `PRZEDMIOT ${st.idx+1}/${DATA.auctionItems.length} · ${st.phase==='bid'?'LICYTACJA!':'SPRZEDANO!'}`;
+
+  const budgetsHTML=DATA.auctionPlayers.map(p=>`
+    <div class="player-card ${st.currentWinner===p?'active':''}" onclick="auctionSetPlayer('${p}')">
+      <div class="p-name">${e(p)}</div>
+      <div class="p-budget">${st.budgets[p]}</div>
+      <div style="font-size:.55rem;color:var(--muted);">MONET</div>
+      ${st.wins[p]?.length?`<div style="font-size:.55rem;color:var(--green2);margin-top:2px;">${st.wins[p].map(w=>w.emoji).join(' ')}</div>`:''}
+    </div>`).join('');
+
+  if(st.phase==='bid'){
+    const bidAmounts=[10,25,50,100,150,200,300,500];
+    body.innerHTML=`
+      <div class="auction-item">
+        <div class="round-badge">${item.emoji} PRZEDMIOT ${st.idx+1} / ${DATA.auctionItems.length}</div>
+        <div class="auction-item-name">${item.emoji} ${e(item.name)}</div>
+        <div style="font-size:.85rem;color:var(--muted);margin-top:8px;">Aktualne najwyższe:</div>
+        <div class="auction-current-bid">${st.currentBid} 🪙</div>
+        <div class="auction-bidder">${st.currentWinner?'Licytuje: '+st.currentWinner:'— nikt jeszcze nie licytował —'}</div>
+      </div>
+      <div class="section-label">WYBIERZ GRACZA I KWOTĘ PODBICIA:</div>
+      <div class="player-budgets">${budgetsHTML}</div>
+      <div class="bid-btns">
+        ${bidAmounts.map(amt=>`<div class="bid-chip ${st.currentBid>=amt?'':'top'}" onclick="auctionBid(${amt})">+${amt} 🪙</div>`).join('')}
+      </div>`;
+    ctrl.innerHTML=`
+      <button class="ctrl-btn secondary" onclick="auctionPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn reveal-btn" onclick="auctionSell()">🔨 SPRZEDANO!</button>
+      <button class="ctrl-btn secondary" onclick="auctionNext()">POMIŃ ▶</button>`;
+  } else {
+    body.innerHTML=`
+      <div class="auction-item">
+        <div class="round-badge">${item.emoji} SPRZEDANO!</div>
+        <div class="auction-item-name">${item.emoji} ${e(item.name)}</div>
+        <div class="answer-box correct" style="margin-top:16px;">
+          <div class="answer-label">🔨 KUPUJE</div>
+          <div class="answer-text">${st.currentWinner||'—'}</div>
+          <div class="answer-sub">za ${st.currentBid} monet</div>
+        </div>
+      </div>
+      <div class="section-label">STAN BUDŻETÓW:</div>
+      <div class="player-budgets">${budgetsHTML}</div>`;
+    ctrl.innerHTML=`
+      <button class="ctrl-btn secondary" onclick="auctionPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn primary" onclick="auctionNext()">NASTĘPNA CECHA ▶</button>`;
+    spawnConfetti(40);
+  }
+}
+function auctionSetPlayer(p){ auctionState.currentWinner=p; renderAuction(); }
+function auctionBid(amt){
+  if(!auctionState.currentWinner){ showToast('Najpierw wybierz gracza!'); return; }
+  const p=auctionState.currentWinner;
+  const totalBid=auctionState.currentBid+amt;
+  if(auctionState.budgets[p]<totalBid){ showToast('Za mało monet!'); return; }
+  auctionState.currentBid=totalBid;
+  renderAuction();
+}
+function auctionSell(){
+  if(!auctionState.currentWinner){ showToast('Nikt nie licytował!'); return; }
+  const p=auctionState.currentWinner;
+  auctionState.budgets[p]-=auctionState.currentBid;
+  if(!auctionState.wins[p]) auctionState.wins[p]=[];
+  auctionState.wins[p].push(DATA.auctionItems[auctionState.idx]);
+  auctionState.phase='sold';
+  flashResult('win');
+  renderAuction();
+}
+function auctionNext(){
+  if(auctionState.idx<DATA.auctionItems.length-1){
+    auctionState.idx++;auctionState.phase='bid';
+    auctionState.currentBid=0;auctionState.currentWinner=null;
+    renderAuction();
+  } else showToast('Aukcja zakończona!');
+}
+function auctionPrev(){
+  if(auctionState.idx>0){
+    auctionState.idx--;auctionState.phase='bid';
+    auctionState.currentBid=0;auctionState.currentWinner=null;
+    renderAuction();
+  }
+}
+
+// ════════════════════════════════════════════
+// WRÓŻBY
+// ════════════════════════════════════════════
+const FLAMES_MEANING = {F:'Znajomi 👋',L:'Miłość ❤️',A:'Atrakcja 🔥',M:'Małżeństwo 💍',E:'Enemies 😤',S:'Siostry 👯'};
+function renderWrozby(){
+  const body=document.getElementById('wrozbyBody');
+  body.innerHTML=`
+    <!-- FLAMES -->
+    <div class="wrozba-card">
+      <div class="wrozba-title">🔮 FLAMES — ZWIĄZEK Z OSOBĄ</div>
+      <div class="wrozba-input-row">
+        <input class="wrozba-input" id="flamesName1" placeholder="Twoje imię (np. Kasia)">
+        <input class="wrozba-input" id="flamesName2" placeholder="Imię drugiej osoby">
+        <button class="ctrl-btn primary" style="padding:12px 20px;" onclick="calcFlames()">🔮 WRÓŻ!</button>
+      </div>
+      <div id="flamesResult" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- DATA ŚLUBU -->
+    <div class="wrozba-card">
+      <div class="wrozba-title">📅 KIEDY ŚLUB? — WRÓŻBA Z IMIENIA</div>
+      <div class="wrozba-input-row">
+        <input class="wrozba-input" id="weddingName" placeholder="Twoje imię">
+        <button class="ctrl-btn primary" style="padding:12px 20px;" onclick="calcWeddingDate()">📅 WRÓŻ!</button>
+      </div>
+      <div id="weddingResult" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- LOSOWA PRZEPOWIEDNIA -->
+    <div class="wrozba-card">
+      <div class="wrozba-title">🌟 PRZEPOWIEDNIA — CO CIĘ CZEKA?</div>
+      <div style="text-align:center;">
+        <button class="ctrl-btn reveal-btn" style="margin:8px auto;" onclick="calcProphecy()">🌟 LOSUJ PRZEPOWIEDNIĘ</button>
+      </div>
+      <div id="prophecyResult" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- LICZBA DZIECI -->
+    <div class="wrozba-card">
+      <div class="wrozba-title">👶 ILE DZIECI? — WRÓŻBA Z DAT</div>
+      <div class="wrozba-input-row">
+        <input class="wrozba-input" id="kidsName" placeholder="Twoje imię">
+        <input class="wrozba-input" id="kidsYear" placeholder="Rok urodzenia (np. 1995)" type="number">
+        <button class="ctrl-btn primary" style="padding:12px 20px;" onclick="calcKids()">👶 WRÓŻ!</button>
+      </div>
+      <div id="kidsResult" style="margin-top:16px;"></div>
+    </div>`;
+}
+function calcFlames(){
+  const n1=(document.getElementById('flamesName1').value||'').toLowerCase().replace(/\s/g,'');
+  const n2=(document.getElementById('flamesName2').value||'').toLowerCase().replace(/\s/g,'');
+  if(!n1||!n2){showToast('Wpisz oba imiona!');return;}
+  // Remove common letters
+  let a=n1.split(''), b=n2.split('');
+  for(let i=0;i<a.length;i++){
+    const j=b.indexOf(a[i]);
+    if(j!==-1){a[i]=null;b[j]=null;}
+  }
+  const count=a.filter(Boolean).length+b.filter(Boolean).length;
+  const flames='FLAMES'.split('');
+  let arr=[...flames];
+  let idx=0;
+  while(arr.length>1){
+    idx=(idx+count-1)%arr.length;
+    arr.splice(idx,1);
+    if(idx>=arr.length)idx=0;
+  }
+  const letter=arr[0];
+  const meaning=FLAMES_MEANING[letter]||'Niespodziewane!';
+  document.getElementById('flamesResult').innerHTML=`
+    <div class="wrozba-result">${letter}</div>
+    <div class="wrozba-sub">${n1} + ${n2} = <strong>${meaning}</strong></div>`;
+  spawnConfetti(30);
+}
+function calcWeddingDate(){
+  const name=document.getElementById('weddingName').value.trim();
+  if(!name){showToast('Wpisz imię!');return;}
+  const sum=name.split('').reduce((acc,c)=>acc+c.charCodeAt(0),0);
+  const year=2025+((sum%5)+1);
+  const month=['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'][sum%12];
+  const days=['Sobota','Niedziela'][sum%2];
+  document.getElementById('weddingResult').innerHTML=`
+    <div class="wrozba-result">${month} ${year}</div>
+    <div class="wrozba-sub">${name} wyjdzie za mąż w ${days} · ${month} ${year} 💍</div>`;
+}
+const PROPHECIES=[
+  "Twój ślub będzie legendarny — wszyscy będą mówić o nim przez lata 🎉",
+  "Czeka cię wielka miłość... i bardzo duże wesele 💒",
+  "W tym roku kogoś spotkasz. On ma brodę. I zna się na kuchni 🍳",
+  "Twoje przyszłe dzieci będą piękne ale bardzo głośne 👶🎸",
+  "Znajdziesz prawdziwą miłość... i 20 złotych w kieszeni 💰",
+  "Twój partner będzie bogatszy niż myślisz, ale kto pyta o hajs? ❤️",
+  "Gwiazdy mówią: tak, on o tobie myśli. Sprawdź telefon 📱",
+  "Los przepowiada: jedno duże szczęście i jeden wielki błąd. Wszystko się ułoży 🌟",
+  "Twój mąż będzie gotował lepiej niż ty. Dziękuj bogom 🙏",
+  "Niespodziewana randka czeka za rogiem. Dosłownie. Teraz.",
+];
+function calcProphecy(){
+  const p=PROPHECIES[Math.floor(Math.random()*PROPHECIES.length)];
+  document.getElementById('prophecyResult').innerHTML=`
+    <div class="wrozba-result" style="font-size:1.6rem;">✨</div>
+    <div class="wrozba-sub" style="font-size:1rem;color:var(--text);">${p}</div>`;
+  spawnConfetti(20);
+}
+function calcKids(){
+  const name=document.getElementById('kidsName').value.trim();
+  const year=parseInt(document.getElementById('kidsYear').value)||1990;
+  if(!name){showToast('Wpisz imię!');return;}
+  const num=((name.length+year)%5)+1;
+  const emojis=['👶','👧','🧒','👦','🧒'][num-1]||'👶';
+  document.getElementById('kidsResult').innerHTML=`
+    <div class="wrozba-result">${num} ${emojis.repeat(num)}</div>
+    <div class="wrozba-sub">${name} będzie miała ${num} ${num===1?'dziecko':num<5?'dzieci':'dzieci'} 🍼</div>`;
+}
+
+// ════════════════════════════════════════════
+// DOPASUJ PARĘ
+// ════════════════════════════════════════════
+let couplesState={};
+function resetCouples(){
+  couplesState={selectedA:null,selectedB:null,matched:[],wrong:[],score:0};
+}
+function renderCouples(){
+  if(!couplesState.matched) resetCouples();
+  const body=document.getElementById('couplesBody');
+  const ctrl=document.getElementById('couplesControls');
+  const st=couplesState;
+  const shuffledA=DATA.couples.map((p,i)=>({...p,idx:i}));
+  const shuffledB=DATA.couples.map((p,i)=>({...p,idx:i})).sort(()=>Math.random()-.5);
+
+  document.getElementById('couplesPhaseLabel').textContent=
+    `${st.matched.length}/${DATA.couples.length} par dopasowanych · KLIKNIJ JEDNĄ OSOBĘ, POTEM DRUGĄ`;
+
+  body.innerHTML=`
+    <div class="couples-score">✅ ${st.score} / ${DATA.couples.length} par</div>
+    <div class="couples-board">
+      <div>
+        <div class="couples-col-label" style="color:var(--gold);">LEWA STRONA</div>
+        ${shuffledA.map((p,i)=>`
+          <div class="couple-item ${st.matched.includes(p.idx)?'matched':''} ${st.selectedA===p.idx?'selected-a':''} ${st.wrong.includes('a'+p.idx)?'wrong':''}"
+            onclick="${st.matched.includes(p.idx)?'':''};couplesSelectA(${p.idx})">
+            ${e(p.a)}
+          </div>`).join('')}
+      </div>
+      <div>
+        <div class="couples-col-label" style="color:var(--pink);">PRAWA STRONA</div>
+        ${shuffledB.map((p,i)=>`
+          <div class="couple-item ${st.matched.includes(p.idx)?'matched':''} ${st.selectedB===p.idx?'selected-b':''} ${st.wrong.includes('b'+p.idx)?'wrong':''}"
+            onclick="${st.matched.includes(p.idx)?'':''};couplesSelectB(${p.idx})">
+            ${e(p.b)}
+          </div>`).join('')}
+      </div>
+    </div>`;
+  ctrl.innerHTML=`<button class="ctrl-btn secondary" onclick="resetCouples();renderCouples()">🔄 NOWA GRA</button>
+    <span class="counter-badge">${st.matched.length} / ${DATA.couples.length} par</span>`;
+}
+function couplesSelectA(idx){
+  if(couplesState.matched.includes(idx))return;
+  couplesState.selectedA=idx;
+  couplesState.wrong=[];
+  renderCouples();
+  checkCouplesMatch();
+}
+function couplesSelectB(idx){
+  if(couplesState.matched.includes(idx))return;
+  couplesState.selectedB=idx;
+  couplesState.wrong=[];
+  renderCouples();
+  checkCouplesMatch();
+}
+function checkCouplesMatch(){
+  const st=couplesState;
+  if(st.selectedA===null||st.selectedB===null)return;
+  if(st.selectedA===st.selectedB){
+    st.matched.push(st.selectedA);
+    st.score++;
+    st.selectedA=null;st.selectedB=null;
+    flashResult('win');
+    if(st.matched.length===DATA.couples.length){spawnConfetti(80);showToast('🎉 Wszystkie pary dopasowane!');}
+    renderCouples();
+  } else {
+    st.wrong=['a'+st.selectedA,'b'+st.selectedB];
+    renderCouples();
+    setTimeout(()=>{
+      st.selectedA=null;st.selectedB=null;st.wrong=[];
+      renderCouples();
+    },800);
+    flashResult('lose');
+  }
+}
+
+// ════════════════════════════════════════════
+// NIGDY NIE
+// ════════════════════════════════════════════
+if(!S.never) S.never={idx:0,yes:0,no:0};
+function renderNever(){
+  const s=S.never,txt=DATA.never[s.idx];
+  const tot=s.yes+s.no;
+  document.getElementById('neverPhaseLabel').textContent=`KARTA ${s.idx+1}/${DATA.never.length} · KTO TO ROBIŁA — PIJE!`;
+  const dots=DATA.never.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
+  document.getElementById('neverBody').innerHTML=`
+    <div class="step-indicator">${dots}</div>
+    <div class="never-card">
+      <div class="never-text">${e(txt)}</div>
+    </div>
+    <div class="never-votes">
+      <button class="never-vote-btn yes ${s.yes>0?'active-yes':''}" onclick="neverVote('yes')">
+        🍹 ROBIŁAM!${s.yes>0?' ('+s.yes+')':''}
+      </button>
+      <button class="never-vote-btn no ${s.no>0?'active-no':''}" onclick="neverVote('no')">
+        😇 NIE JA!${s.no>0?' ('+s.no+')':''}
+      </button>
+    </div>
+    <div class="score-bar">
+      <div class="score-item"><span class="score-label">🍹 PIJĄ</span><span class="score-value pink">${tot?Math.round(s.yes/tot*100)+'%':'—'}</span></div>
+      <div class="score-item"><span class="score-label">😇 NIE PIJĄ</span><span class="score-value blue">${tot?Math.round(s.no/tot*100)+'%':'—'}</span></div>
+      <div class="score-item"><span class="score-label">GŁOSÓW</span><span class="score-value">${tot}</span></div>
+    </div>`;
+  document.getElementById('neverControls').innerHTML=`
+    <button class="ctrl-btn secondary" onclick="neverPrev()">◀ WSTECZ</button>
+    <span class="counter-badge">${s.idx+1} / ${DATA.never.length}</span>
+    <button class="ctrl-btn primary" onclick="neverNext()">NASTĘPNA ▶</button>`;
+}
+function neverVote(v){v==='yes'?S.never.yes++:S.never.no++;renderNever();}
+function neverNext(){if(S.never.idx<DATA.never.length-1){S.never.idx++;S.never.yes=0;S.never.no=0;renderNever();}else showToast('Koniec kart!');}
+function neverPrev(){if(S.never.idx>0){S.never.idx--;S.never.yes=0;S.never.no=0;renderNever();}}
+
+// ════════════════════════════════════════════
+// GŁUCHY TELEFON RYSOWANY
+// ════════════════════════════════════════════
+let telState={round:0,phase:'draw',guesses:[],canvasHistory:[]};
+let telDrawing=false,telLx=0,telLy=0,telColor='#1a1a2e',telBrush=5;
+
+function renderTelephone(){
+  const s=telState;
+  const players=DATA.telPlayers;
+  const totalRounds=players.length;
+  document.getElementById('telPhaseLabel').textContent=
+    `RUNDA ${s.round+1}/${totalRounds} · ${players[s.round]?.toUpperCase()||''} ${s.phase==='draw'?'RYSUJE!':'ZGADUJE!'}`;
+
+  const playersHTML=players.map((p,i)=>`
+    <div class="tel-player ${i===s.round?'active':i<s.round?'done':''}">
+      <div class="p-num">${i+1}</div>
+      <div class="p-lbl">${e(p)}</div>
+    </div>`).join('');
+
+  let prompt='';
+  if(s.round===0) prompt=DATA.telStartWord;
+  else if(s.phase==='draw'&&s.guesses.length>0) prompt=s.guesses[s.guesses.length-1];
+  else prompt='...';
+
+  const body=document.getElementById('telBody');
+  body.innerHTML=`
+    <div class="telephone-round">${playersHTML}</div>
+    <div class="telephone-canvas-wrap">
+      ${s.phase==='draw'?`
+        <div class="tel-prompt">📌 Narysuj: <strong>${e(prompt)}</strong></div>
+        <div class="draw-tools">
+          ${['#1a1a2e','#FF2D9C','#FFD700','#00CFFF','#FF4500','#22BB33','#ffffff'].map(c=>
+            `<div class="color-dot ${telColor===c?'active':''}" style="background:${c};${c==='#ffffff'?'border:1px solid #aaa':''}" data-color="${c}" onclick="setTelColor(this)"></div>`).join('')}
+          <div style="width:1px;height:22px;background:var(--border);margin:0 4px;"></div>
+          ${[3,7,14,28].map((s,i)=>
+            `<button class="brush-btn ${telBrush===s?'active':''}" onclick="setTelBrush(${s})">${['S','M','L','XL'][i]}</button>`).join('')}
+          <button class="ctrl-btn danger" style="margin-left:auto;padding:6px 12px;font-size:.8rem;" onclick="clearTelCanvas()">🗑</button>
+        </div>
+        <canvas class="tel-canvas" id="telCanvas"></canvas>
+      `:`
+        <div class="tel-prompt">👀 Co widzisz na rysunku?</div>
+        <div style="display:flex;flex-direction:column;gap:10px;padding:8px 0;flex:1;">
+          <div class="advice-input-wrap">
+            <div class="section-label">ZGADNIJ CO TO JEST</div>
+            <textarea id="telGuessInput" placeholder="Wpisz swoją odpowiedź..." rows="2"></textarea>
+            <div style="display:flex;justify-content:flex-end;margin-top:6px;">
+              <button class="ctrl-btn primary" style="padding:9px 20px;" onclick="addTelGuess()">+ ZATWIERDŹ</button>
+            </div>
+          </div>
+          ${s.guesses.length?`
+            <div class="section-label">ODPOWIEDZI (${s.guesses.length})</div>
+            <div class="tel-guesses">
+              ${s.guesses.map((g,i)=>`
+                <div class="tel-guess-item">
+                  <span class="tel-guess-player">${e(players[s.round]||'?')}</span>
+                  <span>${e(g)}</span>
+                </div>`).join('')}
+            </div>`:''}
+        </div>
+      `}
+    </div>`;
+
+  const ctrl=document.getElementById('telControls');
+  ctrl.innerHTML=s.phase==='draw'?`
+    <button class="ctrl-btn secondary" onclick="telBack()">◀ WSTECZ</button>
+    <button class="ctrl-btn reveal-btn" onclick="telSwitchToGuess()">👀 POKAŻ DO ZGADYWANIA</button>
+  `:`
+    <button class="ctrl-btn secondary" onclick="telSwitchToDraw()">← WRÓĆ DO RYSOWANIA</button>
+    <button class="ctrl-btn primary" onclick="telNext()">NASTĘPNA RUNDA ▶</button>
+  `;
+
+  if(s.phase==='draw') setTimeout(initTelCanvas,50);
+}
+function initTelCanvas(){
+  const canvas=document.getElementById('telCanvas');
+  if(!canvas)return;
+  canvas.width=canvas.offsetWidth||600;
+  canvas.height=Math.max(220,canvas.offsetHeight||300);
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#F0EBF8';ctx.fillRect(0,0,canvas.width,canvas.height);
+  // Restore if history exists for this round
+  if(telState.canvasHistory[telState.round]){
+    const img=new Image();
+    img.onload=()=>ctx.drawImage(img,0,0);
+    img.src=telState.canvasHistory[telState.round];
+  }
+  const gp=ev=>{const r=canvas.getBoundingClientRect();return[ev.clientX-r.left,ev.clientY-r.top];};
+  canvas.onmousedown=ev=>{telDrawing=true;[telLx,telLy]=gp(ev);};
+  canvas.onmousemove=ev=>{if(!telDrawing)return;const[x,y]=gp(ev);const ctx2=canvas.getContext('2d');ctx2.beginPath();ctx2.moveTo(telLx,telLy);ctx2.lineTo(x,y);ctx2.strokeStyle=telColor;ctx2.lineWidth=telBrush;ctx2.lineCap='round';ctx2.lineJoin='round';ctx2.stroke();[telLx,telLy]=[x,y];};
+  canvas.onmouseup=canvas.onmouseleave=()=>telDrawing=false;
+  canvas.ontouchstart=ev=>{ev.preventDefault();telDrawing=true;[telLx,telLy]=gp(ev.touches[0]);};
+  canvas.ontouchmove=ev=>{ev.preventDefault();if(!telDrawing)return;const[x,y]=gp(ev.touches[0]);const ctx2=canvas.getContext('2d');ctx2.beginPath();ctx2.moveTo(telLx,telLy);ctx2.lineTo(x,y);ctx2.strokeStyle=telColor;ctx2.lineWidth=telBrush;ctx2.lineCap='round';ctx2.lineJoin='round';ctx2.stroke();[telLx,telLy]=[x,y];};
+  canvas.ontouchend=()=>telDrawing=false;
+}
+function clearTelCanvas(){const c=document.getElementById('telCanvas');if(!c)return;const ctx=c.getContext('2d');ctx.fillStyle='#F0EBF8';ctx.fillRect(0,0,c.width,c.height);}
+function setTelColor(el){telColor=el.dataset.color;document.querySelectorAll('#telBody .color-dot').forEach(d=>d.classList.remove('active'));el.classList.add('active');}
+function setTelBrush(s){telBrush=s;renderTelephone();}
+function saveTelCanvas(){
+  const c=document.getElementById('telCanvas');
+  if(c) telState.canvasHistory[telState.round]=c.toDataURL();
+}
+function telSwitchToGuess(){saveTelCanvas();telState.phase='guess';telState.guesses=[];renderTelephone();}
+function telSwitchToDraw(){telState.phase='draw';renderTelephone();}
+function addTelGuess(){
+  const v=document.getElementById('telGuessInput')?.value.trim();
+  if(!v)return;
+  telState.guesses.push(v);
+  document.getElementById('telGuessInput').value='';
+  renderTelephone();
+}
+function telNext(){
+  if(telState.round<DATA.telPlayers.length-1){
+    telState.round++;telState.phase='draw';telState.guesses=[];
+    renderTelephone();
+  } else {
+    showToast('Koniec rund! Czy hasło przeżyło? 😂');
+    // Show final reveal
+    document.getElementById('telControls').innerHTML=`
+      <button class="ctrl-btn danger" onclick="telReset()">🔄 NOWA GRA</button>`;
+  }
+}
+function telBack(){if(telState.round>0){telState.round--;telState.phase='draw';renderTelephone();}}
+function telReset(){telState={round:0,phase:'draw',guesses:[],canvasHistory:[]};renderTelephone();}
+
+// ════════════════════════════════════════════
+// PRINT FUNCTIONS
+// ════════════════════════════════════════════
+function setPrintPage(html){
+  document.getElementById('printPage').innerHTML=html;
+  setTimeout(()=>window.print(),100);
+}
+
+function printTierList(){
+  const placed=DATA.tierItems.filter(it=>tierState[it]&&tierState[it]!=='pool');
+  setPrintPage(`
+    <div class="pp-title">🏆 TIER LIST · ${e(DATA.tierCategory)}</div>
+    <div class="pp-sub">LAST DISCO · WIECZÓR PANIEŃSKI KASI</div>
+    <hr class="pp-divider">
+    ${TIERS.map(t=>`
+      <div class="pp-tier-row">
+        <div class="pp-tier-lbl" style="background:${{'S':'#FF215A','A':'#FF8C00','B':'#FFD700','C':'#39C26E','D':'#00CFFF','F':'#7B2D8B'}[t]};color:white;">${t}</div>
+        <div class="pp-tier-box">
+          ${DATA.tierItems.filter(it=>tierState[it]===t).map(it=>`<span style="margin-right:10px;font-size:.85rem;">${e(it)}</span>`).join('') || '<span style="color:#bbb;font-size:.8rem;">— puste —</span>'}
+        </div>
+      </div>`).join('')}
+    <div style="margin-top:12px;font-size:.75rem;color:#888;text-align:center;">PULA (nieumieszczone): ${DATA.tierItems.filter(it=>!tierState[it]||tierState[it]==='pool').map(e).join(', ')||'—'}</div>`);
+}
+
+function printAuction(){
+  setPrintPage(`
+    <div class="pp-title">💰 AUKCJA ZALET</div>
+    <div class="pp-sub">LAST DISCO · WIECZÓR PANIEŃSKI KASI · KAŻDA GRACZKA MA ${DATA.auctionBudget} MONET</div>
+    <hr class="pp-divider">
+    <div class="pp-grid" style="grid-template-columns:repeat(3,1fr);">
+      ${DATA.auctionItems.map((it,i)=>`
+        <div class="pp-card">
+          <div class="pp-label">PRZEDMIOT ${i+1}</div>
+          <div class="pp-text">${it.emoji} ${e(it.name)}</div>
+          <div class="pp-line"></div>
+          <div style="font-size:.7rem;color:#888;">Kupuje: ________________</div>
+          <div style="font-size:.7rem;color:#888;">Cena: ________________</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:16px;">
+      <div class="pp-label">KARTA GRACZA — WYTNIJ</div>
+      <div class="pp-grid" style="grid-template-columns:repeat(${DATA.auctionPlayers.length},1fr);gap:6px;">
+        ${DATA.auctionPlayers.map(p=>`
+          <div class="pp-card" style="text-align:center;">
+            <div style="font-weight:bold;font-size:1rem;">${e(p)}</div>
+            <div style="font-size:2rem;margin:8px 0;">🪙</div>
+            <div style="font-size:1.2rem;font-weight:bold;">${DATA.auctionBudget}</div>
+            <div style="font-size:.65rem;color:#888;">monet na start</div>
+          </div>`).join('')}
+      </div>
+    </div>`);
+}
+
+function printWrozby(){
+  setPrintPage(`
+    <div class="pp-title">🔮 WRÓŻBY</div>
+    <div class="pp-sub">LAST DISCO · WIECZÓR PANIEŃSKI KASI</div>
+    <hr class="pp-divider">
+    <div class="pp-grid" style="grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="pp-card">
+        <div class="pp-label">🔥 FLAMES</div>
+        <div class="pp-text">Twoje imię: ________________________</div>
+        <div class="pp-line"></div>
+        <div class="pp-text">Imię drugiej osoby: ________________</div>
+        <div class="pp-line"></div>
+        <div style="font-size:.75rem;margin-top:8px;">Wynik: F-L-A-M-E-S</div>
+        <div style="font-size:.65rem;color:#888;line-height:1.6;">F=Znajomi · L=Miłość · A=Atrakcja<br>M=Małżeństwo · E=Enemies · S=Siostry</div>
+      </div>
+      <div class="pp-card">
+        <div class="pp-label">📅 KIEDY ŚLUB?</div>
+        <div class="pp-text">Moje imię: ________________________</div>
+        <div class="pp-line"></div>
+        <div class="pp-text">Rok urodzenia: ____________________</div>
+        <div class="pp-line"></div>
+        <div class="pp-text">Wynik: ___________________________</div>
+      </div>
+      <div class="pp-card">
+        <div class="pp-label">👶 ILE DZIECI?</div>
+        <div class="pp-text">Moje imię: ________________________</div>
+        <div class="pp-line"></div>
+        <div class="pp-text">Liczba dzieci: ____________________</div>
+        <div class="pp-line"></div>
+        <div class="pp-text">Imiona: __________________________</div>
+      </div>
+      <div class="pp-card">
+        <div class="pp-label">🌟 MOJA PRZEPOWIEDNIA</div>
+        <div style="height:60px;border-bottom:1px dashed #ccc;margin:6px 0;"></div>
+        <div style="height:40px;border-bottom:1px dashed #ccc;"></div>
+      </div>
+    </div>`);
+}
+
+function printCouples(){
+  const shuffled=[...DATA.couples].sort(()=>Math.random()-.5);
+  setPrintPage(`
+    <div class="pp-title">💑 DOPASUJ PARĘ</div>
+    <div class="pp-sub">LAST DISCO · WIECZÓR PANIEŃSKI KASI · POŁĄCZ PARY STRZAŁKĄ</div>
+    <hr class="pp-divider">
+    <div style="display:flex;gap:20px;">
+      <div style="flex:1;">
+        <div class="pp-label">LEWA STRONA</div>
+        ${DATA.couples.map((p,i)=>`<div class="pp-card" style="margin-bottom:6px;"><div class="pp-text">${i+1}. ${e(p.a)}</div></div>`).join('')}
+      </div>
+      <div style="flex:1;">
+        <div class="pp-label">PRAWA STRONA (wymieszane)</div>
+        ${shuffled.map((p,i)=>`<div class="pp-card" style="margin-bottom:6px;"><div class="pp-text">${String.fromCharCode(65+i)}. ${e(p.b)}</div></div>`).join('')}
+      </div>
+      <div style="flex:.5;">
+        <div class="pp-label">ODPOWIEDZI</div>
+        ${DATA.couples.map((p,i)=>`<div style="font-size:.75rem;margin-bottom:8px;">${i+1} → ___</div>`).join('')}
+      </div>
+    </div>`);
+}
+
+function printNever(){
+  setPrintPage(`
+    <div class="pp-title">🙈 NIGDY NIE...</div>
+    <div class="pp-sub">LAST DISCO · WIECZÓR PANIEŃSKI KASI · KTO TO ROBIŁA — PIJE!</div>
+    <hr class="pp-divider">
+    <div class="pp-grid" style="grid-template-columns:1fr 1fr;gap:8px;">
+      ${DATA.never.map((n,i)=>`
+        <div class="pp-card">
+          <div class="pp-label">KARTA ${i+1}</div>
+          <div class="pp-text" style="font-size:.9rem;">${e(n)}</div>
+        </div>`).join('')}
+    </div>`);
+}
+
+document.addEventListener('keydown',ev=>{
+  if(ev.target.tagName==='INPUT'||ev.target.tagName==='TEXTAREA')return;
+  const id=document.querySelector('.screen.active')?.id;
+  if(ev.key==='Enter'||ev.key===' '){
+    ev.preventDefault();
+    if(id==='quiz'){S.quiz.phase==='question'?quizReveal():quizNext();}
+    if(id==='highlow'){S.highlow.phase==='question'?hlReveal():hlNext();}
+    if(id==='eight'){S.eight.phase==='task'?eightStartTimer():eightNext();}
+  }
+  if(ev.key==='ArrowRight'){
+    if(id==='quiz')quizNext();if(id==='honornot')honNext();
+    if(id==='highlow')hlNext();if(id==='eight')eightNext();if(id==='choice')choiceNext();
+  }
+  if(ev.key==='ArrowLeft'){
+    if(id==='quiz')quizPrev();if(id==='honornot')honPrev();
+    if(id==='highlow')hlPrev();if(id==='eight')eightPrev();if(id==='choice')choicePrev();
+  }
+});
+</script>
+</body>
+</html>
