@@ -1666,39 +1666,80 @@ const GAME_INTROS = {
 };
 
 function showGameIntro(game) {
+  document.getElementById('introOverlay')?.remove();
   const info = GAME_INTROS[game];
   if(!info) { hostStart(game); return; }
+  window._introGame = game;
 
-  const overlay = document.createElement('div');
-  overlay.className = 'intro-overlay';
-  overlay.id = 'introOverlay';
+  const ov = document.createElement('div');
+  ov.className = 'intro-overlay';
+  ov.id = 'introOverlay';
 
-  const rulesHtml = info.rules.map(r => `
-    <div class="intro-rule">
-      <span class="intro-rule-icon">${r.icon}</span>
-      <span class="intro-rule-text">${r.text}</span>
-    </div>`).join('');
+  // Build rules
+  const rulesDiv = document.createElement('div');
+  rulesDiv.className = 'intro-rules';
+  (info.rules||[]).forEach(r => {
+    const rule = document.createElement('div');
+    rule.className = 'intro-rule';
+    rule.innerHTML = '<span class="intro-rule-icon">' + r.icon + '</span><span class="intro-rule-text">' + r.text + '</span>';
+    rulesDiv.appendChild(rule);
+  });
 
-  const scoreHtml = info.score ? `
-    <div class="intro-score-info">
-      <span class="intro-score-icon">🏆</span>
-      <span class="intro-score-text"><strong>PUNKTY:</strong> ${info.score}</span>
-    </div>` : '';
+  // Build panel
+  const panel = document.createElement('div');
+  panel.className = 'intro-panel';
 
-  overlay.innerHTML = `
-    <div class="intro-panel">
-      <div class="intro-emoji">${info.emoji}</div>
-      <div class="intro-title">${info.title}</div>
-      <div class="intro-subtitle">${info.subtitle}</div>
-      <div class="intro-rules">${rulesHtml}</div>
-      ${scoreHtml}
-      <div class="intro-btns">
-        <button class="intro-back-btn" onclick="document.getElementById('introOverlay')?.remove()">← MENU</button>
-        <button class="intro-start-btn" onclick="document.getElementById('introOverlay')?.remove();hostStart('${game}')">▶ START!</button>
-      </div>
-    </div>`;
-  document.body.appendChild(overlay);
+  const emoji = document.createElement('div');
+  emoji.className = 'intro-emoji';
+  emoji.textContent = info.emoji;
+
+  const title = document.createElement('div');
+  title.className = 'intro-title';
+  title.textContent = info.title;
+
+  const sub = document.createElement('div');
+  sub.className = 'intro-subtitle';
+  sub.textContent = info.subtitle;
+
+  const btns = document.createElement('div');
+  btns.className = 'intro-btns';
+
+  const backBtn = document.createElement('button');
+  backBtn.className = 'intro-back-btn';
+  backBtn.textContent = '← MENU';
+  backBtn.onclick = () => document.getElementById('introOverlay')?.remove();
+
+  const startBtn = document.createElement('button');
+  startBtn.className = 'intro-start-btn';
+  startBtn.textContent = '▶ START!';
+  startBtn.onclick = introStart;
+
+  btns.appendChild(backBtn);
+  btns.appendChild(startBtn);
+
+  panel.appendChild(emoji);
+  panel.appendChild(title);
+  panel.appendChild(sub);
+  panel.appendChild(rulesDiv);
+
+  if(info.score) {
+    const scoreDiv = document.createElement('div');
+    scoreDiv.className = 'intro-score-info';
+    scoreDiv.innerHTML = '<span class="intro-score-icon">🏆</span><span class="intro-score-text"><strong>PUNKTY:</strong> ' + info.score + '</span>';
+    panel.appendChild(scoreDiv);
+  }
+
+  panel.appendChild(btns);
+  ov.appendChild(panel);
+  document.body.appendChild(ov);
 }
+function introStart() {
+  const game = window._introGame;
+  document.getElementById('introOverlay')?.remove();
+  if(game) hostStart(game);
+}
+
+
 // ── IN-GAME PLAYERS STRIP ──
 function updateGamePlayersStrip(votes) {
   const strip = document.getElementById('gamePlayersStrip');
