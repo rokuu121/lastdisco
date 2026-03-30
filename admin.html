@@ -15,7 +15,6 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow:hidden;}
-#home{overflow-y:auto!important;}
 .disco-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse at 10% 15%,rgba(255,45,156,.2) 0%,transparent 40%),
     radial-gradient(ellipse at 90% 85%,rgba(0,207,255,.16) 0%,transparent 40%),
@@ -27,37 +26,9 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .screen.active{display:flex;}
 
 /* ── HOME ── */
-#home{align-items:center;justify-content:flex-start;padding:18px 0 24px;gap:10px;}
-.home-crown{font-size:3.5rem;margin-bottom:4px;animation:float 3s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0)rotate(-5deg);}50%{transform:translateY(-10px)rotate(5deg);}}
-.home-title{font-family:'Bebas Neue';font-size:clamp(3rem,9vw,8rem);letter-spacing:8px;line-height:.9;text-align:center;
-  background:linear-gradient(135deg,var(--gold),var(--gold2) 35%,var(--pink) 70%,var(--pink2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 0 30px rgba(255,215,0,.2));}
-.home-sub{font-family:'Playfair Display';font-style:italic;color:var(--blue);font-size:1.1rem;letter-spacing:2px;margin:8px 0 6px;}
-.host-badge{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.4);border-radius:20px;
-  padding:5px 18px;font-family:'Bebas Neue';font-size:.85rem;letter-spacing:3px;color:var(--gold);margin-bottom:24px;}
-.qr-section{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.05);
-  border:1px solid var(--border);border-radius:14px;padding:14px 20px;margin-bottom:10px;
-  max-width:700px;width:92vw;}
-.qr-section canvas{border-radius:8px;background:white;padding:4px;flex-shrink:0;}
-.qr-info{flex:1;}
-.qr-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;color:var(--gold);margin-bottom:4px;}
-.qr-url{font-size:.8rem;color:var(--blue);word-break:break-all;line-height:1.4;}
-.qr-hint{font-size:.65rem;color:var(--muted);margin-top:6px;line-height:1.4;}
-.online-count{font-family:'Bebas Neue';font-size:.9rem;letter-spacing:2px;color:var(--green);margin-top:6px;}
-.games-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:min(1100px,96vw);max-height:none;padding:2px;}
-@media(max-width:900px){.games-grid{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:600px){.games-grid{grid-template-columns:repeat(2,1fr);}}
-.games-grid::-webkit-scrollbar{width:4px;}
-.games-grid::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px;}
-.game-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 10px;
-  cursor:pointer;text-align:center;transition:all .25s;position:relative;overflow:hidden;}
-.game-btn:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,215,0,.15);}
-.game-btn .icon{font-size:1.9rem;display:block;margin-bottom:4px;}
-.game-btn .name{font-family:'Bebas Neue';font-size:.95rem;letter-spacing:2px;color:var(--gold);}
-.game-btn .desc{font-size:.6rem;color:var(--muted);margin-top:3px;line-height:1.3;}
-
+50%{transform:translateY(-10px)rotate(5deg);}}
+@media(max-width:900px){}
+@media(max-width:600px){}
 /* ── GAME LAYOUT ── */
 .game-header{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
   padding:12px 20px 10px;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px;
@@ -367,20 +338,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(255,215,0,.22);border-radius:2px;}
 
-/* ── PLAYERS PANEL ── */
-.players-panel{background:rgba(255,255,255,.04);border:1px solid rgba(57,255,20,.25);border-radius:14px;
-  padding:12px 16px;max-width:700px;width:92vw;margin-bottom:8px;}
-.players-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.players-panel-title{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;color:var(--green);}
-.players-panel-count{font-family:'Bebas Neue';font-size:1.1rem;color:var(--gold);letter-spacing:2px;}
-.players-chips{display:flex;flex-wrap:wrap;gap:5px;min-height:24px;}
-.player-chip{background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);border-radius:20px;
-  padding:3px 10px;font-family:'Bebas Neue';font-size:.72rem;letter-spacing:1px;color:#ADFF2F;
-  animation:chipPop .3s cubic-bezier(.34,1.56,.64,1);cursor:default;}
-@keyframes chipPop{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
-.players-empty{font-size:.75rem;color:var(--muted);font-style:italic;}
-
-
+to{opacity:1;transform:scale(1);}}
 /* ════════════════════════════════════════
    VOTES LIVE PANEL — rich graphics
 ════════════════════════════════════════ */
@@ -521,6 +479,207 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .sb-row:not(:nth-child(-n+3)) .sb-pts{color:rgba(255,248,231,.45);}
 .sb-reset{width:100%;background:rgba(255,45,156,.06);border:1px solid rgba(255,45,156,.2);color:rgba(255,45,156,.6);border-radius:8px;padding:9px;font-family:'Bebas Neue';font-size:.8rem;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:14px;}
 .sb-reset:hover{background:rgba(255,45,156,.15);color:#FF2D9C;border-color:rgba(255,45,156,.4);}
+
+/* ════════════════════════════════════════════════════
+   HOME SCREEN — TV 2-COLUMN LAYOUT
+════════════════════════════════════════════════════ */
+#home{overflow:hidden!important;padding:0;}
+.home-layout{
+  display:grid;
+  grid-template-columns:1fr 320px;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* ── LEFT COLUMN ── */
+.home-left{
+  display:flex;flex-direction:column;
+  padding:16px 14px 14px 20px;
+  overflow:hidden;
+  border-right:1px solid rgba(255,215,0,.1);
+}
+.home-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:14px;flex-shrink:0;
+}
+.home-crown-small{font-size:2rem;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)rotate(-5deg);}50%{transform:translateY(-6px)rotate(5deg);}}
+.home-title-small{
+  font-family:'Bebas Neue';font-size:clamp(1.8rem,3.5vw,3rem);
+  letter-spacing:6px;line-height:.9;
+  background:linear-gradient(135deg,var(--gold),var(--gold2) 40%,var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.home-sub-small{
+  font-size:.7rem;color:var(--muted);letter-spacing:2px;margin-top:3px;
+}
+
+/* ── GAMES GRID ── */
+.games-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:7px;
+  flex:1;
+  overflow:hidden;
+  align-content:start;
+}
+.game-btn{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:10px 6px 8px;cursor:pointer;text-align:center;
+  transition:all .2s;display:flex;flex-direction:column;align-items:center;
+  gap:3px;min-height:0;
+}
+.game-btn:hover{
+  border-color:var(--gold);transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(255,215,0,.15);
+  background:rgba(255,215,0,.06);
+}
+.game-btn .icon{font-size:clamp(1.2rem,2.2vw,1.7rem);display:block;line-height:1;}
+.game-btn .name{
+  font-family:'Bebas Neue';font-size:clamp(.6rem,1vw,.78rem);
+  letter-spacing:1px;color:var(--gold);line-height:1.1;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  word-break:keep-all;
+}
+
+/* ── RIGHT COLUMN ── */
+.home-right{
+  display:flex;flex-direction:column;gap:0;
+  background:rgba(0,0,0,.25);
+  overflow:hidden;
+}
+
+/* QR compact */
+.qr-compact{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px 10px;
+  border-bottom:1px solid rgba(255,215,0,.08);
+  flex-shrink:0;
+}
+.qr-compact canvas{border-radius:6px;background:white;padding:3px;flex-shrink:0;}
+.qr-compact-info{flex:1;min-width:0;}
+.qr-compact-label{font-family:'Bebas Neue';font-size:.58rem;letter-spacing:3px;color:var(--gold);margin-bottom:3px;}
+.qr-compact-url{font-size:.65rem;color:var(--blue);word-break:break-all;line-height:1.4;opacity:.85;}
+
+/* Sections */
+.home-right-section{
+  display:flex;flex-direction:column;
+  border-bottom:1px solid rgba(255,215,0,.07);
+  flex:1;min-height:0;overflow:hidden;
+}
+.home-right-section:last-child{border-bottom:none;}
+.home-right-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px 6px;flex-shrink:0;
+  background:rgba(255,255,255,.02);
+}
+.home-right-title{
+  font-family:'Bebas Neue';font-size:.7rem;letter-spacing:3px;color:var(--green);
+}
+#globalSBWrap .home-right-title{color:var(--gold);}
+
+/* Players list (vertical, bigger) */
+.players-list{
+  flex:1;overflow-y:auto;padding:6px 10px 8px;display:flex;flex-direction:column;gap:5px;
+}
+.players-list::-webkit-scrollbar{width:3px;}
+.players-list::-webkit-scrollbar-thumb{background:rgba(57,255,20,.2);}
+.player-chip{
+  display:flex;align-items:center;gap:9px;
+  background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.2);border-radius:10px;
+  padding:7px 12px;
+  animation:chipPop .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes chipPop{from{opacity:0;transform:translateX(10px);}to{opacity:1;transform:translateX(0);}}
+.player-chip-av{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(57,255,20,.15);border:1.5px solid rgba(57,255,20,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue';font-size:.72rem;color:var(--green2);flex-shrink:0;
+}
+.player-chip-name{
+  font-family:'Bebas Neue';font-size:.85rem;letter-spacing:2px;color:var(--green2);flex:1;
+}
+.player-chip-time{font-size:.55rem;color:var(--muted);flex-shrink:0;}
+.players-empty{
+  font-size:.72rem;color:var(--muted);font-style:italic;text-align:center;padding:12px;
+}
+
+/* Global SB in right panel */
+#globalSBPanel{flex:1;overflow-y:auto;padding:4px 10px 8px;}
+#globalSBPanel::-webkit-scrollbar{width:3px;}
+#globalSBPanel .sb-row{padding:6px 8px;margin-bottom:3px;border-radius:8px;}
+#globalSBPanel .sb-avatar{width:28px;height:28px;font-size:.7rem;}
+#globalSBPanel .sb-name{font-size:.8rem;}
+#globalSBPanel .sb-breakdown{font-size:.5rem;}
+#globalSBPanel .sb-pts{font-size:1.1rem;}
+.sb-reset-small{
+  background:none;border:none;color:rgba(255,45,156,.5);
+  font-size:.85rem;cursor:pointer;padding:2px 4px;transition:color .2s;
+}
+.sb-reset-small:hover{color:#FF2D9C;}
+
+
+/* ══ END-OF-GAME SCOREBOARD OVERLAY ══ */
+.eog-overlay{
+  position:fixed;inset:0;z-index:600;
+  background:rgba(7,0,15,.92);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;
+  animation:eogIn .5s cubic-bezier(.34,1.2,.64,1);
+}
+@keyframes eogIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+.eog-panel{
+  background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,45,156,.05));
+  border:1px solid rgba(255,215,0,.3);border-radius:20px;
+  padding:28px 32px 24px;width:min(580px,90vw);
+  display:flex;flex-direction:column;gap:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+.eog-header{text-align:center;}
+.eog-emoji{font-size:2.5rem;display:block;margin-bottom:6px;animation:bounce .6s cubic-bezier(.34,1.56,.64,1);}
+@keyframes bounce{from{transform:scale(0);}to{transform:scale(1);}}
+.eog-title{font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:5px;
+  background:linear-gradient(90deg,var(--gold),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.eog-subtitle{font-size:.72rem;color:var(--muted);letter-spacing:3px;margin-top:4px;}
+.eog-rows{display:flex;flex-direction:column;gap:6px;}
+.eog-row{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;border-radius:12px;
+  position:relative;overflow:hidden;
+}
+.eog-row-bg{position:absolute;left:0;top:0;bottom:0;border-radius:12px;pointer-events:none;}
+.eog-row:nth-child(1){background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,165,0,.06));border:1.5px solid rgba(255,215,0,.4);}
+.eog-row:nth-child(1) .eog-row-bg{background:linear-gradient(90deg,rgba(255,215,0,.1),transparent);}
+.eog-row:nth-child(2){background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);}
+.eog-row:nth-child(3){background:rgba(255,140,0,.07);border:1px solid rgba(255,140,0,.2);}
+.eog-row:not(:nth-child(-n+3)){background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);}
+.eog-medal{font-size:1.4rem;min-width:32px;text-align:center;flex-shrink:0;z-index:1;}
+.eog-av{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue';font-size:.9rem;flex-shrink:0;z-index:1;
+}
+.eog-row:nth-child(1) .eog-av{background:rgba(255,215,0,.25);border:2px solid #FFD700;color:#FFD700;}
+.eog-row:nth-child(2) .eog-av{background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.3);color:rgba(255,248,231,.8);}
+.eog-row:nth-child(3) .eog-av{background:rgba(255,140,0,.15);border:2px solid rgba(255,140,0,.4);color:#FFA500;}
+.eog-row:not(:nth-child(-n+3)) .eog-av{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);color:rgba(255,248,231,.5);}
+.eog-name{flex:1;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;z-index:1;}
+.eog-row:nth-child(1) .eog-name{color:#FFD700;}
+.eog-row:nth-child(2) .eog-name{color:rgba(255,248,231,.9);}
+.eog-row:nth-child(3) .eog-name{color:#FFA500;}
+.eog-row:not(:nth-child(-n+3)) .eog-name{color:rgba(255,248,231,.5);}
+.eog-pts{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:1px;flex-shrink:0;z-index:1;}
+.eog-row:nth-child(1) .eog-pts{color:#FFD700;}
+.eog-row:nth-child(2) .eog-pts{color:rgba(255,248,231,.8);}
+.eog-row:nth-child(3) .eog-pts{color:#FFA500;}
+.eog-row:not(:nth-child(-n+3)) .eog-pts{color:rgba(255,248,231,.45);}
+.eog-punit{font-size:.65rem;opacity:.6;}
+.eog-btns{display:flex;gap:10px;justify-content:center;margin-top:4px;}
+.eog-btn-next{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);border:none;border-radius:10px;padding:12px 28px;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;cursor:pointer;transition:all .2s;}
+.eog-btn-next:hover{opacity:.85;transform:scale(1.03);}
+.eog-btn-home{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:var(--muted);border-radius:10px;padding:12px 20px;font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.eog-btn-home:hover{border-color:var(--pink);color:var(--pink);}
 </style>
 </head>
 <body>
@@ -531,48 +690,67 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 <!-- ══ HOME ══ -->
 <div class="screen active" id="home">
-  <div class="home-crown">🪩</div>
-  <div class="home-title">LAST DISCO</div>
-  <div class="home-sub">Wieczór Panieński Kasi</div>
-  <div class="host-badge">📺 PANEL HOSTA</div>
-  <div class="qr-section">
-    <canvas id="qrCanvas" width="80" height="80"></canvas>
-    <div class="qr-info">
-      <div class="qr-label">LINK DLA GOŚCI</div>
-      <div class="qr-url" id="playerUrl">ładowanie...</div>
-      <div class="qr-hint">Goście wchodzą na <strong>gierka.rokulab.com</strong><br>Ty jesteś na <strong>.../admin.html</strong></div>
+  <div class="home-layout">
+
+    <!-- ── LEFT: Logo + Games ── -->
+    <div class="home-left">
+      <div class="home-header">
+        <div class="home-crown-small">🪩</div>
+        <div>
+          <div class="home-title-small">LAST DISCO</div>
+          <div class="home-sub-small">Wieczór Panieński Kasi · <span style="color:var(--green);font-size:.75em;">📺 HOST</span></div>
+        </div>
+      </div>
+      <div class="games-grid" id="gamesGrid">
+        <div class="game-btn" onclick="hostStart('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div></div>
+        <div class="game-btn" onclick="hostStart('quiz')"><span class="icon">🎤</span><div class="name">ZGADNIJ KASIĘ</div></div>
+        <div class="game-btn" onclick="hostStart('vabank')"><span class="icon">🎲</span><div class="name">VA-BANK</div></div>
+        <div class="game-btn" onclick="hostStart('honornot')"><span class="icon">🔥</span><div class="name">HOT OR NOT</div></div>
+        <div class="game-btn" onclick="hostStart('advice')"><span class="icon">💌</span><div class="name">RADY DLA KASI</div></div>
+        <div class="game-btn" onclick="hostStart('highlow')"><span class="icon">📊</span><div class="name">WYŻEJ CZY NIŻEJ</div></div>
+        <div class="game-btn" onclick="hostStart('eight')"><span class="icon">⏱️</span><div class="name">MASZ 8 SEKUND</div></div>
+        <div class="game-btn" onclick="hostStart('choice')"><span class="icon">⚡</span><div class="name">CO WYBIERASZ?</div></div>
+        <div class="game-btn" onclick="hostStart('draw')"><span class="icon">✏️</span><div class="name">DORYSUJ TO</div></div>
+        <div class="game-btn" onclick="hostStart('tierlist')"><span class="icon">🏆</span><div class="name">TIER LIST</div></div>
+        <div class="game-btn" onclick="hostStart('auction')"><span class="icon">💰</span><div class="name">AUKCJA ZALET</div></div>
+        <div class="game-btn" onclick="hostStart('wrozby')"><span class="icon">🔮</span><div class="name">WRÓŻBY</div></div>
+        <div class="game-btn" onclick="hostStart('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARĘ</div></div>
+        <div class="game-btn" onclick="hostStart('neverhave')"><span class="icon">🙈</span><div class="name">NIGDY NIE...</div></div>
+        <div class="game-btn" onclick="hostStart('telephone')"><span class="icon">📞</span><div class="name">GŁUCHY TELEFON</div></div>
+      </div>
     </div>
-  </div>
-  <div class="players-panel">
-    <div class="players-panel-header">
-      <div class="players-panel-title">⬤ GRACZE ONLINE</div>
-      <div class="players-panel-count"><span id="onlineNum">0</span> dołączyły</div>
+
+    <!-- ── RIGHT: Players + Scoreboard ── -->
+    <div class="home-right">
+      <!-- QR compact -->
+      <div class="qr-compact">
+        <canvas id="qrCanvas" width="64" height="64"></canvas>
+        <div class="qr-compact-info">
+          <div class="qr-compact-label">LINK DLA GOŚCI</div>
+          <div class="qr-compact-url" id="playerUrl">ładowanie...</div>
+        </div>
+      </div>
+
+      <!-- Players -->
+      <div class="home-right-section">
+        <div class="home-right-header">
+          <div class="home-right-title">⬤ <span id="onlineNum">0</span> GRACZY ONLINE</div>
+        </div>
+        <div class="players-list" id="playersChips">
+          <div class="players-empty">Czekam na graczy…</div>
+        </div>
+      </div>
+
+      <!-- Global Scoreboard -->
+      <div class="home-right-section" id="globalSBWrap" style="display:none;flex-direction:column;">
+        <div class="home-right-header">
+          <div class="home-right-title">🏆 TABLICA WYNIKÓW</div>
+          <button onclick="resetScores()" class="sb-reset-small">🔄</button>
+        </div>
+        <div id="globalSBPanel"></div>
+      </div>
     </div>
-    <div class="players-chips" id="playersChips"><div class="players-empty">Czekam na graczy…</div></div>
-  </div>
-  <div id="globalSBWrap" style="max-width:700px;width:92vw;margin-bottom:8px;display:none;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <div style="font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:#FFD700;">🏆 TABLICA WYNIKÓW</div>
-      <button onclick="resetScores()" style="background:rgba(255,45,156,.08);border:1px solid rgba(255,45,156,.25);color:rgba(255,45,156,.7);border-radius:6px;padding:3px 10px;font-family:'Bebas Neue';font-size:.65rem;letter-spacing:2px;cursor:pointer;">🔄 RESET</button>
-    </div>
-    <div id="globalSBPanel"><div class="sb-empty">Zagraj w gry!</div></div>
-  </div>
-  <div class="games-grid">
-    <div class="game-btn" onclick="hostStart('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div><div class="desc">Klikaj pola gdy się zdarzają</div></div>
-    <div class="game-btn" onclick="hostStart('quiz')"><span class="icon">🎤</span><div class="name">ZGADNIJ KASIĘ</div><div class="desc">Quiz — pytanie → odpowiedź</div></div>
-    <div class="game-btn" onclick="hostStart('vabank')"><span class="icon">🎲</span><div class="name">VA-BANK</div><div class="desc">Tablica 50–1000 pkt</div></div>
-    <div class="game-btn" onclick="hostStart('honornot')"><span class="icon">🔥</span><div class="name">HOT OR NOT</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('advice')"><span class="icon">💌</span><div class="name">RADY DLA KASI</div><div class="desc">Goście piszą z telefonu</div></div>
-    <div class="game-btn" onclick="hostStart('highlow')"><span class="icon">📊</span><div class="name">WYŻEJ CZY NIŻEJ</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('eight')"><span class="icon">⏱️</span><div class="name">MASZ 8 SEKUND</div><div class="desc">Zadanie + timer</div></div>
-    <div class="game-btn" onclick="hostStart('choice')"><span class="icon">⚡</span><div class="name">CO WYBIERASZ?</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('draw')"><span class="icon">✏️</span><div class="name">DORYSUJ TO</div><div class="desc">Rysuj na TV</div></div>
-    <div class="game-btn" onclick="hostStart('tierlist')"><span class="icon">🏆</span><div class="name">TIER LIST</div><div class="desc">Drag & drop rankingi</div></div>
-    <div class="game-btn" onclick="hostStart('auction')"><span class="icon">💰</span><div class="name">AUKCJA ZALET</div><div class="desc">Licytuj cechy partnera</div></div>
-    <div class="game-btn" onclick="hostStart('wrozby')"><span class="icon">🔮</span><div class="name">WRÓŻBY</div><div class="desc">FLAMES i przepowiednie</div></div>
-    <div class="game-btn" onclick="hostStart('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARĘ</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('neverhave')"><span class="icon">🙈</span><div class="name">NIGDY NIE...</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('telephone')"><span class="icon">📞</span><div class="name">GŁUCHY TELEFON</div><div class="desc">Rysowany telefon</div></div>
+
   </div>
 </div>
 
@@ -654,8 +832,13 @@ onValue(ref(db,'presence'), snap => {
     ? namedList.map(n => {
         const ts = tsMap[n] || Date.now();
         const m  = Math.floor((Date.now() - ts) / 60000);
-        const t  = m < 1 ? 'tylko co' : m === 1 ? '1 min' : m + 'm';
-        return `<div class="player-chip" title="Dołączyła ${t} temu">🪩 ${n} <span style="font-size:.55rem;opacity:.6;">${t}</span></div>`;
+        const t  = m < 1 ? 'przed chwilą' : m === 1 ? '1 min' : m + ' min';
+        const initials = n.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || n.slice(0,2).toUpperCase();
+        return `<div class="player-chip">
+          <div class="player-chip-av">${initials}</div>
+          <div class="player-chip-name">${n}</div>
+          <div class="player-chip-time">${t}</div>
+        </div>`;
       }).join('')
     : '<div class="players-empty">Czekam na graczy…</div>';
   if(num) num.textContent = namedList.length;
@@ -928,9 +1111,12 @@ function renderGlobalSB() {
   const el = document.getElementById('globalSBPanel');
   if(!el) return;
   const wrap = document.getElementById('globalSBWrap');
-  const players = Object.keys(SCORES);
+  // Include online players even if 0 pts
+  const online = window._onlinePlayers || [];
+  online.forEach(p => { if(!SCORES[p]) SCORES[p] = {total:0, games:{}}; });
+  const players = [...new Set([...Object.keys(SCORES), ...online])];
   if(!players.length) { el.innerHTML='<div class="sb-empty">Zagraj w gry!</div>'; if(wrap) wrap.style.display='none'; return; }
-  if(wrap) wrap.style.display='block';
+  if(wrap) wrap.style.display = online.length > 0 ? 'flex' : 'none';
   const sorted = players.slice().sort((a,b)=>(SCORES[b].total||0)-(SCORES[a].total||0));
   const maxPts = SCORES[sorted[0]]?.total || 1;
   el.innerHTML = sorted.map((name,rank) => _sbRowHTML(name, rank, SCORES[name], maxPts)).join('');
@@ -1001,6 +1187,69 @@ function renderMiniSB(game) {
     </div>`;
   }).join('');
   return `<div class="mini-sb"><div class="mini-sb-title">WYNIKI TEJ GRY</div><div class="mini-sb-rows">${chips}</div></div>`;
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// END-OF-GAME SCOREBOARD
+// ════════════════════════════════════════════════════════════════
+function showEndOfGameSB(game, onNext) {
+  const MEDALS = ['🥇','🥈','🥉'];
+  const GAME_EMOJI = {
+    quiz:'🎤', honornot:'🔥', highlow:'📊', choice:'⚡',
+    neverhave:'🙈', bingo:'🎰', vabank:'🎲', couples:'💑',
+    auction:'💰', telephone:'📞', tierlist:'🏆', draw:'✏️',
+    eight:'⏱️', wrozby:'🔮',
+  };
+  const label = GAME_LABELS[game] || game;
+  const emoji = GAME_EMOJI[game] || '🪩';
+
+  // Collect game scores
+  const all = window._onlinePlayers || [];
+  const rows = all.map(name => ({
+    name,
+    pts: Math.round(((SCORES[name]?.games[game]||[]).reduce((x,v)=>x+v.pts,0))*10)/10,
+    initials: name.slice(0,2).toUpperCase(),
+  })).sort((a,b) => b.pts - a.pts);
+
+  const maxPts = rows[0]?.pts || 1;
+
+  let rowsHtml = rows.map((r,i) => {
+    const pct = maxPts ? Math.round(r.pts/maxPts*100) : 0;
+    const medal = MEDALS[i] || (i+1)+'.';
+    return `<div class="eog-row">
+      <div class="eog-row-bg" style="width:${pct}%"></div>
+      <div class="eog-medal">${medal}</div>
+      <div class="eog-av">${e(r.initials)}</div>
+      <div class="eog-name">${e(r.name)}</div>
+      <div class="eog-pts">${r.pts}<span class="eog-punit"> pkt</span></div>
+    </div>`;
+  }).join('');
+
+  if(!rows.length) rowsHtml = '<div style="text-align:center;color:var(--muted);font-style:italic;padding:12px;">Brak wyników tej rundy</div>';
+
+  const overlay = document.createElement('div');
+  overlay.className = 'eog-overlay';
+  overlay.id = 'eogOverlay';
+  overlay.innerHTML = `
+    <div class="eog-panel">
+      <div class="eog-header">
+        <span class="eog-emoji">${emoji}</span>
+        <div class="eog-title">KONIEC GRY!</div>
+        <div class="eog-subtitle">${e(label)} · WYNIKI RUNDY</div>
+      </div>
+      <div class="eog-rows">${rowsHtml}</div>
+      <div class="eog-btns">
+        ${onNext ? `<button class="eog-btn-next" onclick="document.getElementById('eogOverlay')?.remove();(${onNext.toString()})()">DALEJ ▶</button>` : ''}
+        <button class="eog-btn-home" onclick="document.getElementById('eogOverlay')?.remove();hostBack()">← MENU</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  spawnConfetti(60);
+}
+
+function closeEOG() {
+  document.getElementById('eogOverlay')?.remove();
 }
 
 // ── IN-GAME PLAYERS STRIP ──
@@ -1270,7 +1519,10 @@ function quizReveal(){
   });
   renderQuiz(false);
 }
-function quizNext(){if(S.quiz.idx<DATA.quiz.length-1){S.quiz.idx++;S.quiz.phase='question';renderQuiz();}else showToast('Ostatnie!');}
+function quizNext(){
+  if(S.quiz.idx<DATA.quiz.length-1){S.quiz.idx++;S.quiz.phase='question';renderQuiz();}
+  else { showEndOfGameSB('quiz'); }
+}
 function quizPrev(){if(S.quiz.idx>0){S.quiz.idx--;S.quiz.phase='question';renderQuiz(false);}}
 
 // ════════════════════════════════════════════
@@ -1293,9 +1545,11 @@ function renderVabank() {
           }).join('')).join('')}
         </div>
       </div>`;
+    const vbAllUsed = vb.used.length >= vb.categories.length*vb.prices.length;
     document.getElementById('gsControls').innerHTML=`
       <button class="ctrl-btn secondary" onclick="DATA.vabank.used=[];renderVabank()">🔄 NOWA GRA</button>
-      <span class="counter-badge">${vb.used.length}/${vb.categories.length*vb.prices.length} pytań</span>`;
+      <span class="counter-badge">${vb.used.length}/${vb.categories.length*vb.prices.length} pytań</span>
+      ${vbAllUsed ? '<button class="ctrl-btn primary" onclick="showEndOfGameSB('vabank')">🏆 WYNIKI</button>' : ''}`;
     window.pushState?.({game:'vabank',view:'board'});
   } else {
     const ci=S.vabank.catIdx,pi=S.vabank.priceIdx;
@@ -1377,7 +1631,7 @@ function honNext(){
     scoreAdd(p,'honornot',pts,'Głos oddany');
   });
   renderLocalSB('honornot');
-  if(S.hon.idx<DATA.hon.length-1){S.hon.idx++;renderHon();}else showToast('Koniec!');
+  if(S.hon.idx<DATA.hon.length-1){S.hon.idx++;renderHon();}else { showEndOfGameSB('honornot'); }
 }
 function honPrev(){if(S.hon.idx>0){S.hon.idx--;renderHon();}}
 
@@ -1475,7 +1729,10 @@ function hlReveal(){
   });
   renderHL(false);
 }
-function hlNext(){if(S.highlow.idx<DATA.highlow.length-1){S.highlow.idx++;S.highlow.phase='question';renderHL();}else showToast('Koniec!');}
+function hlNext(){
+  if(S.highlow.idx<DATA.highlow.length-1){S.highlow.idx++;S.highlow.phase='question';renderHL();}
+  else { showEndOfGameSB('highlow'); }
+}
 function hlPrev(){if(S.highlow.idx>0){S.highlow.idx--;S.highlow.phase='question';renderHL(false);}}
 
 // ════════════════════════════════════════════
@@ -1519,7 +1776,11 @@ function renderEight() {
 }
 function eightStartTimer(){S.eight.phase='timer';renderEight();}
 function eightStop(){clearInterval(S.eight.interval);S.eight.phase='task';showToast('Zatrzymano');renderEight();}
-function eightNext(){clearInterval(S.eight.interval);if(S.eight.idx<DATA.eight.length-1){S.eight.idx++;S.eight.phase='task';renderEight();}else showToast('Koniec!');}
+function eightNext(){
+  clearInterval(S.eight.interval);
+  if(S.eight.idx<DATA.eight.length-1){S.eight.idx++;S.eight.phase='task';renderEight();}
+  else { showToast('Koniec zadań! 🎉'); }
+}
 function eightPrev(){clearInterval(S.eight.interval);if(S.eight.idx>0){S.eight.idx--;S.eight.phase='task';renderEight();}}
 function runTimer(secs){
   let left=secs; const r=54*2*Math.PI;
@@ -1570,7 +1831,7 @@ function choiceNext(){
     scoreAdd(p,'choice', v===majority?2:1, v===majority?'Większość!':'Własny wybór');
   });
   renderLocalSB('choice');
-  if(S.choice.idx<DATA.choice.length-1){S.choice.idx++;renderChoice();}else showToast('Koniec!');
+  if(S.choice.idx<DATA.choice.length-1){S.choice.idx++;renderChoice();}else { showEndOfGameSB('choice'); }
 }
 function choicePrev(){if(S.choice.idx>0){S.choice.idx--;renderChoice(false);}}
 
@@ -1699,7 +1960,11 @@ function auctionSell(){
   flashResult('win');
   renderAuction();
 }
-function auctionNext(){if(S.auction.idx<DATA.auctionItems.length-1){S.auction.idx++;S.auction.phase='bid';S.auction.currentBid=0;S.auction.currentWinner=null;renderAuction();}else showToast('Aukcja zakończona!');}
+function auctionNext(){
+  if(S.auction.idx<DATA.auctionItems.length-1){
+    S.auction.idx++;S.auction.phase='bid';S.auction.currentBid=0;S.auction.currentWinner=null;renderAuction();
+  } else { showEndOfGameSB('auction'); }
+}
 function auctionPrev(){if(S.auction.idx>0){S.auction.idx--;S.auction.phase='bid';S.auction.currentBid=0;S.auction.currentWinner=null;renderAuction();}}
 
 // ════════════════════════════════════════════
@@ -1807,7 +2072,7 @@ function checkCouplesMatch(){
     flashResult('win');
     // Award pts to all online players (cooperative)
     (window._onlinePlayers||[]).forEach(p=>scoreAdd(p,'couples',3,'Para dopasowana!'));
-    if(st.matched.length===DATA.couples.length){spawnConfetti(80);showToast('🎉 Wszystkie pary!');}
+    if(st.matched.length===DATA.couples.length){spawnConfetti(80);setTimeout(()=>showEndOfGameSB('couples'),800);}
   }else{
     st.wrong=['a'+st.selectedA,'b'+st.selectedB];
     setTimeout(()=>{st.selectedA=null;st.selectedB=null;st.wrong=[];renderCouples();},800);
@@ -1846,7 +2111,7 @@ function neverNext(){
     if(v===ROBILAM) scoreAdd(p,'neverhave',1,'🍹 Robiłam!');
   });
   renderLocalSB('neverhave');
-  if(S.never.idx<DATA.never.length-1){S.never.idx++;renderNever();}else showToast('Koniec kart!');
+  if(S.never.idx<DATA.never.length-1){S.never.idx++;renderNever();}else { showEndOfGameSB('neverhave'); }
 }
 function neverPrev(){if(S.never.idx>0){S.never.idx--;renderNever(false);}}
 
