@@ -558,6 +558,47 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .mini-sb-chip .mp{font-family:'Bebas Neue';font-size:.95rem;color:rgba(255,248,231,.5);}
 .mini-sb-chip.lead .mp{color:#FFD700;}
 .mini-sb-chip .mdelta{font-size:.6rem;color:#39FF14;margin-left:2px;}
+
+/* ── LOCAL SB (in-game) ── */
+.local-sb-wrap{padding:6px 20px 4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,215,0,.03);border-top:1px solid rgba(255,215,0,.08);}
+.local-sb-title{font-family:'Bebas Neue';font-size:.6rem;letter-spacing:3px;color:rgba(255,215,0,.45);flex-shrink:0;}
+.local-sb-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.mini-sb-chip{display:flex;align-items:center;gap:7px;padding:4px 10px 4px 5px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);transition:all .3s;}
+.mini-sb-chip.lead{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.3);box-shadow:0 0 10px rgba(255,215,0,.08);}
+.mini-sb-chip-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:.65rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,248,231,.6);flex-shrink:0;}
+.mini-sb-chip-av.lead{background:rgba(255,215,0,.2);border-color:rgba(255,215,0,.5);color:#FFD700;}
+.mini-sb-chip-name{font-family:'Bebas Neue';font-size:.68rem;letter-spacing:1px;color:rgba(255,248,231,.55);line-height:1.1;}
+.mini-sb-chip-name.lead{color:#FFD700;}
+.mini-sb-chip-pts{font-family:'Bebas Neue';font-size:.85rem;color:rgba(255,248,231,.4);line-height:1;}
+.mini-sb-chip-pts.lead{color:#FFD700;}
+
+/* ── GLOBAL SB (home) ── */
+.sb-empty{text-align:center;padding:14px;font-size:.75rem;color:rgba(255,248,231,.3);font-style:italic;}
+.sb-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:10px;margin-bottom:4px;position:relative;overflow:hidden;cursor:default;}
+.sb-bar-bg{position:absolute;left:0;top:0;bottom:0;border-radius:10px;pointer-events:none;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.sb-row:nth-child(1){background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(255,165,0,.04));border:1px solid rgba(255,215,0,.28);}
+.sb-row:nth-child(1) .sb-bar-bg{background:linear-gradient(90deg,rgba(255,215,0,.1),transparent);}
+.sb-row:nth-child(2){background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);}
+.sb-row:nth-child(2) .sb-bar-bg{background:linear-gradient(90deg,rgba(255,255,255,.06),transparent);}
+.sb-row:nth-child(3){background:rgba(255,140,0,.05);border:1px solid rgba(255,140,0,.16);}
+.sb-row:nth-child(3) .sb-bar-bg{background:linear-gradient(90deg,rgba(255,140,0,.08),transparent);}
+.sb-row:not(:nth-child(-n+3)){background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);}
+.sb-pos{font-size:.95rem;min-width:24px;text-align:center;flex-shrink:0;z-index:1;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:.8rem;flex-shrink:0;z-index:1;}
+.sb-row:nth-child(1) .sb-avatar{background:rgba(255,215,0,.2);border:2px solid #FFD700;color:#FFD700;}
+.sb-row:nth-child(2) .sb-avatar{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.25);color:rgba(255,248,231,.7);}
+.sb-row:nth-child(3) .sb-avatar{background:rgba(255,140,0,.1);border:2px solid rgba(255,140,0,.3);color:#FFA500;}
+.sb-row:not(:nth-child(-n+3)) .sb-avatar{background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.1);color:rgba(255,248,231,.45);}
+.sb-info{flex:1;min-width:0;z-index:1;}
+.sb-name{font-family:'Bebas Neue';font-size:.9rem;letter-spacing:1px;color:#FFF8E7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-breakdown{font-size:.55rem;color:rgba(255,248,231,.35);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-pts{font-family:'Bebas Neue';font-size:1.35rem;flex-shrink:0;z-index:1;}
+.sb-row:nth-child(1) .sb-pts{color:#FFD700;}
+.sb-row:nth-child(2) .sb-pts{color:rgba(255,248,231,.75);}
+.sb-row:nth-child(3) .sb-pts{color:#FFA500;}
+.sb-row:not(:nth-child(-n+3)) .sb-pts{color:rgba(255,248,231,.45);}
+.sb-reset{width:100%;background:rgba(255,45,156,.06);border:1px solid rgba(255,45,156,.2);color:rgba(255,45,156,.6);border-radius:8px;padding:9px;font-family:'Bebas Neue';font-size:.8rem;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:14px;}
+.sb-reset:hover{background:rgba(255,45,156,.15);color:#FF2D9C;border-color:rgba(255,45,156,.4);}
 </style>
 </head>
 <body>
@@ -586,6 +627,13 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       <div class="players-panel-count"><span id="onlineNum">0</span> dołączyły</div>
     </div>
     <div class="players-chips" id="playersChips"><div class="players-empty">Czekam na graczy…</div></div>
+  </div>
+  <div id="globalSBWrap" style="max-width:520px;width:90vw;margin-bottom:16px;display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div style="font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:#FFD700;">🏆 TABLICA WYNIKÓW</div>
+      <button onclick="resetScores()" style="background:rgba(255,45,156,.08);border:1px solid rgba(255,45,156,.25);color:rgba(255,45,156,.7);border-radius:6px;padding:3px 10px;font-family:'Bebas Neue';font-size:.65rem;letter-spacing:2px;cursor:pointer;">🔄 RESET</button>
+    </div>
+    <div id="globalSBPanel"><div class="sb-empty">Zagraj w gry!</div></div>
   </div>
   <div class="games-grid">
     <div class="game-btn" onclick="hostStart('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div><div class="desc">Klikaj pola gdy się zdarzają</div></div>
@@ -625,6 +673,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
     <div class="game-stage">
       <div class="game-body" id="gsBody"></div>
       <div id="gsVotesZone" style="flex-shrink:0;padding:0 4px;"></div>
+      <div id="localSBPanel" style="flex-shrink:0;"></div>
       <div class="nav-controls" id="gsControls"></div>
     </div>
     <div class="admin-panel" id="gsAdmin">
@@ -697,6 +746,10 @@ function pushState(data) {
   return set(ref(db,'gameState'), { ...data, ts: Date.now() });
 }
 function pushVotesReset() {
+  // _lastVotes already holds the snapshot (updated by onValue listener)
+  // Just clear Firebase; scoring functions read _lastVotes synchronously before this resolves
+  window._lastVotes = {};
+  updateGamePlayersStrip({});
   return set(ref(db,'votes'), null);
 }
 
@@ -704,12 +757,15 @@ function pushVotesReset() {
 let votesCallback = null;
 onValue(ref(db,'votes'), snap => {
   const votes = snap.val() || {};
+  window._lastVotes = votes;           // ← FIX: always keep snapshot
   if(votesCallback) votesCallback(votes);
-  // update badge
+  updateGamePlayersStrip(votes);
   const total = Object.keys(votes).length;
   const badge = document.getElementById('liveVotesBadge');
-  if(total > 0) { badge.style.display=''; badge.textContent = `⬤ ${total} głosów`; }
-  else badge.style.display='none';
+  if(badge) {
+    if(total > 0) { badge.style.display=''; badge.textContent = `⬤ ${total} głosów`; }
+    else badge.style.display='none';
+  }
 });
 
 // ── ADVICE (players submit) ──
@@ -873,13 +929,23 @@ function scoresInit() {
 }
 
 function scoreAdd(player, game, pts, label='') {
-  if(!player) return;
+  if(!player || pts === 0) return;
   scoresInit();
   if(!SCORES[player]) SCORES[player] = { total:0, games:{} };
-  SCORES[player].total += pts;
+  SCORES[player].total = Math.round((SCORES[player].total + pts) * 10) / 10;
   if(!SCORES[player].games[game]) SCORES[player].games[game] = [];
   SCORES[player].games[game].push({ pts, label, ts: Date.now() });
-  renderSB();
+  // Push to Firebase so player view shows score + feedback
+  const pKey = player.replace(/\s/g,'_');
+  window.FB?.set(window.FB.ref(window.FB.db, 'scores/' + pKey), {
+    total: SCORES[player].total,
+    lastGame: game,
+    lastPts: pts,
+    lastLabel: label,
+    ts: Date.now()
+  });
+  renderLocalSB(game);
+  renderGlobalSB();
   updateFabBadge();
 }
 
@@ -899,7 +965,7 @@ function toggleSB() {
   const d = document.getElementById('sbDrawer');
   if(!d) return;
   d.classList.toggle('open');
-  if(d.classList.contains('open')) renderSB();
+  if(d.classList.contains('open')) { renderGlobalSB(); renderLocalSB(window._currentGame); }
 }
 
 function resetScores() {
@@ -909,74 +975,88 @@ function resetScores() {
   showToast('Wyniki zresetowane!');
 }
 
-function renderSB() {
-  const body = document.getElementById('sbDrawerBody');
-  if(!body) return;
+const GAME_LABELS = {
+  quiz:'🎤 Quiz', honornot:'🔥 Hot or Not', highlow:'📊 Wyżej/Niżej',
+  choice:'⚡ Co Wybierasz', neverhave:'🙈 Nigdy Nie', bingo:'🎰 Bingo',
+  vabank:'🎲 Va-Bank', couples:'💑 Dopasuj Parę', auction:'💰 Aukcja',
+};
+const MEDALS = ['🥇','🥈','🥉'];
 
-  const players = Object.keys(SCORES);
-  if(!players.length) {
-    body.innerHTML = '<div style="text-align:center;padding:24px;font-size:.8rem;color:rgba(255,248,231,.3);font-style:italic;">Zagraj w gry żeby zobaczyć wyniki!</div>';
-    return;
-  }
-
-  // Sort by total desc
-  const sorted = players.slice().sort((a,b) => SCORES[b].total - SCORES[a].total);
-  const maxPts = SCORES[sorted[0]]?.total || 1;
-  const MEDALS = ['🥇','🥈','🥉'];
-  const GAME_LABELS = {
-    quiz:'🎤 Quiz', honornot:'🔥 Hot or Not', highlow:'📊 Wyżej/Niżej',
-    choice:'⚡ Co Wybierasz', neverhave:'🙈 Nigdy Nie', bingo:'🎰 Bingo',
-    vabank:'🎲 Va-Bank', couples:'💑 Dopasuj Parę', auction:'💰 Aukcja',
-  };
-
-  let html = '<div class="sb-section-label">RANKING ŁĄCZNY</div>';
-
-  sorted.forEach((name, rank) => {
-    const sc = SCORES[name];
-    const initials = name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || name.slice(0,2).toUpperCase();
-    const pct = Math.round(sc.total / maxPts * 100);
-    const medal = MEDALS[rank] || (rank+1)+'.';
-    // build breakdown string
-    const parts = Object.entries(sc.games).map(([g, arr]) => {
-      const sum = arr.reduce((a,v)=>a+v.pts,0);
-      return (GAME_LABELS[g]||g)+': '+sum;
-    });
-    html += `<div class="sb-row">
-      <div class="sb-bar-bg" style="width:${pct}%"></div>
-      <div class="sb-pos">${medal}</div>
-      <div class="sb-avatar">${initials}</div>
-      <div class="sb-info">
-        <div class="sb-name">${e(name)}</div>
-        <div class="sb-breakdown">${parts.join(' · ') || 'brak punktów'}</div>
-      </div>
-      <div class="sb-pts">${sc.total}<span style="font-size:.7rem;opacity:.5"> pkt</span></div>
-    </div>`;
+function _sbRowHTML(name, rank, sc, maxPts) {
+  const initials = name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || name.slice(0,2).toUpperCase();
+  const pct = Math.round((sc.total||0) / (maxPts||1) * 100);
+  const medal = MEDALS[rank] || (rank+1)+'.';
+  const parts = Object.entries(sc.games||{}).map(([g,arr])=>{
+    const sum = Math.round(arr.reduce((a,v)=>a+v.pts,0)*10)/10;
+    return (GAME_LABELS[g]||g)+': '+sum;
   });
+  return `<div class="sb-row">
+    <div class="sb-bar-bg" style="width:${pct}%"></div>
+    <div class="sb-pos">${medal}</div>
+    <div class="sb-avatar">${e(initials)}</div>
+    <div class="sb-info">
+      <div class="sb-name">${e(name)}</div>
+      <div class="sb-breakdown">${parts.join(' · ')||'brak punktów'}</div>
+    </div>
+    <div class="sb-pts">${sc.total||0}<span style="font-size:.7rem;opacity:.5"> pkt</span></div>
+  </div>`;
+}
 
-  // Per-game summaries
-  const allGames = [...new Set(players.flatMap(p => Object.keys(SCORES[p].games)))];
-  if(allGames.length) {
-    allGames.forEach(game => {
-      const label = GAME_LABELS[game] || game;
-      html += `<div class="sb-section-label">${e(label)}</div><div class="sb-game-row">`;
-      // Sort players by game score
-      const gameSorted = players
-        .map(p => ({ name:p, pts: (SCORES[p].games[game]||[]).reduce((a,v)=>a+v.pts,0) }))
-        .filter(x => x.pts > 0)
-        .sort((a,b) => b.pts - a.pts);
-      const maxG = gameSorted[0]?.pts || 1;
-      gameSorted.forEach((x,i) => {
-        html += `<div class="sb-game-chip ${i===0?'leader':''}">
-          <span class="sc-name">${e(x.name)}</span>
-          <span class="sc-pts">${x.pts}</span>
-        </div>`;
-      });
-      html += `</div>`;
-    });
-  }
+// ── GLOBAL scoreboard (home screen panel) ──
+function renderGlobalSB() {
+  const el = document.getElementById('globalSBPanel');
+  if(!el) return;
+  const wrap = document.getElementById('globalSBWrap');
+  const players = Object.keys(SCORES);
+  if(!players.length) { el.innerHTML='<div class="sb-empty">Zagraj w gry!</div>'; if(wrap) wrap.style.display='none'; return; }
+  if(wrap) wrap.style.display='block';
+  const sorted = players.slice().sort((a,b)=>(SCORES[b].total||0)-(SCORES[a].total||0));
+  const maxPts = SCORES[sorted[0]]?.total || 1;
+  el.innerHTML = sorted.map((name,rank) => _sbRowHTML(name, rank, SCORES[name], maxPts)).join('');
+}
 
-  html += `<button class="sb-reset" onclick="resetScores()">🔄 RESET WYNIKÓW</button>`;
-  body.innerHTML = html;
+// ── LOCAL scoreboard (in-game, one game only) ──
+function renderLocalSB(game) {
+  const el = document.getElementById('localSBPanel');
+  if(!el || !game) return;
+  const label = GAME_LABELS[game] || game;
+  const players = Object.keys(SCORES).filter(p => SCORES[p].games?.[game]?.length > 0);
+  if(!players.length) { el.innerHTML=''; return; }
+  const sorted = players.slice().sort((a,b)=>{
+    const pa = (SCORES[a].games[game]||[]).reduce((x,v)=>x+v.pts,0);
+    const pb = (SCORES[b].games[game]||[]).reduce((x,v)=>x+v.pts,0);
+    return pb-pa;
+  });
+  const maxG = (SCORES[sorted[0]]?.games[game]||[]).reduce((x,v)=>x+v.pts,0) || 1;
+  const chips = sorted.map((name,i) => {
+    const pts = Math.round((SCORES[name].games[game]||[]).reduce((x,v)=>x+v.pts,0)*10)/10;
+    const initials = name.slice(0,2).toUpperCase();
+    const isLead = i===0;
+    return `<div class="mini-sb-chip ${isLead?'lead':''}">
+      <div class="mini-sb-chip-av ${isLead?'lead':''}">${e(initials)}</div>
+      <div>
+        <div class="mini-sb-chip-name ${isLead?'lead':''}">${e(name)}</div>
+        <div class="mini-sb-chip-pts ${isLead?'lead':''}">${pts} pkt</div>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="local-sb-wrap">
+    <div class="local-sb-title">WYNIKI · ${e(label)}</div>
+    <div class="local-sb-chips">${chips}</div>
+  </div>`;
+}
+
+// Legacy compat
+function renderSB() { renderGlobalSB(); }
+
+function resetScores() {
+  SCORES = {};
+  renderGlobalSB();
+  renderLocalSB(window._currentGame);
+  // Clear Firebase scores
+  window.FB?.set(window.FB.ref(window.FB.db,'scores'), null);
+  updateFabBadge();
+  showToast('Wyniki zresetowane!');
 }
 
 // ── Mini scoreboard widget (shown inside game body) ──

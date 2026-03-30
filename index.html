@@ -35,7 +35,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 
 /* ── SCREENS ── */
 .screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;overflow-y:auto;overflow-x:hidden;
-  padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));}
+  padding:16px;padding-bottom:calc(80px + env(safe-area-inset-bottom));}
 .screen.active{display:flex;}
 
 /* ── JOIN SCREEN ── */
@@ -203,6 +203,31 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .confetti-overlay{position:fixed;inset:0;z-index:500;pointer-events:none;overflow:hidden;}
 .confetti-piece{position:absolute;border-radius:2px;animation:fall linear forwards;}
 @keyframes fall{0%{transform:translateY(-10px)rotate(0);opacity:1;}100%{transform:translateY(110vh)rotate(540deg);opacity:0;}}
+
+/* ── SCORE BAR ── */
+.score-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(7,0,15,.92);backdrop-filter:blur(12px);
+  border-top:1px solid rgba(255,215,0,.15);
+  padding:8px 16px 10px;padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:12px;transition:all .4s;}
+.score-bar-pts{font-family:'Bebas Neue';font-size:1.6rem;letter-spacing:2px;color:#FFD700;
+  min-width:50px;line-height:1;transition:all .3s;}
+.score-bar-pts small{font-size:.65rem;opacity:.6;letter-spacing:1px;font-family:'Outfit';}
+.score-bar-right{flex:1;display:flex;flex-direction:column;gap:3px;}
+.score-bar-label{font-family:'Bebas Neue';font-size:.62rem;letter-spacing:3px;color:rgba(255,248,231,.4);}
+.score-bar-track{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
+.score-bar-fill{height:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:2px;
+  transition:width .6s cubic-bezier(.34,1.1,.64,1);}
+.score-feedback{position:fixed;bottom:70px;right:16px;z-index:300;
+  font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:2px;
+  padding:8px 18px;border-radius:50px;
+  animation:feedbackPop .4s cubic-bezier(.34,1.56,.64,1) forwards, feedbackFade 2s 1s forwards;
+  pointer-events:none;}
+.score-feedback.plus{background:linear-gradient(135deg,rgba(57,255,20,.2),rgba(0,207,255,.1));
+  border:1px solid rgba(57,255,20,.4);color:#39FF14;}
+.score-feedback.minus{background:rgba(255,51,51,.12);border:1px solid rgba(255,51,51,.3);color:#FF3333;}
+@keyframes feedbackPop{from{opacity:0;transform:translateY(20px) scale(.8);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes feedbackFade{from{opacity:1;}to{opacity:0;transform:translateY(-8px);}}
 </style>
 </head>
 <body>
@@ -301,6 +326,18 @@ onValue(ref(db,'advice'), snap => {
   if(window._currentPlayerGame === 'advice') renderAdvicePlayer();
 });
 
+// ── Listen to scores for this player ──
+function listenMyScore(name) {
+  if(!name) return;
+  const pKey = name.replace(/\s/g,'_');
+  onValue(ref(db,'scores/'+pKey), snap => {
+    const data = snap.val();
+    window._myScore = data;
+    window._renderScoreBar?.();
+  });
+}
+window.listenMyScore = listenMyScore;
+
 window.dispatchEvent(new Event('fbReady_player'));
 </script>
 
@@ -321,6 +358,7 @@ function joinGame() {
   if(!n) { showToast('Wpisz swoje imię!'); return; }
   _playerName = n;
   window._playerName = n;
+  window.listenMyScore?.(n);
   document.getElementById('playerTag').textContent = n.toUpperCase();
   document.getElementById('waitName').textContent = '👋 Hej, ' + n + '!';
   switchScreen('waiting');
@@ -338,6 +376,9 @@ document.getElementById('nameInput').addEventListener('keydown', ev => {
 function switchScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  const bar = document.getElementById('scoreBar');
+  if(bar) bar.style.display = (id === 'game') ? 'flex' : 'none';
+  window._renderScoreBar?.();
 }
 
 // ══════════════════════════════════════════
@@ -392,6 +433,9 @@ function sendVote(value) {
   window.DB?.set(window.DB.ref(window.DB.db,'votes/'+_playerName.replace(/\s/g,'_')), value);
   showToast('✅ Głos wysłany!');
   spawnConfetti(15);
+  // Update score label to show pending
+  const lbl = document.getElementById('scoreLabel');
+  if(lbl) lbl.textContent = '⏳ Czekam na wynik…';
 }
 
 // ══════════════════════════════════════════
@@ -661,7 +705,64 @@ function spawnConfetti(n=30) {
 let _tt;
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2200);}
 
+// ── SCORE BAR RENDERER ──
+let _prevTotal = 0;
+window._myScore = null;
+
+window._renderScoreBar = function() {
+  const data = window._myScore;
+  const bar = document.getElementById('scoreBar');
+  const ptsEl = document.getElementById('scorePts');
+  const labelEl = document.getElementById('scoreLabel');
+  const fillEl = document.getElementById('scoreBarFill');
+  if(!bar || !data) return;
+
+  // Show bar when on game screen
+  bar.style.display = document.getElementById('game').classList.contains('active') ? 'flex' : 'none';
+
+  const total = data.total || 0;
+  const lastPts = data.lastPts || 0;
+  const lastLabel = data.lastLabel || '';
+
+  // Update pts display
+  if(ptsEl) ptsEl.innerHTML = total + ' <small>pkt</small>';
+  if(fillEl) fillEl.style.width = Math.min(100, total * 4) + '%';
+
+  // Show feedback if pts changed
+  if(total !== _prevTotal && total > 0) {
+    const diff = total - _prevTotal;
+    _prevTotal = total;
+
+    // Label
+    if(labelEl) labelEl.textContent = lastLabel || (diff > 0 ? '+' + diff + ' pkt!' : lastLabel);
+
+    // Floating feedback
+    document.querySelectorAll('.score-feedback').forEach(el=>el.remove());
+    if(diff !== 0) {
+      const fb = document.createElement('div');
+      fb.className = 'score-feedback ' + (diff > 0 ? 'plus' : 'minus');
+      fb.textContent = (diff > 0 ? '+' : '') + diff + ' pkt';
+      document.body.appendChild(fb);
+      setTimeout(() => fb.remove(), 3000);
+    }
+  } else {
+    _prevTotal = total;
+  }
+};
+
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 </script>
+
+<!-- ── SCORE BAR ── -->
+<div class="score-bar" id="scoreBar" style="display:none;">
+  <div>
+    <div class="score-bar-label">TWOJE PUNKTY</div>
+    <div class="score-bar-pts" id="scorePts">0 <small>pkt</small></div>
+  </div>
+  <div class="score-bar-right">
+    <div class="score-bar-label" id="scoreLabel">⏳ Czekam na wyniki…</div>
+    <div class="score-bar-track"><div class="score-bar-fill" id="scoreBarFill" style="width:0%"></div></div>
+  </div>
+</div>
 </body>
 </html>
