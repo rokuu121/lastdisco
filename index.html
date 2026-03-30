@@ -273,7 +273,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, push, serverTimestamp, onDisconnect }
+import { getDatabase, ref, set, get, onValue, push, serverTimestamp, onDisconnect }
   from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -303,7 +303,7 @@ onValue(ref(db,'presence'), snap => {
 });
 
 // Expose
-window.DB = { db, ref, set, push, onValue, onDisconnect };
+window.DB = { db, ref, set, get, push, onValue, onDisconnect };
 
 window.addEventListener('fbReady_player', async () => {
   const name = window._playerName;
@@ -354,9 +354,21 @@ window._adviceList = [];
 // ══════════════════════════════════════════
 // JOIN
 // ══════════════════════════════════════════
-function joinGame() {
+async function joinGame() {
   const n = document.getElementById('nameInput').value.trim();
   if(!n) { showToast('Wpisz swoje imię!'); return; }
+
+  // Check for duplicate names in presence
+  try {
+    const snap = await window.DB.get(window.DB.ref(window.DB.db, 'presence'));
+    const raw = snap.val() || {};
+    const taken = new Set(Object.values(raw).map(v => v && v.name).filter(Boolean));
+    if(taken.has(n)) {
+      showToast('Imię "'+n+'" jest już zajęte!');
+      return;
+    }
+  } catch(e) { /* offline — allow join */ }
+
   _playerName = n;
   window._playerName = n;
   window.listenMyScore?.(n);
@@ -412,7 +424,7 @@ window._handleGameState = function(state) {
     case 'choice':    renderChoicePlayer(state); break;
     case 'neverhave': renderNeverPlayer(state); break;
     case 'advice':    renderAdvicePlayer(state); break;
-    case 'bingo':     renderBingoPlayer(state); break;
+    case 'bingo':     window._lastBingoState = state; renderBingoPlayer(state); break;
     case 'tierlist':  renderTierPlayer(state); break;
     case 'couples':   renderCouplesPlayer(state); break;
     case 'vabank':    renderVabankPlayer(state); break;
@@ -580,38 +592,69 @@ function sendAdvice() {
 // BINGO PLAYER
 // ══════════════════════════════════════════
 function renderBingoPlayer(state) {
-  const marked = state.marked || new Array(25).fill(false);
+  const hostMarked = state.marked || new Array(25).fill(false);
+  // Merge host marks with player's own marks
+  const merged = hostMarked.map((h,i) => h || _playerBingo[i]);
   const bingoItems=["Ktoś śpiewa do szczotki","Kasia płacze ze śmiechu","Kogoś bolą nogi","Selfie z ochroniarzem","Kelner dostaje numer","Ktoś zakłada tiare","Foto bez filtra","Kasia opowiada jak się poznali","Tylko jeden drink","Ktoś gubi szpilkę","Disco polo po 1","Cola dla trzeźwości","FREE\n🪩","Ktoś dzwoni do chłopaka","Choreograf","Kasia na stole","Ktoś płacze","Kolejka bez pytania","Chodźmy jeszcze","Nieznajomy z kwiatem","Ktoś tańczy ABBA","Zgubiona torebka","Wszyscy śpiewają","Taksówkarz pyta","Ktoś wysyła mema"];
   document.getElementById('gameContent').innerHTML=`
-    <div class="q-card"><div class="q-round">🎰 BINGO</div><div class="q-text" style="font-size:1rem;">Obserwuj co się dzieje!</div></div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px;">
-      ${bingoItems.map((t,i)=>`<div style="aspect-ratio:1;border:1px solid ${marked[i]?'var(--gold)':'var(--border)'};border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;padding:3px;font-size:.42rem;font-weight:600;background:${i===12?'linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,45,156,.12))':marked[i]?'linear-gradient(135deg,var(--pink),#7B0044)':'var(--card)'};color:${marked[i]||i===12?'white':'var(--text)'};">${esc(t)}</div>`).join('')}
+    <div class="q-card"><div class="q-round">🎰 BINGO</div><div class="q-text" style="font-size:1rem;">Klikaj pola gdy się zdarzą!</div></div>
+    <div class="player-bingo-grid">
+      ${bingoItems.map((t,i)=>{
+        const isMarked = merged[i] || i===12;
+        const isHostMarked = hostMarked[i];
+        return `<div class="pb-cell${isMarked?' marked':''}${i===12?' free':''}" onclick="${i!==12?'togglePlayerBingo('+i+')':''}" style="${isHostMarked&&!_playerBingo[i]?'box-shadow:0 0 6px var(--gold);':''}">${esc(t)}</div>`;
+      }).join('')}
     </div>`;
+}
+function togglePlayerBingo(i) {
+  _playerBingo[i] = !_playerBingo[i];
+  if(_playerBingo[i]) { showToast('Zaznaczono!'); spawnConfetti(8); }
+  // Re-render with current game state
+  if(window._lastBingoState) renderBingoPlayer(window._lastBingoState);
 }
 
 // ══════════════════════════════════════════
 // TIER LIST PLAYER
 // ══════════════════════════════════════════
 const TIERS=['S','A','B','C','D','F'];
+let _tierSelectedItem = null;
 function renderTierPlayer(state) {
-  const tier = state.tier || {};
+  const hostTier = state.tier || {};
   const items = state.items || [];
   const category = state.category || 'Tier List';
+  // Merge host assignments with player's own
+  const merged = {};
+  items.forEach(it => { merged[it] = _playerTier[it] || hostTier[it] || null; });
   document.getElementById('gameContent').innerHTML=`
-    <div class="q-card"><div class="q-round">🏆 TIER LIST</div><div class="q-text" style="font-size:1rem;">${esc(category)}</div></div>
+    <div class="q-card"><div class="q-round">🏆 TIER LIST</div><div class="q-text" style="font-size:1rem;">${esc(category)}</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-top:4px;">Kliknij element z puli, potem wybierz tier</div>
+    </div>
     <div class="player-tier">
       ${TIERS.map(t=>`
-        <div class="ptier-row">
+        <div class="ptier-row" onclick="assignTier('${t}')">
           <div class="ptier-lbl ${t}">${t}</div>
-          <div class="ptier-items">
-            ${items.filter(it=>tier[it]===t).map(it=>`<div class="ptier-item">${esc(it)}</div>`).join('')}
+          <div class="ptier-items" style="cursor:pointer;min-height:36px;">
+            ${items.filter(it=>merged[it]===t).map(it=>`<div class="ptier-item" onclick="event.stopPropagation();selectTierItem('${esc(it)}')" style="${_tierSelectedItem===it?'border-color:var(--gold);background:rgba(255,215,0,.2);':''}">${esc(it)}</div>`).join('')}
           </div>
         </div>`).join('')}
     </div>
     <div style="margin-top:8px;">
-      <div class="ptier-pool-lbl">PULA</div>
-      <div class="ptier-pool">${items.filter(it=>!tier[it]||tier[it]==='pool').map(it=>`<div class="ptier-item">${esc(it)}</div>`).join('')}</div>
+      <div class="ptier-pool-lbl">PULA — kliknij element</div>
+      <div class="ptier-pool">${items.filter(it=>!merged[it]||merged[it]==='pool').map(it=>`<div class="ptier-item" onclick="selectTierItem('${esc(it)}')" style="cursor:pointer;${_tierSelectedItem===it?'border-color:var(--gold);background:rgba(255,215,0,.2);':''}">${esc(it)}</div>`).join('')}</div>
     </div>`;
+  window._lastTierState = state;
+}
+function selectTierItem(item) {
+  _tierSelectedItem = (_tierSelectedItem === item) ? null : item;
+  if(window._lastTierState) renderTierPlayer(window._lastTierState);
+}
+function assignTier(t) {
+  if(!_tierSelectedItem) { showToast('Najpierw wybierz element!'); return; }
+  _playerTier[_tierSelectedItem] = t;
+  showToast(_tierSelectedItem + ' → ' + t);
+  spawnConfetti(8);
+  _tierSelectedItem = null;
+  if(window._lastTierState) renderTierPlayer(window._lastTierState);
 }
 
 // ══════════════════════════════════════════
@@ -767,7 +810,7 @@ window._renderScoreBar = function() {
   }
 };
 
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 </script>
 
 <!-- ── SCORE BAR ── -->
