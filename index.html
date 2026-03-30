@@ -525,12 +525,14 @@ function renderHLPlayer(state) {
 // ══════════════════════════════════════════
 function renderChoicePlayer(state) {
   const c = document.getElementById('gameContent');
+  window._choiceA = state.a || 'A';
+  window._choiceB = state.b || 'B';
   c.innerHTML=`
     <div class="q-card"><div class="q-round">CO WYBIERASZ?</div><div class="q-text" style="font-size:1rem;">Głosuj która opcja lepsza!</div></div>
     ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
     <div class="vote-grid">
-      <div class="vote-btn a" onclick="sendVote(${JSON.stringify(state.a||'A')});renderSimpleVoted()"><span class="vote-icon">⚡</span><span class="vote-label" style="font-size:.85rem;white-space:normal;line-height:1.3;">${esc(state.a||'A')}</span></div>
-      <div class="vote-btn b" onclick="sendVote(${JSON.stringify(state.b||'B')});renderSimpleVoted()"><span class="vote-icon">⚡</span><span class="vote-label" style="font-size:.85rem;white-space:normal;line-height:1.3;">${esc(state.b||'B')}</span></div>
+      <div class="vote-btn a" onclick="sendVote(window._choiceA);renderSimpleVoted()"><span class="vote-icon">⚡</span><span class="vote-label" style="font-size:.85rem;white-space:normal;line-height:1.3;">${esc(state.a||'A')}</span></div>
+      <div class="vote-btn b" onclick="sendVote(window._choiceB);renderSimpleVoted()"><span class="vote-icon">⚡</span><span class="vote-label" style="font-size:.85rem;white-space:normal;line-height:1.3;">${esc(state.b||'B')}</span></div>
     </div>`}`;
 }
 
