@@ -2,446 +2,252 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🪩 LAST DISCO – Host Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#07000F">
+<title>🪩 Last Disco – Dołącz!</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --gold:#FFD700;--gold2:#FFA500;--pink:#FF2D9C;--pink2:#FF6BC8;
   --blue:#00CFFF;--green:#39FF14;--green2:#ADFF2F;--red:#FF3333;
-  --dark:#07000F;--card:rgba(255,255,255,.06);--card2:rgba(255,255,255,.1);
-  --border:rgba(255,215,0,.2);--text:#FFF8E7;--muted:rgba(255,248,231,.5);
-  --admin-bg:#0D001A;--admin-border:rgba(255,45,156,.35);
+  --dark:#07000F;--card:rgba(255,255,255,.07);--border:rgba(255,215,0,.2);
+  --text:#FFF8E7;--muted:rgba(255,248,231,.5);
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outfit',sans-serif;overflow:hidden;}
-.disco-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse at 10% 15%,rgba(255,45,156,.2) 0%,transparent 40%),
-    radial-gradient(ellipse at 90% 85%,rgba(0,207,255,.16) 0%,transparent 40%),
-    radial-gradient(ellipse at 50% 50%,rgba(255,215,0,.05) 0%,transparent 55%);}
-.disco-dots{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.6;
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{
+  min-height:100%;min-height:100dvh;
+  background:var(--dark);color:var(--text);
+  font-family:'Outfit',sans-serif;
+  overflow-x:hidden;
+}
+/* Safe area for iPhone notch */
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);}
+
+/* ── BG ── */
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 20% 20%,rgba(255,45,156,.18) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(0,207,255,.12) 0%,transparent 50%);}
+.dots{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;
   background-image:radial-gradient(circle,rgba(255,215,0,.15) 1px,transparent 1px);
-  background-size:32px 32px;}
-.screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;overflow:hidden;}
+  background-size:24px 24px;}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;overflow-y:auto;overflow-x:hidden;
+  padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));}
 .screen.active{display:flex;}
 
-/* ── HOME ── */
-#home{align-items:center;justify-content:center;}
-.home-crown{font-size:3.5rem;margin-bottom:4px;animation:float 3s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0)rotate(-5deg);}50%{transform:translateY(-10px)rotate(5deg);}}
-.home-title{font-family:'Bebas Neue';font-size:clamp(3rem,9vw,8rem);letter-spacing:8px;line-height:.9;text-align:center;
-  background:linear-gradient(135deg,var(--gold),var(--gold2) 35%,var(--pink) 70%,var(--pink2));
+/* ── JOIN SCREEN ── */
+#join{align-items:center;justify-content:center;text-align:center;gap:0;}
+.join-disco{font-size:3.5rem;margin-bottom:6px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)rotate(-5deg);}50%{transform:translateY(-8px)rotate(5deg);}}
+.join-title{font-family:'Bebas Neue';font-size:clamp(2.5rem,12vw,5rem);letter-spacing:6px;line-height:.9;
+  background:linear-gradient(135deg,var(--gold),var(--gold2) 40%,var(--pink));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 0 30px rgba(255,215,0,.2));}
-.home-sub{font-family:'Playfair Display';font-style:italic;color:var(--blue);font-size:1.1rem;letter-spacing:2px;margin:8px 0 6px;}
-.host-badge{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.4);border-radius:20px;
-  padding:5px 18px;font-family:'Bebas Neue';font-size:.85rem;letter-spacing:3px;color:var(--gold);margin-bottom:24px;}
-.qr-section{display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.05);
-  border:1px solid var(--border);border-radius:14px;padding:14px 20px;margin-bottom:20px;
-  max-width:500px;width:90vw;}
-.qr-section canvas{border-radius:8px;background:white;padding:4px;flex-shrink:0;}
-.qr-info{flex:1;}
-.qr-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;color:var(--gold);margin-bottom:4px;}
-.qr-url{font-size:.8rem;color:var(--blue);word-break:break-all;line-height:1.4;}
-.qr-hint{font-size:.65rem;color:var(--muted);margin-top:6px;line-height:1.4;}
-.online-count{font-family:'Bebas Neue';font-size:.9rem;letter-spacing:2px;color:var(--green);margin-top:6px;}
-.games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:min(1080px,94vw);max-height:50vh;overflow-y:auto;padding:2px;}
-@media(max-width:900px){.games-grid{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:600px){.games-grid{grid-template-columns:repeat(2,1fr);}}
-.games-grid::-webkit-scrollbar{width:4px;}
-.games-grid::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px;}
-.game-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 10px;
-  cursor:pointer;text-align:center;transition:all .25s;position:relative;overflow:hidden;}
-.game-btn:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,215,0,.15);}
-.game-btn .icon{font-size:1.9rem;display:block;margin-bottom:4px;}
-.game-btn .name{font-family:'Bebas Neue';font-size:.95rem;letter-spacing:2px;color:var(--gold);}
-.game-btn .desc{font-size:.6rem;color:var(--muted);margin-top:3px;line-height:1.3;}
+  filter:drop-shadow(0 0 20px rgba(255,215,0,.2));}
+.join-sub{font-family:'Outfit';font-style:italic;color:var(--blue);font-size:1rem;letter-spacing:2px;margin:8px 0 28px;}
+.name-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;width:100%;max-width:360px;}
+.name-label{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
+.name-input{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,215,0,.3);border-radius:10px;
+  color:var(--text);font-family:'Outfit';font-size:1.2rem;font-weight:600;padding:14px 16px;
+  outline:none;text-align:center;transition:border-color .2s;}
+.name-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,215,0,.15);}
+.join-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--dark);border:none;border-radius:12px;padding:16px;
+  font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:3px;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 20px rgba(255,215,0,.3);}
+.join-btn:active{transform:scale(.97);}
+.join-hint{font-size:.7rem;color:var(--muted);margin-top:10px;text-align:center;line-height:1.5;}
 
-/* ── GAME LAYOUT ── */
-.game-header{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
-  padding:12px 20px 10px;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px;
-  background:rgba(7,0,15,.7);backdrop-filter:blur(10px);}
-.game-header-left{display:flex;flex-direction:column;min-width:0;}
-.game-header-title{font-family:'Bebas Neue';font-size:1.7rem;letter-spacing:4px;
+/* ── WAITING SCREEN ── */
+#waiting{align-items:center;justify-content:center;text-align:center;gap:16px;}
+.wait-emoji{font-size:3rem;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.wait-title{font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:4px;color:var(--gold);}
+.wait-sub{font-size:.9rem;color:var(--muted);line-height:1.6;}
+.wait-name{font-family:'Bebas Neue';font-size:1.2rem;color:var(--pink);letter-spacing:2px;}
+.wait-online{font-size:.8rem;color:var(--green);letter-spacing:2px;font-family:'Bebas Neue';}
+
+/* ── GAME SCREEN ── */
+#game{gap:12px;padding-top:max(16px, env(safe-area-inset-top));}
+.game-top{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-bottom:4px;}
+.game-tag{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:3px;
   background:linear-gradient(90deg,var(--gold),var(--pink));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
-.game-header-sub{font-size:.65rem;color:var(--muted);letter-spacing:2px;margin-top:1px;text-transform:uppercase;}
-.header-btns{display:flex;gap:6px;align-items:center;flex-shrink:0;}
-.back-btn{background:rgba(255,45,156,.1);border:1px solid rgba(255,45,156,.4);color:var(--pink);
-  border-radius:8px;padding:7px 14px;font-family:'Bebas Neue';font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
-.back-btn:hover{background:rgba(255,45,156,.25);}
-.admin-toggle-btn{background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.3);color:var(--gold);
-  border-radius:8px;padding:7px 14px;font-family:'Bebas Neue';font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
-.admin-toggle-btn:hover,.admin-toggle-btn.active{background:rgba(255,215,0,.18);border-color:var(--gold);}
-.live-votes{font-family:'Bebas Neue';font-size:.85rem;letter-spacing:2px;color:var(--green);
-  background:rgba(57,255,20,.08);border:1px solid rgba(57,255,20,.3);border-radius:6px;padding:6px 12px;}
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.player-tag{font-family:'Bebas Neue';font-size:.7rem;letter-spacing:2px;color:var(--muted);}
+.voted-badge{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:2px;color:var(--green);
+  background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);border-radius:20px;padding:4px 12px;}
 
-.game-stage-wrap{flex:1;display:flex;overflow:hidden;position:relative;z-index:2;}
-.game-stage{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.game-body{flex:1;overflow-y:auto;padding:18px 24px;display:flex;flex-direction:column;gap:14px;}
-.game-body::-webkit-scrollbar{width:4px;}
-.game-body::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px;}
-.nav-controls{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;
-  flex-shrink:0;padding:10px 20px 14px;border-top:1px solid var(--border);
-  background:rgba(7,0,15,.7);backdrop-filter:blur(10px);}
-.ctrl-btn{padding:11px 22px;border-radius:8px;font-family:'Bebas Neue';font-size:1.05rem;letter-spacing:2px;cursor:pointer;transition:all .2s;border:none;}
-.ctrl-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);}
-.ctrl-btn.primary:hover{opacity:.85;transform:scale(1.02);}
-.ctrl-btn.secondary{background:var(--card);border:1px solid var(--border);color:var(--text);}
-.ctrl-btn.secondary:hover{border-color:var(--gold);}
-.ctrl-btn.danger{background:rgba(255,45,156,.12);border:1px solid rgba(255,45,156,.4);color:var(--pink);}
-.ctrl-btn.reveal-btn{background:linear-gradient(135deg,var(--pink),#8B0055);color:white;font-size:1.2rem;padding:13px 36px;box-shadow:0 4px 20px rgba(255,45,156,.35);}
-.ctrl-btn.reveal-btn:hover{transform:scale(1.02);box-shadow:0 6px 28px rgba(255,45,156,.5);}
-.counter-badge{font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;color:var(--muted);padding:10px 12px;}
+/* ── QUESTION CARD ── */
+.q-card{background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,45,156,.05));
+  border:1px solid rgba(255,215,0,.25);border-radius:16px;
+  padding:22px 20px;text-align:center;flex-shrink:0;}
+.q-round{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:3px;color:var(--pink);margin-bottom:6px;}
+.q-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.2rem,5vw,1.8rem);line-height:1.25;color:var(--text);}
+.q-hint{font-size:.85rem;color:var(--muted);margin-top:8px;font-style:italic;line-height:1.4;}
 
-/* ── ADMIN PANEL ── */
-.admin-panel{width:0;overflow:hidden;background:var(--admin-bg);border-left:1px solid var(--admin-border);
-  transition:width .3s ease;flex-shrink:0;display:flex;flex-direction:column;}
-.admin-panel.open{width:320px;}
-.admin-inner{width:320px;display:flex;flex-direction:column;height:100%;}
-.admin-header{padding:14px 16px 10px;border-bottom:1px solid var(--admin-border);flex-shrink:0;}
-.admin-title{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;color:var(--pink);}
-.admin-subtitle{font-size:.6rem;color:var(--muted);letter-spacing:1px;margin-top:2px;}
-.admin-scroll{flex:1;overflow-y:auto;padding:12px 14px;}
-.admin-label{font-family:'Bebas Neue';font-size:.7rem;letter-spacing:3px;color:var(--gold);margin-bottom:5px;}
-.admin-input,.admin-textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--admin-border);
-  border-radius:6px;color:var(--text);font-family:'Outfit';font-size:.8rem;padding:8px 10px;outline:none;transition:border-color .2s;}
-.admin-input:focus,.admin-textarea:focus{border-color:var(--pink);}
-.admin-textarea{resize:vertical;min-height:50px;line-height:1.5;}
-.admin-row{display:flex;gap:6px;margin-bottom:6px;align-items:flex-start;}
-.admin-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.1);border-radius:8px;padding:10px;margin-bottom:8px;}
-.admin-item-footer{display:flex;justify-content:flex-end;margin-top:6px;}
-.admin-delete-btn{background:rgba(255,45,156,.1);border:1px solid rgba(255,45,156,.3);color:var(--pink);
-  border-radius:4px;padding:4px 8px;font-size:.7rem;cursor:pointer;font-family:'Bebas Neue';letter-spacing:1px;transition:all .2s;}
-.admin-delete-btn:hover{background:rgba(255,45,156,.25);}
-.admin-add-btn{background:rgba(57,255,20,.07);border:1px solid rgba(57,255,20,.3);color:var(--green2);
-  border-radius:6px;padding:7px 12px;font-family:'Bebas Neue';font-size:.82rem;letter-spacing:2px;cursor:pointer;transition:all .2s;width:100%;margin-top:5px;}
-.admin-add-btn:hover{background:rgba(57,255,20,.16);}
-.admin-divider{height:1px;background:var(--admin-border);margin:10px 0;}
-.admin-note{font-size:.65rem;color:var(--muted);line-height:1.6;font-style:italic;background:rgba(255,215,0,.05);border-radius:6px;padding:8px 10px;}
+/* ── OPTIONS ── */
+.options{display:flex;flex-direction:column;gap:10px;}
+.opt{background:rgba(255,255,255,.06);border:2px solid rgba(255,215,0,.2);border-radius:12px;
+  padding:16px 18px;display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.opt:active{transform:scale(.98);}
+.opt.selected{border-color:var(--gold);background:rgba(255,215,0,.12);}
+.opt.correct{border-color:var(--green);background:rgba(57,255,20,.1);}
+.opt.wrong{border-color:var(--red);background:rgba(255,51,51,.07);}
+.opt.sent{border-color:var(--green2);background:rgba(173,255,47,.06);cursor:default;}
+.opt-letter{font-family:'Bebas Neue';font-size:1.5rem;color:var(--blue);min-width:24px;text-align:center;flex-shrink:0;}
+.opt-letter.correct{color:var(--green);}
+.opt-text{font-size:.95rem;font-weight:600;line-height:1.35;}
 
-/* ── GAME CARDS ── */
-.big-card{background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,45,156,.05));
-  border:1px solid rgba(255,215,0,.3);border-radius:16px;padding:28px 32px;text-align:center;position:relative;overflow:hidden;flex-shrink:0;}
-.round-badge{font-family:'Bebas Neue';font-size:.8rem;letter-spacing:3px;color:var(--pink);margin-bottom:8px;}
-.main-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.6rem,3.2vw,3rem);line-height:1.15;color:var(--text);}
-.sub-text{font-size:.9rem;color:var(--muted);margin-top:10px;line-height:1.5;font-style:italic;}
-.answer-box{border-radius:14px;padding:22px 28px;text-align:center;animation:revealBounce .5s cubic-bezier(.34,1.56,.64,1);flex-shrink:0;}
-.answer-box.correct{background:linear-gradient(135deg,rgba(57,255,20,.1),rgba(0,207,255,.06));border:2px solid rgba(57,255,20,.4);box-shadow:0 0 30px rgba(57,255,20,.12);}
-.answer-box.neutral{background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,207,255,.06));border:2px solid rgba(255,215,0,.35);}
-@keyframes revealBounce{from{opacity:0;transform:scale(.88) translateY(16px);}to{opacity:1;transform:scale(1) translateY(0);}}
-.answer-label{font-family:'Bebas Neue';font-size:.8rem;letter-spacing:4px;color:var(--green);margin-bottom:6px;}
-.answer-label.neutral{color:var(--gold);}
-.answer-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.6rem,3vw,2.8rem);color:var(--text);line-height:1.1;}
-.answer-sub{font-size:.85rem;color:var(--muted);margin-top:8px;line-height:1.5;}
-.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.opt-btn{background:rgba(255,255,255,.05);border:2px solid rgba(255,215,0,.2);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .25s;}
-.opt-btn.correct-opt{border-color:var(--green);background:rgba(57,255,20,.1);animation:correctPulse .4s ease;}
-.opt-btn.wrong-opt{border-color:var(--red);background:rgba(255,51,51,.07);}
-@keyframes correctPulse{0%{transform:scale(1);}40%{transform:scale(1.03);}100%{transform:scale(1);}}
-.opt-letter{font-family:'Bebas Neue';font-size:1.6rem;min-width:26px;text-align:center;color:var(--blue);flex-shrink:0;}
-.opt-letter.correct-letter{color:var(--green);}
-.opt-text{font-size:.9rem;line-height:1.4;font-weight:600;}
-.step-indicator{display:flex;gap:5px;justify-content:center;padding:4px 0;flex-wrap:wrap;}
-.step-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.12);transition:all .3s;}
-.step-dot.done{background:var(--pink);}
-.step-dot.active{background:var(--gold);transform:scale(1.4);}
-.score-bar{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;background:rgba(255,215,0,.04);border:1px solid var(--border);border-radius:10px;padding:10px 16px;flex-shrink:0;}
-.score-item{text-align:center;}
-.score-label{font-family:'Bebas Neue';font-size:.65rem;letter-spacing:2px;color:var(--muted);display:block;}
-.score-value{font-family:'Bebas Neue';font-size:1.5rem;color:var(--gold);line-height:1;}
-.score-value.blue{color:var(--blue);}.score-value.green{color:var(--green);}.score-value.pink{color:var(--pink);}
+/* ── VOTE BUTTONS (big) ── */
+.vote-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.vote-btn{border-radius:14px;padding:22px 12px;text-align:center;cursor:pointer;
+  border:2px solid transparent;transition:all .25s;-webkit-tap-highlight-color:transparent;}
+.vote-btn:active{transform:scale(.96);}
+.vote-btn.hot{background:rgba(255,45,156,.12);border-color:rgba(255,45,156,.4);color:var(--pink);}
+.vote-btn.not{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
+.vote-btn.yes{background:rgba(57,255,20,.1);border-color:rgba(57,255,20,.4);color:var(--green);}
+.vote-btn.no{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
+.vote-btn.a{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.4);color:var(--gold);}
+.vote-btn.b{background:rgba(255,45,156,.1);border-color:rgba(255,45,156,.35);color:var(--pink);}
+.vote-btn.selected{transform:scale(.97);}
+.vote-btn.hot.selected,.vote-btn.yes.selected{background:rgba(255,45,156,.3);border-color:var(--pink);box-shadow:0 0 20px rgba(255,45,156,.25);}
+.vote-btn.not.selected,.vote-btn.no.selected{background:rgba(0,207,255,.2);border-color:var(--blue);box-shadow:0 0 20px rgba(0,207,255,.2);}
+.vote-btn.a.selected{background:rgba(255,215,0,.25);border-color:var(--gold);box-shadow:0 0 20px rgba(255,215,0,.2);}
+.vote-btn.b.selected{background:rgba(255,45,156,.25);border-color:var(--pink);box-shadow:0 0 20px rgba(255,45,156,.2);}
+.vote-icon{font-size:2.2rem;display:block;margin-bottom:6px;}
+.vote-label{font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:2px;display:block;}
 
-/* ── LIVE RESULTS BAR ── */
-.live-bar{background:rgba(57,255,20,.06);border:1px solid rgba(57,255,20,.25);border-radius:10px;padding:10px 16px;flex-shrink:0;}
-.live-bar-title{font-family:'Bebas Neue';font-size:.7rem;letter-spacing:3px;color:var(--green);margin-bottom:8px;}
-.live-option-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
-.live-option-label{font-family:'Bebas Neue';font-size:.8rem;letter-spacing:1px;color:var(--text);min-width:80px;}
-.live-option-bar{flex:1;height:12px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden;}
-.live-option-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s ease;}
-.live-option-fill.pink{background:linear-gradient(90deg,var(--pink),var(--pink2));}
-.live-option-fill.blue{background:linear-gradient(90deg,var(--blue),#0080FF);}
-.live-option-fill.green{background:linear-gradient(90deg,var(--green),var(--green2));}
-.live-option-count{font-family:'Bebas Neue';font-size:.85rem;color:var(--gold);min-width:30px;text-align:right;}
+/* ── ANSWER REVEAL ── */
+.answer-card{border-radius:14px;padding:20px 18px;text-align:center;
+  animation:revealPop .4s cubic-bezier(.34,1.56,.64,1);}
+.answer-card.correct{background:linear-gradient(135deg,rgba(57,255,20,.1),rgba(0,207,255,.06));border:2px solid rgba(57,255,20,.35);}
+.answer-card.neutral{background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,207,255,.06));border:2px solid rgba(255,215,0,.3);}
+@keyframes revealPop{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+.answer-lbl{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:var(--green);margin-bottom:6px;}
+.answer-lbl.neutral{color:var(--gold);}
+.answer-val{font-family:'Outfit';font-weight:800;font-size:clamp(1.3rem,5vw,2rem);color:var(--text);line-height:1.15;}
+.answer-note{font-size:.8rem;color:var(--muted);margin-top:6px;line-height:1.4;}
 
-/* ── BINGO ── */
-.bingo-letters{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:520px;margin:0 auto 4px;}
-.b-letter{text-align:center;font-family:'Bebas Neue';font-size:1.8rem;}
-.b-letter:nth-child(1){color:var(--pink);}.b-letter:nth-child(2){color:var(--gold);}
-.b-letter:nth-child(3){color:var(--blue);}.b-letter:nth-child(4){color:var(--green2);}
-.b-letter:nth-child(5){color:var(--pink);}
-.bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:520px;margin:0 auto;}
-.b-cell{aspect-ratio:1;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;
-  text-align:center;padding:6px;font-size:.58rem;font-weight:600;color:var(--text);line-height:1.3;
-  cursor:pointer;transition:all .25s;background:var(--card);position:relative;overflow:hidden;}
-.b-cell:hover{border-color:var(--gold);background:rgba(255,215,0,.08);}
-.b-cell.marked{background:linear-gradient(135deg,var(--pink),#7B0044);border-color:var(--gold);color:white;animation:cellMark .3s cubic-bezier(.34,1.56,.64,1);}
-@keyframes cellMark{from{transform:scale(.85);}to{transform:scale(1);}}
-.b-cell.marked::after{content:'✓';position:absolute;top:2px;right:4px;font-size:.85rem;color:var(--gold);}
-.b-cell.free{background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,45,156,.12));border-color:var(--gold);font-family:'Bebas Neue';font-size:.9rem;letter-spacing:1px;color:var(--gold);}
+/* ── RESULTS BAR ── */
+.results-wrap{background:rgba(57,255,20,.05);border:1px solid rgba(57,255,20,.2);border-radius:10px;padding:10px 14px;}
+.results-title{font-family:'Bebas Neue';font-size:.68rem;letter-spacing:3px;color:var(--green);margin-bottom:8px;}
+.result-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.result-lbl{font-family:'Bebas Neue';font-size:.75rem;color:var(--text);min-width:70px;letter-spacing:1px;}
+.result-bar-wrap{flex:1;height:10px;background:rgba(255,255,255,.08);border-radius:5px;overflow:hidden;}
+.result-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s ease;}
+.result-bar-fill.pink{background:linear-gradient(90deg,var(--pink),var(--pink2));}
+.result-bar-fill.blue{background:linear-gradient(90deg,var(--blue),#0080FF);}
+.result-count{font-family:'Bebas Neue';font-size:.8rem;color:var(--gold);min-width:24px;text-align:right;}
 
-/* ── HOT OR NOT ── */
-.hon-question{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:36px 28px;text-align:center;
-  font-family:'Outfit';font-weight:700;font-size:clamp(1.3rem,2.8vw,2.4rem);line-height:1.4;color:var(--text);
-  min-height:140px;display:flex;align-items:center;justify-content:center;}
-.hon-votes{display:flex;gap:12px;justify-content:center;}
-.hon-vote-btn{flex:1;max-width:240px;padding:16px;border-radius:12px;font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:2px;cursor:pointer;transition:all .25s;border:2px solid transparent;}
-.hon-vote-btn.hot{background:rgba(255,45,156,.12);border-color:rgba(255,45,156,.4);color:var(--pink);}
-.hon-vote-btn.not{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
-.hon-vote-btn:hover{transform:scale(1.04);}
+/* ── ADVICE INPUT ── */
+.advice-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.advice-label{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
+.advice-ta{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,215,0,.25);border-radius:10px;
+  color:var(--text);font-family:'Outfit';font-size:1rem;padding:12px 14px;outline:none;
+  resize:none;min-height:80px;line-height:1.6;caret-color:var(--gold);}
+.advice-ta:focus{border-color:var(--gold);}
+.advice-ta::placeholder{color:var(--muted);}
+.advice-send{width:100%;margin-top:10px;background:linear-gradient(135deg,var(--pink),#8B0055);
+  border:none;border-radius:10px;color:white;padding:14px;
+  font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:3px;cursor:pointer;transition:all .2s;}
+.advice-send:active{transform:scale(.97);}
+.advice-sent-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.advice-sent-item{background:var(--card);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;
+  padding:10px 12px;font-style:italic;font-size:.9rem;color:var(--text);line-height:1.5;}
 
-/* ── CHOICE ── */
-.choice-vs-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;}
-.choice-side{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:24px 16px;text-align:center;
-  cursor:pointer;transition:all .25s;min-height:130px;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:700;line-height:1.5;}
-.choice-side:hover{transform:scale(1.02);}
-.choice-side.picked-a{border-color:var(--gold);background:rgba(255,215,0,.1);}
-.choice-side.picked-b{border-color:var(--pink);background:rgba(255,45,156,.1);}
-.vs-badge{font-family:'Bebas Neue';font-size:2.2rem;color:var(--muted);}
+/* ── IDLE / WAITING FOR GAME ── */
+.idle-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:28px 20px;text-align:center;margin-top:24px;}
+.idle-emoji{font-size:2.5rem;margin-bottom:10px;animation:pulse 2s ease-in-out infinite;}
+.idle-text{font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;color:var(--gold);}
+.idle-sub{font-size:.82rem;color:var(--muted);margin-top:6px;line-height:1.5;}
 
-/* ── RADY ── */
-.advice-input-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.advice-input-wrap textarea{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Outfit';font-size:1rem;resize:none;min-height:70px;line-height:1.6;caret-color:var(--gold);}
-.advice-input-wrap textarea::placeholder{color:var(--muted);}
-.advice-add-row{display:flex;justify-content:flex-end;margin-top:8px;}
-.advice-list{display:flex;flex-direction:column;gap:8px;}
-.advice-item{background:var(--card);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 40px 12px 14px;
-  font-family:'Playfair Display';font-style:italic;font-size:.95rem;color:var(--text);line-height:1.5;position:relative;
-  animation:adviceSlide .4s cubic-bezier(.34,1.56,.64,1);}
-@keyframes adviceSlide{from{opacity:0;transform:translateX(-16px);}to{opacity:1;transform:translateX(0);}}
-.advice-del{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;}
-.advice-del:hover{color:var(--pink);}
-.section-label{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:var(--muted);margin-bottom:5px;}
+/* ── BINGO PLAYER ── */
+.player-bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:6px;}
+.pb-cell{aspect-ratio:1;border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;font-size:.5rem;font-weight:600;color:var(--text);line-height:1.2;background:var(--card);cursor:pointer;transition:all .2s;}
+.pb-cell.marked{background:linear-gradient(135deg,var(--pink),#7B0044);border-color:var(--gold);color:white;}
+.pb-cell.free{background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,45,156,.12));border-color:var(--gold);font-family:'Bebas Neue';font-size:.75rem;color:var(--gold);}
 
-/* ── TIMER ── */
-.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;}
-.timer-ring{width:150px;height:150px;position:relative;display:flex;align-items:center;justify-content:center;}
-.timer-ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
-.timer-ring circle{fill:none;stroke-width:7;stroke-linecap:round;}
-.timer-bg{stroke:rgba(255,255,255,.08);}
-.timer-fill{stroke:var(--gold);stroke-dasharray:408;stroke-dashoffset:0;transition:stroke-dashoffset .1s linear;}
-.timer-fill.danger{stroke:var(--red);filter:drop-shadow(0 0 5px var(--red));}
-.timer-number{font-family:'Bebas Neue';font-size:3.4rem;color:var(--text);z-index:1;}
-.timer-number.danger{color:var(--red);}
+/* ── TIER LIST PLAYER ── */
+.player-tier{display:flex;flex-direction:column;gap:8px;}
+.ptier-row{display:flex;align-items:center;gap:8px;}
+.ptier-lbl{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.2rem;flex-shrink:0;}
+.ptier-lbl.S{background:#FF215A;color:white;}.ptier-lbl.A{background:#FF8C00;color:white;}
+.ptier-lbl.B{background:#FFD700;color:#333;}.ptier-lbl.C{background:#39C26E;color:white;}
+.ptier-lbl.D{background:#00CFFF;color:white;}.ptier-lbl.F{background:#7B2D8B;color:white;}
+.ptier-items{flex:1;display:flex;flex-wrap:wrap;gap:4px;min-height:36px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,215,0,.15);border-radius:7px;padding:5px;}
+.ptier-item{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:4px 9px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.ptier-item:active{transform:scale(.94);}
+.ptier-pool{display:flex;flex-wrap:wrap;gap:5px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:8px;min-height:40px;}
+.ptier-pool-lbl{font-family:'Bebas Neue';font-size:.68rem;letter-spacing:3px;color:var(--muted);margin-bottom:5px;}
 
-/* ── VA-BANK ── */
-.vabank-board{display:flex;flex-direction:column;gap:6px;padding:16px 24px;flex:1;}
-.vabank-board-grid{display:grid;gap:7px;flex:1;}
-.vb-cat-header{background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,45,156,.08));border:1px solid rgba(255,215,0,.3);
-  border-radius:10px;padding:12px;text-align:center;font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;color:var(--gold);line-height:1.2;}
-.vb-cell{background:linear-gradient(135deg,rgba(0,128,255,.15),rgba(0,70,180,.2));border:2px solid rgba(0,207,255,.3);
-  border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:2px;
-  color:var(--gold);cursor:pointer;transition:all .25s;min-height:60px;}
-.vb-cell:hover:not(.used){border-color:var(--gold);transform:scale(1.04);box-shadow:0 6px 24px rgba(0,207,255,.2);}
-.vb-cell.used{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06);color:rgba(255,255,255,.12);cursor:default;pointer-events:none;}
-.vabank-question-view{flex:1;display:flex;flex-direction:column;gap:14px;padding:20px 28px;overflow-y:auto;}
-.vb-price-badge{display:inline-flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:4px;
-  padding:8px 24px;border-radius:50px;margin:0 auto;background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,165,0,.12));
-  border:2px solid var(--gold);color:var(--gold);flex-shrink:0;}
-
-/* ── TIER LIST ── */
-.tier-board{display:flex;flex-direction:column;gap:6px;}
-.tier-row{display:flex;align-items:stretch;gap:6px;min-height:72px;}
-.tier-label{width:70px;flex-shrink:0;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:1.8rem;letter-spacing:1px;border:2px solid rgba(255,255,255,.1);}
-.tier-label.S{background:linear-gradient(135deg,#FF215A,#FF6B9D);color:white;}
-.tier-label.A{background:linear-gradient(135deg,#FF8C00,#FFC96B);color:white;}
-.tier-label.B{background:linear-gradient(135deg,#FFD700,#FFF07A);color:#333;}
-.tier-label.C{background:linear-gradient(135deg,#39C26E,#7FFFB3);color:white;}
-.tier-label.D{background:linear-gradient(135deg,#00CFFF,#7FE6FF);color:white;}
-.tier-label.F{background:linear-gradient(135deg,#7B2D8B,#C06BE8);color:white;}
-.tier-drop{flex:1;border:2px dashed rgba(255,215,0,.2);border-radius:8px;display:flex;flex-wrap:wrap;gap:5px;padding:7px;min-height:72px;transition:border-color .2s;background:rgba(255,255,255,.02);}
-.tier-drop.drag-over{border-color:var(--gold);background:rgba(255,215,0,.05);}
-.tier-item{background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:7px 12px;font-size:.82rem;font-weight:600;cursor:grab;transition:all .2s;user-select:none;}
-.tier-item:hover{border-color:var(--gold);transform:scale(1.04);}
-.tier-pool-wrap{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:10px;}
-.tier-pool{display:flex;flex-wrap:wrap;gap:6px;min-height:44px;}
-.tier-pool-label{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:3px;color:var(--muted);margin-bottom:7px;}
-
-/* ── AUKCJA ── */
-.auction-item{background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,45,156,.05));border:1px solid rgba(255,215,0,.3);border-radius:14px;padding:24px 28px;text-align:center;flex-shrink:0;}
-.auction-item-name{font-family:'Outfit';font-weight:800;font-size:clamp(1.6rem,3.2vw,2.8rem);line-height:1.1;}
-.auction-current-bid{font-family:'Bebas Neue';font-size:2.8rem;color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.3);}
-.auction-bidder{font-size:.85rem;color:var(--muted);margin-top:4px;}
-.bid-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
-.bid-chip{background:rgba(255,215,0,.1);border:2px solid rgba(255,215,0,.3);color:var(--gold);border-radius:8px;padding:10px 16px;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
-.bid-chip:hover{background:rgba(255,215,0,.22);transform:scale(1.05);}
-.player-budgets{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
-.player-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 14px;text-align:center;cursor:pointer;transition:all .2s;min-width:85px;}
-.player-card.active{border-color:var(--gold);background:rgba(255,215,0,.1);}
-.player-card .p-name{font-family:'Bebas Neue';font-size:.85rem;letter-spacing:2px;color:var(--gold);}
-.player-card .p-budget{font-family:'Bebas Neue';font-size:1.3rem;color:var(--text);}
-
-/* ── WRÓŻBY ── */
-.wrozba-card{background:linear-gradient(135deg,rgba(173,0,255,.1),rgba(255,45,156,.07));border:1px solid rgba(173,0,255,.35);border-radius:14px;padding:24px 28px;flex-shrink:0;}
-.wrozba-title{font-family:'Bebas Neue';font-size:.9rem;letter-spacing:4px;color:#C06BE8;margin-bottom:10px;}
-.wrozba-result{font-family:'Bebas Neue';font-size:clamp(2rem,5vw,4.5rem);background:linear-gradient(135deg,#C06BE8,var(--gold),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;letter-spacing:3px;animation:wrozbaReveal .5s cubic-bezier(.34,1.56,.64,1);}
-@keyframes wrozbaReveal{from{opacity:0;transform:scale(.7)rotate(-5deg);}to{opacity:1;transform:scale(1)rotate(0);}}
-.wrozba-sub{font-size:.88rem;color:var(--muted);margin-top:8px;font-style:italic;}
-.wrozba-input-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.wrozba-input{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Outfit';font-size:.95rem;padding:10px 14px;outline:none;transition:border-color .2s;}
-.wrozba-input:focus{border-color:var(--pink);}
-
-/* ── COUPLES ── */
-.couples-board{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.couples-col-label{font-family:'Bebas Neue';font-size:.82rem;letter-spacing:3px;text-align:center;margin-bottom:7px;}
-.couple-item{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 14px;cursor:pointer;transition:all .25s;text-align:center;font-size:.9rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
-.couple-item:hover{border-color:var(--gold);}
-.couple-item.selected-a{border-color:var(--gold);background:rgba(255,215,0,.1);}
-.couple-item.selected-b{border-color:var(--pink);background:rgba(255,45,156,.1);}
-.couple-item.matched{border-color:var(--green);background:rgba(57,255,20,.07);cursor:default;}
-.couple-item.wrong{border-color:var(--red);background:rgba(255,51,51,.07);animation:shake .3s ease;}
-@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
-
-/* ── NIGDY NIE ── */
-.never-card{background:linear-gradient(135deg,rgba(0,207,255,.07),rgba(255,45,156,.05));border:1px solid rgba(0,207,255,.3);border-radius:14px;padding:36px 32px;text-align:center;flex-shrink:0;}
-.never-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.4rem,3vw,2.8rem);line-height:1.35;color:var(--text);}
-.never-votes{display:flex;gap:12px;justify-content:center;}
-.never-vote-btn{flex:1;max-width:230px;padding:15px;border-radius:12px;font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:2px;cursor:pointer;transition:all .25s;border:2px solid transparent;}
-.never-vote-btn.yes{background:rgba(57,255,20,.1);border-color:rgba(57,255,20,.4);color:var(--green);}
-.never-vote-btn.no{background:rgba(0,207,255,.08);border-color:rgba(0,207,255,.3);color:var(--blue);}
-.never-vote-btn:hover{transform:scale(1.04);}
-
-/* ── DRAW ── */
-.draw-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:4px 0;flex-shrink:0;}
-.color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s;flex-shrink:0;}
-.color-dot.active{border-color:white;transform:scale(1.25);}
-.brush-btn{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-family:'Bebas Neue';font-size:.82rem;letter-spacing:1px;color:var(--text);cursor:pointer;transition:all .2s;}
-.brush-btn:hover,.brush-btn.active{border-color:var(--gold);color:var(--gold);}
-.draw-area{background:#F0EBF8;border-radius:10px;flex:1;min-height:260px;touch-action:none;cursor:crosshair;}
-
-/* ── TELEPHONE ── */
-.telephone-round{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:6px;flex-shrink:0;}
-.tel-player{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;text-align:center;min-width:72px;transition:all .25s;}
-.tel-player.active{border-color:var(--gold);background:rgba(255,215,0,.1);}
-.tel-player.done{border-color:var(--green);background:rgba(57,255,20,.05);}
-.tel-player .p-num{font-family:'Bebas Neue';font-size:1rem;color:var(--gold);}
-.tel-player .p-lbl{font-size:.58rem;color:var(--muted);letter-spacing:1px;}
-.tel-canvas{background:#F0EBF8;border-radius:10px;flex:1;touch-action:none;cursor:crosshair;min-height:200px;}
-.tel-prompt{font-family:'Playfair Display';font-style:italic;font-size:1rem;color:var(--gold);text-align:center;padding:6px;flex-shrink:0;}
-.tel-guesses{display:flex;flex-direction:column;gap:5px;max-height:160px;overflow-y:auto;}
-.tel-guess-item{background:var(--card);border-left:3px solid var(--blue);border-radius:0 7px 7px 0;padding:7px 10px;font-size:.88rem;display:flex;justify-content:space-between;align-items:center;}
-.tel-guess-player{font-family:'Bebas Neue';font-size:.7rem;color:var(--blue);letter-spacing:2px;margin-right:8px;}
-
-/* ── CONFETTI / FLASH ── */
-.confetti-overlay{position:fixed;inset:0;z-index:500;pointer-events:none;overflow:hidden;}
-.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall linear forwards;}
-@keyframes confettiFall{0%{transform:translateY(-20px)rotate(0deg);opacity:1;}100%{transform:translateY(110vh)rotate(720deg);opacity:0;}}
-.result-flash{position:fixed;inset:0;z-index:400;pointer-events:none;display:flex;align-items:center;justify-content:center;animation:flashOut .8s ease forwards;}
-.result-flash.win{background:radial-gradient(ellipse at center,rgba(57,255,20,.22),transparent 70%);}
-.result-flash.lose{background:radial-gradient(ellipse at center,rgba(255,51,51,.22),transparent 70%);}
-@keyframes flashOut{0%{opacity:1;}100%{opacity:0;}}
-.result-flash .result-emoji{font-size:7rem;animation:emojiBounce .5s cubic-bezier(.34,1.56,.64,1);}
-@keyframes emojiBounce{from{transform:scale(0)rotate(-20deg);}to{transform:scale(1)rotate(0);}}
-
-/* ── PRINT ── */
-.print-btn{background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.4);color:var(--green2);border-radius:8px;padding:7px 14px;font-family:'Bebas Neue';font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all .2s;}
-.print-btn:hover{background:rgba(57,255,20,.2);}
-.print-page{display:none;}
-@media print{
-  body *{visibility:hidden;}
-  .print-page,.print-page *{visibility:visible;display:block!important;}
-  .print-page{position:fixed;inset:0;background:white;color:#111;font-family:Georgia,serif;padding:14mm 16mm;}
-  .print-page .pp-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:5px;color:#1a0033;text-align:center;margin-bottom:4px;}
-  .print-page .pp-sub{font-size:.75rem;text-align:center;color:#666;letter-spacing:3px;margin-bottom:14px;}
-  .print-page .pp-divider{border:none;border-top:2px solid #FF2D9C;margin:8px 0;}
-  .print-page .pp-grid{display:grid;gap:8px;}
-  .print-page .pp-card{border:1.5px solid #ddd;border-radius:7px;padding:10px 12px;page-break-inside:avoid;}
-  .print-page .pp-label{font-size:.58rem;letter-spacing:3px;color:#FF2D9C;text-transform:uppercase;margin-bottom:3px;}
-  .print-page .pp-text{font-size:.95rem;font-weight:bold;line-height:1.4;}
-  .print-page .pp-line{border-bottom:1px dashed #bbb;margin:5px 0;}
-  .print-page .pp-tier-row{display:flex;gap:7px;align-items:stretch;min-height:44px;margin-bottom:5px;}
-  .print-page .pp-tier-lbl{width:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;border-radius:5px;flex-shrink:0;}
-  .print-page .pp-tier-box{flex:1;border:1.5px dashed #ccc;border-radius:5px;padding:5px;}
-  @page{margin:0;size:A4;}
-}
+/* ── FB STATUS ── */
+.fb-dot{position:fixed;top:max(8px,env(safe-area-inset-top));right:10px;
+  font-family:'Bebas Neue';font-size:.6rem;letter-spacing:1px;color:var(--muted);z-index:9999;}
+.fb-dot.ok{color:var(--green);}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;padding:12px 28px;border-radius:50px;z-index:9999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 6px 24px rgba(255,215,0,.35);}
+.toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;
+  transform:translateX(-50%) translateY(100px);
+  background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);
+  font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;
+  padding:10px 24px;border-radius:50px;z-index:9999;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;
+  box-shadow:0 4px 20px rgba(255,215,0,.3);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
-/* ── FIREBASE STATUS ── */
-.fb-status{position:fixed;bottom:8px;right:12px;font-family:'Bebas Neue';font-size:.65rem;letter-spacing:2px;color:var(--muted);z-index:9998;}
-.fb-status.connected{color:var(--green);}
-
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-thumb{background:rgba(255,215,0,.22);border-radius:2px;}
+/* ── CONFETTI ── */
+.confetti-overlay{position:fixed;inset:0;z-index:500;pointer-events:none;overflow:hidden;}
+.confetti-piece{position:absolute;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-10px)rotate(0);opacity:1;}100%{transform:translateY(110vh)rotate(540deg);opacity:0;}}
 </style>
 </head>
 <body>
-<div class="disco-bg"></div>
-<div class="disco-dots"></div>
+<div class="bg"></div>
+<div class="dots"></div>
 <div class="confetti-overlay" id="confettiOverlay"></div>
-<div class="fb-status" id="fbStatus">⬤ ŁĄCZENIE...</div>
+<div class="fb-dot" id="fbDot">⬤</div>
 
-<!-- ══ HOME ══ -->
-<div class="screen active" id="home">
-  <div class="home-crown">🪩</div>
-  <div class="home-title">LAST DISCO</div>
-  <div class="home-sub">Wieczór Panieński Kasi</div>
-  <div class="host-badge">📺 PANEL HOSTA</div>
-  <div class="qr-section">
-    <canvas id="qrCanvas" width="80" height="80"></canvas>
-    <div class="qr-info">
-      <div class="qr-label">LINK DLA GOŚCI</div>
-      <div class="qr-url" id="playerUrl">ładowanie...</div>
-      <div class="qr-hint">Goście skanują QR lub wpisują link w telefonie</div>
-      <div class="online-count" id="onlineCount">⬤ 0 graczy online</div>
-    </div>
-  </div>
-  <div class="games-grid">
-    <div class="game-btn" onclick="hostStart('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div><div class="desc">Klikaj pola gdy się zdarzają</div></div>
-    <div class="game-btn" onclick="hostStart('quiz')"><span class="icon">🎤</span><div class="name">ZGADNIJ KASIĘ</div><div class="desc">Quiz — pytanie → odpowiedź</div></div>
-    <div class="game-btn" onclick="hostStart('vabank')"><span class="icon">🎲</span><div class="name">VA-BANK</div><div class="desc">Tablica 50–1000 pkt</div></div>
-    <div class="game-btn" onclick="hostStart('honornot')"><span class="icon">🔥</span><div class="name">HOT OR NOT</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('advice')"><span class="icon">💌</span><div class="name">RADY DLA KASI</div><div class="desc">Goście piszą z telefonu</div></div>
-    <div class="game-btn" onclick="hostStart('highlow')"><span class="icon">📊</span><div class="name">WYŻEJ CZY NIŻEJ</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('eight')"><span class="icon">⏱️</span><div class="name">MASZ 8 SEKUND</div><div class="desc">Zadanie + timer</div></div>
-    <div class="game-btn" onclick="hostStart('choice')"><span class="icon">⚡</span><div class="name">CO WYBIERASZ?</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('draw')"><span class="icon">✏️</span><div class="name">DORYSUJ TO</div><div class="desc">Rysuj na TV</div></div>
-    <div class="game-btn" onclick="hostStart('tierlist')"><span class="icon">🏆</span><div class="name">TIER LIST</div><div class="desc">Drag & drop rankingi</div></div>
-    <div class="game-btn" onclick="hostStart('auction')"><span class="icon">💰</span><div class="name">AUKCJA ZALET</div><div class="desc">Licytuj cechy partnera</div></div>
-    <div class="game-btn" onclick="hostStart('wrozby')"><span class="icon">🔮</span><div class="name">WRÓŻBY</div><div class="desc">FLAMES i przepowiednie</div></div>
-    <div class="game-btn" onclick="hostStart('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARĘ</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('neverhave')"><span class="icon">🙈</span><div class="name">NIGDY NIE...</div><div class="desc">Głosuj z telefonu!</div></div>
-    <div class="game-btn" onclick="hostStart('telephone')"><span class="icon">📞</span><div class="name">GŁUCHY TELEFON</div><div class="desc">Rysowany telefon</div></div>
+<!-- JOIN -->
+<div class="screen active" id="join">
+  <div class="join-disco">🪩</div>
+  <div class="join-title">LAST DISCO</div>
+  <div class="join-sub">Wieczór Panieński Kasi</div>
+  <div class="name-card">
+    <div class="name-label">TWOJE IMIĘ</div>
+    <input class="name-input" id="nameInput" type="text" placeholder="Np. Ania" autocomplete="off" autocapitalize="words" maxlength="20">
+    <button class="join-btn" onclick="joinGame()">🪩 DOŁĄCZ!</button>
+    <div class="join-hint">Wpisz swoje imię i dołącz do zabawy.<br>Prowadząca widzi wszystkie głosy na TV.</div>
   </div>
 </div>
 
-<!-- ══ GAME SCREEN (dynamically filled) ══ -->
-<div class="screen" id="gameScreen">
-  <div class="disco-bg"></div><div class="disco-dots"></div>
-  <div class="game-header">
-    <div class="game-header-left">
-      <div class="game-header-title" id="gsTitle">GRA</div>
-      <div class="game-header-sub" id="gsSubtitle">–</div>
-    </div>
-    <div class="header-btns">
-      <div class="live-votes" id="liveVotesBadge" style="display:none;">⬤ 0 głosów</div>
-      <button class="admin-toggle-btn" id="gsAdminBtn" onclick="toggleAdmin('current')">⚙ ADMIN</button>
-      <button class="back-btn" onclick="hostBack()">← MENU</button>
-    </div>
-  </div>
-  <div class="game-stage-wrap">
-    <div class="game-stage">
-      <div class="game-body" id="gsBody"></div>
-      <div class="nav-controls" id="gsControls"></div>
-    </div>
-    <div class="admin-panel" id="gsAdmin">
-      <div class="admin-inner">
-        <div class="admin-header"><div class="admin-title" id="gsAdminTitle">⚙ ADMIN</div><div class="admin-subtitle">EDYTUJ TREŚĆ GRY</div></div>
-        <div class="admin-scroll" id="gsAdminContent"></div>
-      </div>
-    </div>
-  </div>
+<!-- WAITING -->
+<div class="screen" id="waiting">
+  <div class="wait-emoji">🪩</div>
+  <div class="wait-title">CZEKAJ NA GRĘ</div>
+  <div class="wait-name" id="waitName"></div>
+  <div class="wait-online" id="waitOnline">⬤ 0 graczy online</div>
+  <div class="wait-sub">Prowadząca zaraz wybierze grę.<br>Telefon zostaw odblokowany!</div>
 </div>
 
-<div class="print-page" id="printPage"></div>
+<!-- GAME -->
+<div class="screen" id="game">
+  <div class="game-top">
+    <div class="game-tag" id="gameTag">🪩 LAST DISCO</div>
+    <div class="player-tag" id="playerTag"></div>
+  </div>
+  <div id="gameContent"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<!-- ══ FIREBASE ══ -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, push, remove, serverTimestamp }
+import { getDatabase, ref, set, onValue, push, serverTimestamp, onDisconnect }
   from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -457,956 +263,405 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ── FB STATUS ──
-const connRef = ref(db, '.info/connected');
-onValue(connRef, snap => {
-  const el = document.getElementById('fbStatus');
-  if(snap.val()) { el.textContent = '⬤ FIREBASE OK'; el.className = 'fb-status connected'; }
-  else { el.textContent = '⬤ OFFLINE'; el.className = 'fb-status'; }
+// Connection status
+onValue(ref(db,'.info/connected'), snap => {
+  const el = document.getElementById('fbDot');
+  el.textContent = snap.val() ? '⬤ OK' : '⬤ OFF';
+  el.className = snap.val() ? 'fb-dot ok' : 'fb-dot';
 });
 
-// ── ONLINE COUNT ──
+// Online count
 onValue(ref(db,'presence'), snap => {
   const count = snap.val() ? Object.keys(snap.val()).length : 0;
-  document.getElementById('onlineCount').textContent = `⬤ ${count} graczy online`;
+  document.getElementById('waitOnline').textContent = `⬤ ${count} graczy online`;
 });
 
-// ── GAME STATE (what host broadcasts) ──
-function pushState(data) {
-  return set(ref(db,'gameState'), { ...data, ts: Date.now() });
-}
-function pushVotesReset() {
-  return set(ref(db,'votes'), null);
-}
+// Expose
+window.DB = { db, ref, set, push, onValue, onDisconnect };
 
-// ── LISTEN TO VOTES ──
-let votesCallback = null;
-onValue(ref(db,'votes'), snap => {
-  const votes = snap.val() || {};
-  if(votesCallback) votesCallback(votes);
-  // update badge
-  const total = Object.keys(votes).length;
-  const badge = document.getElementById('liveVotesBadge');
-  if(total > 0) { badge.style.display=''; badge.textContent = `⬤ ${total} głosów`; }
-  else badge.style.display='none';
+window.addEventListener('fbReady_player', async () => {
+  const name = window._playerName;
+  if(!name) return;
+  // Presence
+  const presRef = ref(db, 'presence/'+name+'_'+Date.now());
+  await set(presRef, {name, ts: Date.now()});
+  onDisconnect(presRef).remove();
 });
 
-// ── ADVICE (players submit) ──
+// Listen to game state
+onValue(ref(db,'gameState'), snap => {
+  const state = snap.val();
+  if(!window._playerName) return; // not joined yet
+  window._handleGameState(state);
+});
+
+// Advice sync
 onValue(ref(db,'advice'), snap => {
-  window._advices = snap.val() ? Object.values(snap.val()) : [];
-  if(window._currentGame === 'advice') renderAdviceDisplay();
+  window._adviceList = snap.val() ? Object.values(snap.val()) : [];
+  if(window._currentPlayerGame === 'advice') renderAdvicePlayer();
 });
 
-// Expose to global scope
-window.FB = { db, ref, set, get, onValue, push, remove, pushState, pushVotesReset,
-  setVotesCallback(cb){ votesCallback = cb; } };
-
-// ── QR CODE (simple, no library) ──
-const playerUrl = window.location.origin + window.location.pathname.replace('index.html','') + 'player.html';
-document.getElementById('playerUrl').textContent = playerUrl;
-// Draw simple QR placeholder directing user
-const qCtx = document.getElementById('qrCanvas').getContext('2d');
-qCtx.fillStyle = '#ffffff';
-qCtx.fillRect(0,0,80,80);
-qCtx.fillStyle = '#1a0033';
-qCtx.font = '7px sans-serif';
-qCtx.textAlign = 'center';
-qCtx.fillText('Skanuj QR', 40, 20);
-qCtx.fillText('lub wejdź na:', 40, 32);
-qCtx.font = 'bold 6px sans-serif';
-// wrap url
-const words = playerUrl.split('/');
-qCtx.fillText(words[words.length-1], 40, 50);
-qCtx.fillText(window.location.hostname, 40, 62);
-
-window.PLAYER_URL = playerUrl;
-window.pushState = pushState;
-window.pushVotesReset = pushVotesReset;
-
-// ── BOOT ──
-window.dispatchEvent(new Event('fbReady'));
+window.dispatchEvent(new Event('fbReady_player'));
 </script>
 
 <script>
-// ════════════════════════════════════════════
-// DATA
-// ════════════════════════════════════════════
-let DATA = {
-  bingo: ["Ktoś śpiewa do szczotki","Kasia płacze ze śmiechu","Kogoś bolą nogi od tańca","Selfie z ochroniarzem","Kelner dostaje numer","Ktoś zakłada tiare","Foto bez filtra","Kasia opowiada jak się poznali","Pada: tylko jeden drink","Ktoś gubi szpilkę","Disco polo po 1 w nocy","Cola dla trzeźwości","FREE\n🪩\nDISCO","Ktoś dzwoni do chłopaka","Improwizowany choreograf","Kasia tańczy na stole","Ktoś płacze wzruszony","Kolejka bez pytania","Ktoś mówi: chodźmy jeszcze","Nieznajomy z kwiatem","Ktoś tańczy ABBA","Zgubiona torebka","Wszyscy śpiewają razem","Taksówkarz pyta co świętujemy","Ktoś wysyła mema"],
-  quiz: [
-    {q:"Jak Kasia poznała swojego Narzeczonego?",opts:["Na imprezie","Przez znajomych","Na aplikacji","W pracy"],answer:"Przez znajomych",answerNote:""},
-    {q:"Co Kasia robi jako pierwsze po przebudzeniu?",opts:["Sprawdza telefon","Pije kawę","Pod prysznic","Śpi 5 min dłużej"],answer:"Sprawdza telefon",answerNote:""},
-    {q:"Ulubiony utwór Kasi do tańca?",opts:["ABBA – Dancing Queen","Disco polo hit","Coś z lat 80/90","Pop teraz"],answer:"ABBA – Dancing Queen",answerNote:""},
-    {q:"Gdyby mogła zjeść jeden posiłek do końca życia?",opts:["Pizza","Sushi","Polskie jedzenie","Słodycze"],answer:"Polskie jedzenie",answerNote:""},
-    {q:"Jak Kasia opisuje Narzeczonego jednym słowem?",opts:["Śmieszny","Przystojny","Mój spokój","Mój chaos"],answer:"Mój spokój",answerNote:""},
-    {q:"Czego Kasia boi się w dniu ślubu?",opts:["Że się spóźni","Że będzie płakać","Że coś pójdzie nie tak","Niczego!"],answer:"Że będzie płakać",answerNote:""},
-  ],
-  vabank: {
-    categories:[{name:"O Kasi 💛",color:"#FF2D9C"},{name:"Miłość & Ślub 💍",color:"#FFD700"},{name:"Disco & Muzyka 🪩",color:"#00CFFF"},{name:"Kobiety & Fakty 💪",color:"#ADFF2F"}],
-    prices:[50,100,200,500,1000],
-    questions:[
-      [{q:"Jak ma na imię mama Kasi?",a:"Podaj odpowiedź!"},{q:"Gdzie Kasia chodziła do szkoły?",a:"Podaj odpowiedź!"},{q:"Jaki jest ulubiony kolor Kasi?",a:"Podaj odpowiedź!"},{q:"Jaka jest największa wada Kasi wg niej samej?",a:"Podaj odpowiedź!"},{q:"Co Kasia powiedziałaby swojemu 16-letniemu 'ja'?",a:"Podaj odpowiedź!"}],
-      [{q:"Gdzie odbyło się pierwsze randka Kasi?",a:"Podaj odpowiedź!"},{q:"Po ilu miesiącach padło 'kocham cię'?",a:"Podaj odpowiedź!"},{q:"Kto zaproponował pierwszą randkę?",a:"Podaj odpowiedź!"},{q:"Ile osób będzie na weselu Kasi?",a:"Podaj odpowiedź!"},{q:"Co Kasia planuje jako niespodziankę w dniu ślubu?",a:"Podaj odpowiedź!"}],
-      [{q:"Jaki gatunek muzyczny był na TikToku w 2024?",a:"Phonk / Hyperpop"},{q:"W którym roku ABBA wydała 'Dancing Queen'?",a:"1976 r."},{q:"Ile płyt sprzedała ABBA łącznie?",a:"Ponad 385 milionów"},{q:"Kto zaśpiewał 'Stayin Alive'?",a:"Bee Gees"},{q:"W którym filmie Travolta zatańczył disco?",a:"Gorączka sobotniej nocy (1977)"}],
-      [{q:"Ile % kobiet mówi 'nie' na pierwsze oświadczyny?",a:"Około 10%"},{q:"Ile par w Polsce bierze ślub rocznie?",a:"Około 180 000 par"},{q:"Ile wynosi średnia długość małżeństwa przed rozwodem?",a:"Około 14 lat"},{q:"Który kraj ma najwyższy wskaźnik zadowolenia z małżeństwa?",a:"Dania i Finlandia"},{q:"Ile razy statystyczna kobieta mówi 'kocham cię' dziennie?",a:"Średnio 3–5 razy"}],
-    ],
-    used:[],
-  },
-  hon:["Tańczyć całą noc w szpilkach","Wyznanie miłości przez megafon","Ślub w kostiumach z lat 70s disco","First dance do Dancing Queen ABBA","Tort w kształcie kuli disco","Mąż który gotuje lepiej niż ty","Podróż poślubna na Ibizę","Oświadczyny na stadionie","Wesele z 200 gośćmi","Tatuaż z inicjałami partnera","Przeprowadzka do jego rodzinnego miasta","Wspólne konto od pierwszego dnia"],
-  highlow:[
-    {q:"Ile krajów uznaje równouprawnienie małżeńskie?",hint:"Wskazówka: więcej czy mniej niż 30?",answer:"35 krajów (2024)"},
-    {q:"W jakim wieku Polki wychodzą za mąż?",hint:"Wskazówka: wyżej czy niżej niż 28 lat?",answer:"Średnio 29,5 roku"},
-    {q:"Ile % związków zaczyna się w miejscu pracy?",hint:"Wskazówka: wyżej czy niżej niż 15%?",answer:"Około 22%"},
-    {q:"Ile razy dziennie mąż mówi 'kocham cię'?",hint:"Wskazówka: więcej czy mniej niż 3 razy?",answer:"Średnio 1,5 raza dziennie"},
-    {q:"Ile kosztuje przeciętny pierścionek zaręczynowy?",hint:"Wskazówka: wyżej czy niżej niż 3 000 zł?",answer:"Około 4 500 – 6 000 zł"},
-    {q:"Ile % ludzi twierdzi że pierwsze wrażenie decyduje?",hint:"Wskazówka: więcej czy mniej niż 50%?",answer:"Około 55% — pierwsze 4 minuty!"},
-    {q:"Ile lat trwa statystyczne małżeństwo w Polsce?",hint:"Wskazówka: więcej czy mniej niż 15 lat?",answer:"Średnio 14,6 lat"},
-    {q:"Ile piosenek ABBA w różnych top 10?",hint:"Wskazówka: więcej czy mniej niż 5?",answer:"9 przebojów"},
-  ],
-  eight:[
-    {task:"Wymień 5 filmów romantycznych zanim minie czas!",seconds:8},
-    {task:"Zatańcz jak Travolta przez całe 8 sekund!",seconds:8},
-    {task:"Powiedz toast dla Kasi po włosku (możesz zmyślić)!",seconds:8},
-    {task:"Napisz w powietrzu imię Narzeczonego całym ciałem!",seconds:8},
-    {task:"Wymień 3 zalety bycia mężatką!",seconds:8},
-    {task:"Zaśpiewaj 8 sekund ulubionej piosenki Kasi!",seconds:8},
-    {task:"Zrób najlepszą minę ślubną!",seconds:8},
-    {task:"Powiedz kompliment Kasi tak szybko jak możesz!",seconds:8},
-    {task:"Udaj że tańczysz solo na weselu!",seconds:8},
-    {task:"Wymień 4 miejsca idealne na podróż poślubną!",seconds:8},
-  ],
-  choice:[
-    {a:"Wesele dla 20 osób w górach",b:"Wesele dla 200 osób w pałacu"},
-    {a:"Partner który gotuje",b:"Partner który sprząta"},
-    {a:"Wiedzieć wszystko o przyszłości",b:"Nie wiedzieć nic"},
-    {a:"Podróż poślubna: plaża & rum",b:"Podróż poślubna: góry & wino"},
-    {a:"Ślub latem w plenerze",b:"Ślub zimą w zamku"},
-    {a:"Mąż lepszy w tańcu niż ty",b:"Mąż który w ogóle nie tańczy"},
-    {a:"Para która nigdy się nie kłóci",b:"Para która kłóci się i rozwiązuje"},
-    {a:"Powiedzieć 'kocham cię' jako pierwsza",b:"Czekać aż on powie pierwszy"},
-    {a:"Oświadczyny prywatnie tylko we dwoje",b:"Oświadczyny z wielkim show publicznie"},
-    {a:"Razem oglądać horror w kinie",b:"Razem oglądać romance w domu"},
-  ],
-  drawPrompts:["Idealne wesele 💒","Panna Młoda na parkiecie 💃","Kula disco 🪩","Tort weselny 🎂","Bukiet ślubny 💐","Pierwszy taniec 🕺","Obrączki 💍","Kielich szampana 🥂","Suknia ślubna","DJ na weselu 🎧","Limuzyna ślubna 🚗","Buty na obcasie 👠","Połowa penisa 😏"],
-  tierItems:["Ryan Gosling","Zac Efron","Chris Hemsworth","Pedro Pascal","Timothée Chalamet","Harry Styles","Jason Momoa","Idris Elba","Keanu Reeves","Adam Driver","Narzeczony Kasi 😏"],
-  tierCategory:"Idealni mężowie 💍",
-  auctionItems:[{name:"Gotuje i sprząta",emoji:"🍳"},{name:"Zawsze cię słucha",emoji:"👂"},{name:"Świetny w łóżku",emoji:"🔥"},{name:"Bogaty AF",emoji:"💎"},{name:"Przystojny jak aktor",emoji:"😍"},{name:"Robi masaże",emoji:"💆"},{name:"Uwielbia twoje koleżanki",emoji:"🥰"},{name:"Pamięta każdą rocznicę",emoji:"📅"},{name:"Tańczy jak Travolta",emoji:"🕺"},{name:"Robi kawę do łóżka",emoji:"☕"}],
-  auctionPlayers:["Gracz 1","Gracz 2","Gracz 3","Gracz 4","Gracz 5","Gracz 6"],
-  auctionBudget:500,
-  couples:[{a:"Romeo",b:"Julia"},{a:"Jack",b:"Rose (Titanic)"},{a:"Beyoncé",b:"Jay-Z"},{a:"Shrek",b:"Fiona"},{a:"Mr Big",b:"Carrie Bradshaw"},{a:"Edward Cullen",b:"Bella Swan"},{a:"Johnny (Dirty Dancing)",b:"Baby"},{a:"Barack Obama",b:"Michelle Obama"}],
-  never:["Nigdy nie... całowałam kogoś na pierwszej randce","Nigdy nie... pisałam do ex o 3 w nocy","Nigdy nie... okłamałam chłopaka o tym gdzie byłam","Nigdy nie... płakałam przez film romantyczny","Nigdy nie... śledziłam ex na instagramie","Nigdy nie... tańczyłam na stole lub barze","Nigdy nie... dałam fałszywy numer telefonu","Nigdy nie... pisałam SMS do niewłaściwej osoby","Nigdy nie... robiłam coś głupiego przez zazdrość","Nigdy nie... kłamałam ile kosztują buty","Nigdy nie... udawałam że mi się podoba prezent","Nigdy nie... zjadłam jedzenie partnera i zaprzeczałam","Nigdy nie... zgadywałam hasło do czyjegoś telefonu"],
-  telPlayers:["Zosia","Ania","Marta","Kasia","Ela","Basia"],
-  telStartWord:"Zakochana para tańczy disco 🕺💃",
-};
+let _playerName = '';
+let _playerVoted = false;
+let _playerTier = {};
+let _playerBingo = new Array(25).fill(false);
+let _currentPlayerGame = '';
+let _lastGameKey = '';
+window._adviceList = [];
 
-// ════════════════════════════════════════════
-// STATE
-// ════════════════════════════════════════════
-let S = {
-  quiz:{idx:0,phase:'question'},
-  vabank:{view:'board',catIdx:0,priceIdx:0,phase:'question'},
-  hon:{idx:0},
-  highlow:{idx:0,phase:'question'},
-  eight:{idx:0,phase:'task',interval:null},
-  choice:{idx:0},
-  bingo:{marked:new Array(25).fill(false)},
-  draw:{color:'#1a1a2e',brush:5,drawing:false,lx:0,ly:0},
-  never:{idx:0},
-  tier:{},
-  auction:{idx:0,phase:'bid',currentBid:0,currentWinner:null,budgets:{},wins:{}},
-  couples:{selectedA:null,selectedB:null,matched:[],score:0,wrong:[]},
-  tel:{round:0,phase:'draw',guesses:[],canvasHistory:[]},
-};
-window._advices = [];
-window._currentGame = '';
+// ══════════════════════════════════════════
+// JOIN
+// ══════════════════════════════════════════
+function joinGame() {
+  const n = document.getElementById('nameInput').value.trim();
+  if(!n) { showToast('Wpisz swoje imię!'); return; }
+  _playerName = n;
+  window._playerName = n;
+  document.getElementById('playerTag').textContent = n.toUpperCase();
+  document.getElementById('waitName').textContent = '👋 Hej, ' + n + '!';
+  switchScreen('waiting');
+  window.dispatchEvent(new Event('fbReady_player'));
+  showToast('Dołączyłaś! 🪩');
+}
 
-const TIERS = ['S','A','B','C','D','F'];
-let tierDragItem = null;
-let telDrawing=false,telLx=0,telLy=0,telColor='#1a1a2e',telBrush=5;
-
-// ════════════════════════════════════════════
-// WAIT FOR FIREBASE
-// ════════════════════════════════════════════
-window.addEventListener('fbReady', () => {
-  // listen to game state changes — but as host we only write, not follow
-  console.log('Firebase ready');
+document.getElementById('nameInput').addEventListener('keydown', ev => {
+  if(ev.key === 'Enter') joinGame();
 });
 
-// ════════════════════════════════════════════
-// HOST NAVIGATION
-// ════════════════════════════════════════════
-function hostStart(game) {
-  window._currentGame = game;
-  document.getElementById('home').classList.remove('active');
-  document.getElementById('gameScreen').classList.add('active');
-  document.getElementById('liveVotesBadge').style.display='none';
-  // Close admin if open
-  document.getElementById('gsAdmin').classList.remove('open');
-  document.getElementById('gsAdminBtn').classList.remove('active');
-  // Wire up votes listener for multiplayer games
-  const multiGames = ['quiz','honornot','highlow','choice','neverhave','couples'];
-  if(multiGames.includes(game)) {
-    document.getElementById('liveVotesBadge').style.display='';
-    window.FB?.setVotesCallback(votes => renderLiveVotes(game, votes));
+// ══════════════════════════════════════════
+// SCREEN NAV
+// ══════════════════════════════════════════
+function switchScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// GAME STATE HANDLER
+// ══════════════════════════════════════════
+window._handleGameState = function(state) {
+  if(!state || state.game === 'idle') {
+    switchScreen('waiting');
+    _currentPlayerGame = '';
+    return;
+  }
+  switchScreen('game');
+  _currentPlayerGame = state.game;
+  document.getElementById('gameTag').textContent = gameEmoji(state.game) + ' ' + state.game.toUpperCase();
+
+  // Reset vote flag when new question
+  const key = state.game + '_' + (state.idx ?? '') + '_' + (state.phase ?? '') + '_' + (state.ts ?? '');
+  if(key !== _lastGameKey) {
+    _playerVoted = false;
+    _lastGameKey = key;
+  }
+
+  const content = document.getElementById('gameContent');
+  content.innerHTML = '';
+
+  switch(state.game) {
+    case 'quiz':      renderQuizPlayer(state); break;
+    case 'honornot':  renderHonPlayer(state); break;
+    case 'highlow':   renderHLPlayer(state); break;
+    case 'choice':    renderChoicePlayer(state); break;
+    case 'neverhave': renderNeverPlayer(state); break;
+    case 'advice':    renderAdvicePlayer(state); break;
+    case 'bingo':     renderBingoPlayer(state); break;
+    case 'tierlist':  renderTierPlayer(state); break;
+    case 'couples':   renderCouplesPlayer(state); break;
+    case 'vabank':    renderVabankPlayer(state); break;
+    case 'eight':     renderEightPlayer(state); break;
+    case 'auction':   renderAuctionPlayer(state); break;
+    default:          renderIdleCard('Gra: ' + state.game); break;
+  }
+};
+
+function gameEmoji(g) {
+  return {quiz:'🎤',honornot:'🔥',highlow:'📊',choice:'⚡',neverhave:'🙈',advice:'💌',
+    bingo:'🎰',tierlist:'🏆',couples:'💑',vabank:'🎲',eight:'⏱️',auction:'💰',wrozby:'🔮',telephone:'📞'}[g]||'🪩';
+}
+
+// ── VOTE HELPER ──
+function sendVote(value) {
+  if(_playerVoted) { showToast('Już głosowałaś!'); return; }
+  _playerVoted = true;
+  window.DB?.set(window.DB.ref(window.DB.db,'votes/'+_playerName.replace(/\s/g,'_')), value);
+  showToast('✅ Głos wysłany!');
+  spawnConfetti(15);
+}
+
+// ══════════════════════════════════════════
+// QUIZ PLAYER
+// ══════════════════════════════════════════
+function renderQuizPlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.phase === 'question') {
+    c.innerHTML = `
+      <div class="q-card"><div class="q-round">PYTANIE ${(state.idx||0)+1}</div><div class="q-text">${esc(state.question||'')}</div></div>
+      <div class="options">
+        ${(state.opts||[]).map((o,i) => `
+          <div class="opt ${_playerVoted?'sent':''}" onclick="quizVote('${esc(o)}','${'ABCD'[i]}')">
+            <span class="opt-letter">${'ABCD'[i]}</span>
+            <span class="opt-text">${esc(o)}</span>
+          </div>`).join('')}
+      </div>
+      ${_playerVoted ? `<div class="voted-badge" style="margin:8px auto;display:block;text-align:center;">✅ Głos wysłany!</div>` : ''}`;
   } else {
-    window.FB?.setVotesCallback(null);
-  }
-  renderGame(game);
-}
-
-function hostBack() {
-  window._currentGame = '';
-  window.FB?.setVotesCallback(null);
-  window.FB?.pushState({game:'idle'});
-  document.getElementById('gameScreen').classList.remove('active');
-  document.getElementById('home').classList.add('active');
-}
-
-function renderGame(game) {
-  const renders = {
-    bingo:renderBingo, quiz:renderQuiz, vabank:renderVabank, honornot:renderHon,
-    advice:renderAdvice, highlow:renderHL, eight:renderEight, choice:renderChoice,
-    draw:()=>{ document.getElementById('gsTitle').textContent='✏️ DORYSUJ TO'; document.getElementById('gsSubtitle').textContent='RYSUJ NA TV · RESZTA ZGADUJE'; renderDrawScreen(); },
-    tierlist:renderTierList, auction:renderAuction, wrozby:renderWrozby,
-    couples:renderCouples, neverhave:renderNever, telephone:renderTelephone,
-  };
-  renders[game]?.();
-}
-
-function toggleAdmin(game) {
-  const panel = document.getElementById('gsAdmin');
-  const btn = document.getElementById('gsAdminBtn');
-  const open = panel.classList.toggle('open');
-  btn.classList.toggle('active', open);
-  if(open) buildAdmin(window._currentGame);
-}
-
-// ════════════════════════════════════════════
-// LIVE VOTES RENDERER
-// ════════════════════════════════════════════
-function renderLiveVotes(game, votes) {
-  const body = document.getElementById('gsBody');
-  const existing = document.getElementById('liveVotesBar');
-  if(existing) existing.remove();
-  if(!votes || !Object.keys(votes).length) return;
-
-  const vArr = Object.values(votes);
-  const total = vArr.length;
-  let html = `<div id="liveVotesBar" class="live-bar"><div class="live-bar-title">⬤ GŁOSY NA ŻYWO (${total})</div>`;
-
-  if(game==='quiz'||game==='honornot'||game==='highlow'||game==='choice'||game==='neverhave') {
-    const counts = {};
-    vArr.forEach(v=>{ counts[v]=(counts[v]||0)+1; });
-    const colors = ['','pink','blue','green',''];
-    Object.entries(counts).sort((a,b)=>b[1]-a[1]).forEach(([key,cnt],i)=>{
-      const pct = Math.round(cnt/total*100);
-      html+=`<div class="live-option-row">
-        <div class="live-option-label">${e(key)}</div>
-        <div class="live-option-bar"><div class="live-option-fill ${colors[i]||''}" style="width:${pct}%"></div></div>
-        <div class="live-option-count">${cnt}</div>
-      </div>`;
-    });
-  }
-  html += '</div>';
-  body.insertAdjacentHTML('beforeend', html);
-}
-
-// ════════════════════════════════════════════
-// PUSH CURRENT QUESTION TO FIREBASE
-// ════════════════════════════════════════════
-function pushQuestion(game, data) {
-  window.pushState?.({ game, ...data });
-  window.pushVotesReset?.();
-}
-
-// ════════════════════════════════════════════
-// BINGO
-// ════════════════════════════════════════════
-function renderBingo() {
-  document.getElementById('gsTitle').textContent = '🎰 BINGO';
-  document.getElementById('gsSubtitle').textContent = 'KLIKAJ POLA GDY SIĘ ZDARZAJĄ';
-  const body = document.getElementById('gsBody');
-  const marked = S.bingo.marked.filter(Boolean).length;
-  body.innerHTML = `
-    <div class="bingo-letters">
-      <div class="b-letter">B</div><div class="b-letter">I</div><div class="b-letter">N</div>
-      <div class="b-letter">G</div><div class="b-letter">O</div>
-    </div>
-    <div class="bingo-grid" id="bingoGrid"></div>`;
-  const g = document.getElementById('bingoGrid');
-  DATA.bingo.forEach((txt,i) => {
-    const d = document.createElement('div');
-    d.className = 'b-cell'+(i===12?' free':'')+(S.bingo.marked[i]?' marked':'');
-    d.textContent = txt;
-    if(i!==12) d.onclick = ()=>toggleBingo(i);
-    g.appendChild(d);
-  });
-  document.getElementById('gsControls').innerHTML = `
-    <button class="ctrl-btn secondary" onclick="resetBingo()">🔄 RESET</button>
-    <span class="counter-badge">${marked}/25 zaznaczonych</span>`;
-  window.pushState?.({game:'bingo', marked: S.bingo.marked});
-}
-function toggleBingo(i) {
-  S.bingo.marked[i] = !S.bingo.marked[i];
-  renderBingo();
-  if(S.bingo.marked[i]) { showToast('✓ Zaznaczono!'); checkBingo(); }
-}
-function checkBingo() {
-  const lines=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],
-    [0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],
-    [0,6,12,18,24],[4,8,12,16,20]];
-  for(const l of lines)
-    if(l.every(i=>S.bingo.marked[i]||i===12)){showToast('🎉 BINGO!');spawnConfetti();return;}
-}
-function resetBingo() { S.bingo.marked=new Array(25).fill(false); renderBingo(); showToast('Reset!'); }
-
-// ════════════════════════════════════════════
-// QUIZ
-// ════════════════════════════════════════════
-function renderQuiz() {
-  const s=S.quiz, d=DATA.quiz[s.idx];
-  document.getElementById('gsTitle').textContent='🎤 ZGADNIJ KASIĘ';
-  document.getElementById('gsSubtitle').textContent=s.phase==='question'?`PYTANIE ${s.idx+1}/${DATA.quiz.length} · GOŚCIE ODPOWIADAJĄ`:`PYTANIE ${s.idx+1}/${DATA.quiz.length} · ODPOWIEDŹ`;
-  const dots=DATA.quiz.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
-  const ci=d.opts.findIndex(o=>o===d.answer);
-  const body=document.getElementById('gsBody');
-  if(s.phase==='question') {
-    body.innerHTML=`
-      <div class="step-indicator">${dots}</div>
-      <div class="big-card"><div class="round-badge">PYTANIE ${s.idx+1}/${DATA.quiz.length}</div><div class="main-text">${e(d.q)}</div></div>
-      <div class="options-grid">${d.opts.map((o,j)=>`<div class="opt-btn"><span class="opt-letter">${'ABCD'[j]}</span><span class="opt-text">${e(o)}</span></div>`).join('')}</div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="quizPrev()">◀ WSTECZ</button>
-      <button class="ctrl-btn reveal-btn" onclick="quizReveal()">🔓 ODSŁOŃ ODPOWIEDŹ</button>
-      <button class="ctrl-btn secondary" onclick="quizNext()">POMIŃ ▶</button>`;
-    pushQuestion('quiz',{idx:s.idx,phase:'question',question:d.q,opts:d.opts});
-  } else {
-    body.innerHTML=`
-      <div class="step-indicator">${dots}</div>
-      <div class="big-card"><div class="round-badge">PYTANIE ${s.idx+1}/${DATA.quiz.length}</div><div class="main-text">${e(d.q)}</div></div>
-      <div class="options-grid">${d.opts.map((o,j)=>`<div class="opt-btn ${j===ci?'correct-opt':'wrong-opt'}"><span class="opt-letter ${j===ci?'correct-letter':''}">${'ABCD'[j]}</span><span class="opt-text">${e(o)}</span></div>`).join('')}</div>
-      <div class="answer-box correct"><div class="answer-label">✅ ODPOWIEDŹ KASI</div><div class="answer-text">${e(d.answer)}</div>${d.answerNote?`<div class="answer-sub">${e(d.answerNote)}</div>`:''}</div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="quizPrev()">◀ WSTECZ</button>
-      <button class="ctrl-btn primary" onclick="quizNext()">NASTĘPNE ▶</button>`;
-    pushQuestion('quiz',{idx:s.idx,phase:'answer',answer:d.answer,correctIdx:ci});
+    const ci = state.correctIdx ?? -1;
+    c.innerHTML = `
+      <div class="q-card"><div class="q-round">PYTANIE ${(state.idx||0)+1}</div><div class="q-text">${esc(state.question||'')}</div></div>
+      <div class="options">
+        ${(state.opts||[]).map((o,i)=>`<div class="opt ${i===ci?'correct':'wrong'}"><span class="opt-letter ${i===ci?'correct':''}">${'ABCD'[i]}</span><span class="opt-text">${esc(o)}</span></div>`).join('')}
+      </div>
+      <div class="answer-card correct"><div class="answer-lbl">✅ ODPOWIEDŹ KASI</div><div class="answer-val">${esc(state.answer||'')}</div></div>`;
+    spawnConfetti(20);
   }
 }
-function quizReveal(){S.quiz.phase='answer';flashResult('win');renderQuiz();}
-function quizNext(){if(S.quiz.idx<DATA.quiz.length-1){S.quiz.idx++;S.quiz.phase='question';renderQuiz();}else showToast('Ostatnie!');}
-function quizPrev(){if(S.quiz.idx>0){S.quiz.idx--;S.quiz.phase='question';renderQuiz();}}
-
-// ════════════════════════════════════════════
-// VA-BANK
-// ════════════════════════════════════════════
-function renderVabank() {
-  document.getElementById('gsTitle').textContent='🎲 VA-BANK';
-  const vb=DATA.vabank;
-  if(S.vabank.view==='board') {
-    document.getElementById('gsSubtitle').textContent='WYBIERZ KATEGORIĘ I WARTOŚĆ';
-    const cols=vb.categories.length;
-    document.getElementById('gsBody').innerHTML=`
-      <div class="vabank-board">
-        <div class="vabank-board-grid" style="grid-template-columns:repeat(${cols},1fr);grid-template-rows:auto repeat(${vb.prices.length},1fr);">
-          ${vb.categories.map((cat,ci)=>`<div class="vb-cat-header" style="border-color:${cat.color}40;color:${cat.color};">${e(cat.name)}</div>`).join('')}
-          ${vb.prices.map((price,pi)=>vb.categories.map((cat,ci)=>{
-            const key=ci+'-'+pi, used=vb.used.includes(key);
-            return `<div class="vb-cell ${used?'used':''}" onclick="vbSelect(${ci},${pi})" style="${used?'':'border-color:'+cat.color+'55;color:'+cat.color+';">'}<span>${used?'':price}</span></div>`;
-          }).join('')).join('')}
-        </div>
-      </div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="DATA.vabank.used=[];renderVabank()">🔄 NOWA GRA</button>
-      <span class="counter-badge">${vb.used.length}/${vb.categories.length*vb.prices.length} pytań</span>`;
-    window.pushState?.({game:'vabank',view:'board'});
-  } else {
-    const ci=S.vabank.catIdx,pi=S.vabank.priceIdx;
-    const qd=vb.questions[ci][pi], price=vb.prices[pi], cat=vb.categories[ci];
-    document.getElementById('gsSubtitle').textContent=`${cat.name} · ${price} PKT · ${S.vabank.phase==='question'?'LICYTUJCIE!':'ODPOWIEDŹ!'}`;
-    document.getElementById('gsBody').innerHTML=S.vabank.phase==='question'?`
-      <div class="vabank-question-view">
-        <div class="vb-price-badge" style="border-color:${cat.color};color:${cat.color};">${e(cat.name)} · ${price} PKT</div>
-        <div class="big-card"><div class="round-badge">PYTANIE ZA ${price} PKT</div><div class="main-text">${e(qd.q)}</div></div>
-        <div style="text-align:center;font-size:.85rem;color:var(--muted);line-height:1.8;">Licytuj pewność: <span style="color:var(--gold)">10 · 20 · 30 · 50 · 75 · 100%</span><br>🎯 Trafiona = stawka × ${price} pkt · 💥 Błąd = tracisz tę samą kwotę</div>
-      </div>`:
-      `<div class="vabank-question-view">
-        <div class="vb-price-badge" style="border-color:${cat.color};color:${cat.color};">${e(cat.name)} · ${price} PKT</div>
-        <div class="big-card"><div class="main-text">${e(qd.q)}</div></div>
-        <div class="answer-box neutral"><div class="answer-label neutral">✅ ODPOWIEDŹ</div><div class="answer-text">${e(qd.a)}</div></div>
-      </div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="S.vabank.view='board';renderVabank()">← TABLICA</button>
-      ${S.vabank.phase==='question'?`<button class="ctrl-btn reveal-btn" onclick="vbReveal()">🔓 ODPOWIEDŹ</button>`:
-      `<button class="ctrl-btn primary" onclick="S.vabank.view='board';renderVabank()">WRÓĆ DO TABLICY ▶</button>`}`;
-    window.pushState?.({game:'vabank',view:'question',ci,pi,question:qd.q,phase:S.vabank.phase,answer:S.vabank.phase==='answer'?qd.a:null});
-  }
+function quizVote(val) { sendVote(val); renderQuizVotedUI(); }
+function renderQuizVotedUI(){
+  document.querySelectorAll('.opt').forEach(el => el.classList.add('sent'));
+  const badge = document.createElement('div');
+  badge.className='voted-badge';badge.style.cssText='margin:8px auto;display:block;text-align:center;';
+  badge.textContent='✅ Głos wysłany!';
+  document.querySelector('.options')?.after(badge);
 }
-function vbSelect(ci,pi){if(DATA.vabank.used.includes(ci+'-'+pi))return;S.vabank.catIdx=ci;S.vabank.priceIdx=pi;S.vabank.view='question';S.vabank.phase='question';renderVabank();}
-function vbReveal(){const key=S.vabank.catIdx+'-'+S.vabank.priceIdx;if(!DATA.vabank.used.includes(key))DATA.vabank.used.push(key);S.vabank.phase='answer';flashResult('win');renderVabank();}
-function hexToRgb(h){const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);return r?`${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}`:'255,215,0';}
 
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════
 // HOT OR NOT
-// ════════════════════════════════════════════
-function renderHon() {
-  const s=S.hon, txt=DATA.hon[s.idx];
-  document.getElementById('gsTitle').textContent='🔥 HOT OR NOT';
-  document.getElementById('gsSubtitle').textContent=`STWIERDZENIE ${s.idx+1}/${DATA.hon.length} · GŁOSUJCIE Z TELEFONÓW!`;
-  const dots=DATA.hon.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
-  document.getElementById('gsBody').innerHTML=`
-    <div class="step-indicator">${dots}</div>
-    <div class="hon-question">${e(txt)}</div>
-    <div class="hon-votes">
-      <button class="hon-vote-btn hot" onclick="window.FB&&window.FB.set(window.FB.ref(window.FB.db,'votes/host_hot'),{v:'🔥 HOT'})">🔥 HOT</button>
-      <button class="hon-vote-btn not" onclick="window.FB&&window.FB.set(window.FB.ref(window.FB.db,'votes/host_not'),{v:'❄️ NOT'})">❄️ NOT</button>
-    </div>`;
-  document.getElementById('gsControls').innerHTML=`
-    <button class="ctrl-btn secondary" onclick="honPrev()">◀ WSTECZ</button>
-    <span class="counter-badge">${s.idx+1}/${DATA.hon.length}</span>
-    <button class="ctrl-btn primary" onclick="honNext()">NASTĘPNE ▶</button>`;
-  pushQuestion('honornot',{idx:s.idx,statement:txt,opts:['🔥 HOT','❄️ NOT']});
+// ══════════════════════════════════════════
+function renderHonPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML = `
+    <div class="q-card"><div class="q-round">HOT OR NOT</div><div class="q-text">${esc(state.statement||'')}</div></div>
+    ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
+    <div class="vote-grid">
+      <div class="vote-btn hot" onclick="sendVote('🔥 HOT');renderHonVoted()"><span class="vote-icon">🔥</span><span class="vote-label">HOT</span></div>
+      <div class="vote-btn not" onclick="sendVote('❄️ NOT');renderHonVoted()"><span class="vote-icon">❄️</span><span class="vote-label">NOT</span></div>
+    </div>`}`;
 }
-function honNext(){if(S.hon.idx<DATA.hon.length-1){S.hon.idx++;renderHon();}else showToast('Koniec!');}
-function honPrev(){if(S.hon.idx>0){S.hon.idx--;renderHon();}}
+function renderHonVoted(){document.querySelector('.vote-grid')?.remove();document.getElementById('gameContent').insertAdjacentHTML('beforeend','<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>');}
 
-// ════════════════════════════════════════════
-// RADY
-// ════════════════════════════════════════════
-function renderAdvice() {
-  document.getElementById('gsTitle').textContent='💌 RADY DLA KASI';
-  document.getElementById('gsSubtitle').textContent='GOŚCIE PISZĄ Z TELEFONU · POJAWIAJĄ SIĘ NA EKRANIE';
-  document.getElementById('gsBody').innerHTML=`
-    <div class="advice-input-wrap">
-      <div class="section-label">WPISZ RADĘ (TY LUB PODYKTUJ GOŚCIOWI)</div>
-      <textarea id="adviceInput" placeholder="Np. Nigdy nie kładź się spać z żalem…" rows="3"></textarea>
-      <div class="advice-add-row"><button class="ctrl-btn primary" style="padding:9px 20px;" onclick="addAdvice()">+ DODAJ RADĘ</button></div>
-    </div>
-    <div class="section-label">ZEBRANE RADY (<span id="adviceCount">0</span>)</div>
-    <div class="advice-list" id="adviceList"></div>`;
-  document.getElementById('gsControls').innerHTML='';
-  window.pushState?.({game:'advice'});
-  renderAdviceDisplay();
-}
-function renderAdviceDisplay(){
-  const list=document.getElementById('adviceList');
-  if(!list)return;
-  document.getElementById('adviceCount').textContent=window._advices.length;
-  list.innerHTML=window._advices.map((a,i)=>`
-    <div class="advice-item">"${e(a)}"
-      <button class="advice-del" onclick="window._advices.splice(${i},1);renderAdviceDisplay();window.FB&&window.FB.set(window.FB.ref(window.FB.db,'advice'),Object.fromEntries(window._advices.map((v,k)=>[k,v])))">✕</button>
-    </div>`).join('');
-  list.scrollTop=list.scrollHeight;
-}
-function addAdvice(){
-  const v=document.getElementById('adviceInput')?.value.trim();
-  if(!v)return;
-  window._advices.push(v);
-  document.getElementById('adviceInput').value='';
-  renderAdviceDisplay();
-  window.FB?.push(window.FB.ref(window.FB.db,'advice'),v);
-  showToast('Rada dodana! 💌');
-}
-
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════
 // WYŻEJ / NIŻEJ
-// ════════════════════════════════════════════
-function renderHL() {
-  const s=S.highlow, d=DATA.highlow[s.idx];
-  document.getElementById('gsTitle').textContent='📊 WYŻEJ CZY NIŻEJ?';
-  document.getElementById('gsSubtitle').textContent=s.phase==='question'?`PYTANIE ${s.idx+1}/${DATA.highlow.length} · GOŚCIE GŁOSUJĄ`:`PYTANIE ${s.idx+1}/${DATA.highlow.length} · ODPOWIEDŹ`;
-  const dots=DATA.highlow.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
-  const body=document.getElementById('gsBody');
-  if(s.phase==='question'){
-    body.innerHTML=`
-      <div class="step-indicator">${dots}</div>
-      <div class="big-card"><div class="round-badge">PYTANIE ${s.idx+1}/${DATA.highlow.length}</div><div class="main-text">${e(d.q)}</div><div class="sub-text">${e(d.hint)}</div></div>
-      <div class="hon-votes">
-        <button class="hon-vote-btn hot" style="flex:1;font-size:1.2rem;">⬆️ WYŻEJ</button>
-        <button class="hon-vote-btn not" style="flex:1;font-size:1.2rem;">⬇️ NIŻEJ</button>
-      </div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="hlPrev()">◀ WSTECZ</button>
-      <button class="ctrl-btn reveal-btn" onclick="hlReveal()">🔓 ODSŁOŃ</button>
-      <button class="ctrl-btn secondary" onclick="hlNext()">POMIŃ ▶</button>`;
-    pushQuestion('highlow',{idx:s.idx,phase:'question',question:d.q,hint:d.hint,opts:['⬆️ WYŻEJ','⬇️ NIŻEJ']});
+// ══════════════════════════════════════════
+function renderHLPlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.phase==='question') {
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round">WYŻEJ CZY NIŻEJ?</div><div class="q-text">${esc(state.question||'')}</div><div class="q-hint">${esc(state.hint||'')}</div></div>
+      ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
+      <div class="vote-grid">
+        <div class="vote-btn hot" onclick="sendVote('⬆️ WYŻEJ');renderSimpleVoted()"><span class="vote-icon">⬆️</span><span class="vote-label">WYŻEJ</span></div>
+        <div class="vote-btn not" onclick="sendVote('⬇️ NIŻEJ');renderSimpleVoted()"><span class="vote-icon">⬇️</span><span class="vote-label">NIŻEJ</span></div>
+      </div>`}`;
   } else {
-    body.innerHTML=`
-      <div class="step-indicator">${dots}</div>
-      <div class="big-card"><div class="round-badge">PYTANIE ${s.idx+1}/${DATA.highlow.length}</div><div class="main-text">${e(d.q)}</div><div class="sub-text">${e(d.hint)}</div></div>
-      <div class="answer-box correct"><div class="answer-label">✅ ODPOWIEDŹ</div><div class="answer-text">${e(d.answer)}</div></div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="hlPrev()">◀ WSTECZ</button>
-      <button class="ctrl-btn primary" onclick="hlNext()">NASTĘPNE ▶</button>`;
-    pushQuestion('highlow',{idx:s.idx,phase:'answer',answer:d.answer});
+    c.innerHTML=`
+      <div class="q-card"><div class="q-text">${esc(state.question||'')}</div></div>
+      <div class="answer-card correct"><div class="answer-lbl">✅ ODPOWIEDŹ</div><div class="answer-val">${esc(state.answer||'')}</div></div>`;
+    spawnConfetti(20);
   }
 }
-function hlReveal(){S.highlow.phase='answer';flashResult('win');renderHL();}
-function hlNext(){if(S.highlow.idx<DATA.highlow.length-1){S.highlow.idx++;S.highlow.phase='question';renderHL();}else showToast('Koniec!');}
-function hlPrev(){if(S.highlow.idx>0){S.highlow.idx--;S.highlow.phase='question';renderHL();}}
 
-// ════════════════════════════════════════════
-// 8 SEKUND
-// ════════════════════════════════════════════
-function renderEight() {
-  const s=S.eight, d=DATA.eight[s.idx];
-  document.getElementById('gsTitle').textContent='⏱️ MASZ 8 SEKUND';
-  const dots=DATA.eight.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
-  const body=document.getElementById('gsBody');
-  if(s.phase==='task'){
-    document.getElementById('gsSubtitle').textContent=`ZADANIE ${s.idx+1}/${DATA.eight.length} · PRZECZYTAJ`;
-    body.innerHTML=`
-      <div class="step-indicator">${dots}</div>
-      <div class="big-card"><div class="round-badge">ZADANIE ${s.idx+1}/${DATA.eight.length}</div><div class="main-text">${e(d.task)}</div></div>
-      <div class="timer-wrap"><div style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:3px;color:var(--muted);">TIMER: ${d.seconds} SEK</div></div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="eightPrev()">◀</button>
-      <button class="ctrl-btn reveal-btn" onclick="eightStartTimer()">▶ START! (${d.seconds}s)</button>
-      <button class="ctrl-btn secondary" onclick="eightNext()">POMIŃ ▶</button>`;
-    window.pushState?.({game:'eight',idx:s.idx,task:d.task,phase:'task'});
-  } else {
-    document.getElementById('gsSubtitle').textContent=`ZADANIE ${s.idx+1}/${DATA.eight.length} · TIMER!`;
-    const r=54*2*Math.PI;
-    body.innerHTML=`
-      <div class="step-indicator">${dots}</div>
-      <div class="big-card"><div class="round-badge">ZADANIE ${s.idx+1}/${DATA.eight.length}</div><div class="main-text">${e(d.task)}</div></div>
-      <div class="timer-wrap"><div class="timer-ring">
-        <svg viewBox="0 0 120 120" width="150" height="150">
-          <circle class="timer-bg" cx="60" cy="60" r="54"/>
-          <circle class="timer-fill" id="timerCircle" cx="60" cy="60" r="54" stroke-dasharray="${r}" stroke-dashoffset="0"/>
-        </svg>
-        <span class="timer-number" id="timerNum">${d.seconds}</span>
-      </div></div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn danger" onclick="eightStop()">⏹ STOP</button>
-      <button class="ctrl-btn secondary" onclick="eightNext()">NASTĘPNE ▶</button>`;
-    window.pushState?.({game:'eight',idx:s.idx,task:d.task,phase:'timer',seconds:d.seconds});
-    runTimer(d.seconds);
-  }
-}
-function eightStartTimer(){S.eight.phase='timer';renderEight();}
-function eightStop(){clearInterval(S.eight.interval);S.eight.phase='task';showToast('Zatrzymano');renderEight();}
-function eightNext(){clearInterval(S.eight.interval);if(S.eight.idx<DATA.eight.length-1){S.eight.idx++;S.eight.phase='task';renderEight();}else showToast('Koniec!');}
-function eightPrev(){clearInterval(S.eight.interval);if(S.eight.idx>0){S.eight.idx--;S.eight.phase='task';renderEight();}}
-function runTimer(secs){
-  let left=secs; const r=54*2*Math.PI;
-  clearInterval(S.eight.interval);
-  S.eight.interval=setInterval(()=>{
-    left-=.1;
-    const c=document.getElementById('timerCircle'), n=document.getElementById('timerNum');
-    if(!c||!n){clearInterval(S.eight.interval);return;}
-    c.style.strokeDashoffset=r*(1-left/secs);
-    n.textContent=Math.ceil(left);
-    const danger=left<=secs*.35;
-    c.classList.toggle('danger',danger); n.classList.toggle('danger',danger);
-    if(left<=0){clearInterval(S.eight.interval);n.textContent='💥';showToast('⏱ CZAS MINĄŁ!');flashResult('lose');}
-  },100);
-}
-
-// ════════════════════════════════════════════
+// ══════════════════════════════════════════
 // CO WYBIERASZ
-// ════════════════════════════════════════════
-function renderChoice() {
-  const s=S.choice, d=DATA.choice[s.idx];
-  document.getElementById('gsTitle').textContent='⚡ CO WYBIERASZ?';
-  document.getElementById('gsSubtitle').textContent=`WYBÓR ${s.idx+1}/${DATA.choice.length} · GŁOSUJCIE Z TELEFONÓW!`;
-  const dots=DATA.choice.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
-  document.getElementById('gsBody').innerHTML=`
-    <div class="step-indicator">${dots}</div>
-    <div class="choice-vs-wrap">
-      <div class="choice-side" onclick="">${e(d.a)}</div>
-      <div class="vs-badge">VS</div>
-      <div class="choice-side" onclick="">${e(d.b)}</div>
-    </div>`;
-  document.getElementById('gsControls').innerHTML=`
-    <button class="ctrl-btn secondary" onclick="choicePrev()">◀ WSTECZ</button>
-    <span class="counter-badge">${s.idx+1}/${DATA.choice.length}</span>
-    <button class="ctrl-btn primary" onclick="choiceNext()">NASTĘPNE ▶</button>`;
-  pushQuestion('choice',{idx:s.idx,a:d.a,b:d.b,opts:[d.a,d.b]});
+// ══════════════════════════════════════════
+function renderChoicePlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">CO WYBIERASZ?</div><div class="q-text" style="font-size:1rem;">Głosuj która opcja lepsza!</div></div>
+    ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
+    <div class="vote-grid">
+      <div class="vote-btn a" onclick="sendVote(${JSON.stringify(state.a||'A')});renderSimpleVoted()"><span class="vote-icon">⚡</span><span class="vote-label" style="font-size:.85rem;white-space:normal;line-height:1.3;">${esc(state.a||'A')}</span></div>
+      <div class="vote-btn b" onclick="sendVote(${JSON.stringify(state.b||'B')});renderSimpleVoted()"><span class="vote-icon">⚡</span><span class="vote-label" style="font-size:.85rem;white-space:normal;line-height:1.3;">${esc(state.b||'B')}</span></div>
+    </div>`}`;
 }
-function choiceNext(){if(S.choice.idx<DATA.choice.length-1){S.choice.idx++;renderChoice();}else showToast('Koniec!');}
-function choicePrev(){if(S.choice.idx>0){S.choice.idx--;renderChoice();}}
 
-// ════════════════════════════════════════════
-// DRAW
-// ════════════════════════════════════════════
-function renderDrawScreen() {
-  const D=S.draw;
-  document.getElementById('gsBody').innerHTML=`
-    <div class="draw-tools">
-      ${['#1a1a2e','#FF2D9C','#FFD700','#00CFFF','#FF4500','#22BB33','#fff'].map(c=>`<div class="color-dot ${D.color===c?'active':''}" style="background:${c};${c==='#fff'?'border:1px solid #aaa':''}" data-color="${c}" onclick="setDrawColor(this)"></div>`).join('')}
-      <div style="width:1px;height:22px;background:var(--border);margin:0 4px;"></div>
-      ${[3,7,14,28].map((s,i)=>`<button class="brush-btn ${D.brush===s?'active':''}" onclick="setDrawBrush(this,${s})">${['S','M','L','XL'][i]}</button>`).join('')}
-      <button class="ctrl-btn danger" style="margin-left:auto;padding:6px 12px;font-size:.8rem;" onclick="clearDrawCanvas()">🗑</button>
+// ══════════════════════════════════════════
+// NIGDY NIE
+// ══════════════════════════════════════════
+function renderNeverPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">🙈 NIGDY NIE...</div><div class="q-text">${esc(state.statement||'')}</div></div>
+    ${_playerVoted ? `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>` : `
+    <div class="vote-grid">
+      <div class="vote-btn yes" onclick="sendVote('🍹 ROBIŁAM!');renderSimpleVoted()"><span class="vote-icon">🍹</span><span class="vote-label">ROBIŁAM!</span></div>
+      <div class="vote-btn no" onclick="sendVote('😇 NIE JA!');renderSimpleVoted()"><span class="vote-icon">😇</span><span class="vote-label">NIE JA!</span></div>
+    </div>`}`;
+}
+
+// ══════════════════════════════════════════
+// ADVICE
+// ══════════════════════════════════════════
+function renderAdvicePlayer() {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="advice-wrap">
+      <div class="advice-label">NAPISZ RADĘ DLA KASI 💌</div>
+      <textarea class="advice-ta" id="adviceTa" placeholder="Np. Nigdy nie kładź się spać z żalem…" rows="3"></textarea>
+      <button class="advice-send" onclick="sendAdvice()">💌 WYŚLIJ RADĘ</button>
     </div>
-    <canvas class="draw-area" id="drawCanvas"></canvas>
-    <div style="display:flex;align-items:center;gap:10px;padding:4px 0;flex-shrink:0;">
-      <span style="font-size:.62rem;color:var(--muted);letter-spacing:2px;">TEMAT:</span>
-      <button class="ctrl-btn secondary" style="padding:6px 12px;font-size:.8rem;" onclick="drawRandom()">🎲 LOSUJ</button>
-      <span id="drawPromptText" style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;color:var(--gold);"></span>
-    </div>`;
-  document.getElementById('gsControls').innerHTML=`<button class="ctrl-btn secondary" onclick="clearDrawCanvas()">🗑 WYCZYŚĆ</button>`;
-  setTimeout(initDrawCanvas, 50);
+    ${window._adviceList.length ? `
+    <div class="advice-label" style="margin-top:14px;">ZEBRANE RADY (${window._adviceList.length})</div>
+    <div class="advice-sent-list">
+      ${window._adviceList.slice(-6).map(a=>`<div class="advice-sent-item">"${esc(a)}"</div>`).join('')}
+    </div>` : ''}`;
 }
-function initDrawCanvas(){
-  const canvas=document.getElementById('drawCanvas');
-  if(!canvas)return;
-  canvas.width=canvas.offsetWidth||600;
-  canvas.height=Math.max(260,canvas.offsetHeight||350);
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#F0EBF8';ctx.fillRect(0,0,canvas.width,canvas.height);
-  const gp=ev=>{const r=canvas.getBoundingClientRect();return[ev.clientX-r.left,ev.clientY-r.top];};
-  const D=S.draw;
-  canvas.onmousedown=ev=>{D.drawing=true;[D.lx,D.ly]=gp(ev);};
-  canvas.onmousemove=ev=>{if(!D.drawing)return;const[x,y]=gp(ev);const ctx2=canvas.getContext('2d');ctx2.beginPath();ctx2.moveTo(D.lx,D.ly);ctx2.lineTo(x,y);ctx2.strokeStyle=D.color;ctx2.lineWidth=D.brush;ctx2.lineCap='round';ctx2.lineJoin='round';ctx2.stroke();[D.lx,D.ly]=[x,y];};
-  canvas.onmouseup=canvas.onmouseleave=()=>D.drawing=false;
-  canvas.ontouchstart=ev=>{ev.preventDefault();D.drawing=true;[D.lx,D.ly]=gp(ev.touches[0]);};
-  canvas.ontouchmove=ev=>{ev.preventDefault();if(!D.drawing)return;const[x,y]=gp(ev.touches[0]);const ctx2=canvas.getContext('2d');ctx2.beginPath();ctx2.moveTo(D.lx,D.ly);ctx2.lineTo(x,y);ctx2.strokeStyle=D.color;ctx2.lineWidth=D.brush;ctx2.lineCap='round';ctx2.lineJoin='round';ctx2.stroke();[D.lx,D.ly]=[x,y];};
-  canvas.ontouchend=()=>D.drawing=false;
+function sendAdvice() {
+  const v = document.getElementById('adviceTa')?.value.trim();
+  if(!v) { showToast('Wpisz radę!'); return; }
+  window.DB?.push(window.DB.ref(window.DB.db,'advice'), v);
+  document.getElementById('adviceTa').value = '';
+  showToast('Rada wysłana! 💌');
+  spawnConfetti(20);
 }
-function clearDrawCanvas(){const c=document.getElementById('drawCanvas');if(!c)return;const ctx=c.getContext('2d');ctx.fillStyle='#F0EBF8';ctx.fillRect(0,0,c.width,c.height);}
-function setDrawColor(el){S.draw.color=el.dataset.color;document.querySelectorAll('#gsBody .color-dot').forEach(d=>d.classList.remove('active'));el.classList.add('active');}
-function setDrawBrush(el,s){S.draw.brush=s;document.querySelectorAll('#gsBody .brush-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
-function drawRandom(){const p=DATA.drawPrompts[Math.floor(Math.random()*DATA.drawPrompts.length)];const el=document.getElementById('drawPromptText');if(el)el.textContent=p;showToast('Temat: '+p);}
 
-// ════════════════════════════════════════════
-// TIER LIST
-// ════════════════════════════════════════════
-function renderTierList() {
-  document.getElementById('gsTitle').textContent='🏆 TIER LIST';
-  document.getElementById('gsSubtitle').textContent='PRZECIĄGNIJ LUB KLIKNIJ ABY UMIEŚCIĆ W TIERZE';
-  if(!Object.keys(S.tier).length) DATA.tierItems.forEach(it=>S.tier[it]='pool');
-  const placed=DATA.tierItems.filter(it=>S.tier[it]!=='pool').length;
-  document.getElementById('gsBody').innerHTML=`
-    <div style="text-align:center;font-family:'Bebas Neue';font-size:.85rem;letter-spacing:3px;color:var(--gold);margin-bottom:4px;">${e(DATA.tierCategory)}</div>
-    <div class="tier-board">
+// ══════════════════════════════════════════
+// BINGO PLAYER
+// ══════════════════════════════════════════
+function renderBingoPlayer(state) {
+  const marked = state.marked || new Array(25).fill(false);
+  const bingoItems=["Ktoś śpiewa do szczotki","Kasia płacze ze śmiechu","Kogoś bolą nogi","Selfie z ochroniarzem","Kelner dostaje numer","Ktoś zakłada tiare","Foto bez filtra","Kasia opowiada jak się poznali","Tylko jeden drink","Ktoś gubi szpilkę","Disco polo po 1","Cola dla trzeźwości","FREE\n🪩","Ktoś dzwoni do chłopaka","Choreograf","Kasia na stole","Ktoś płacze","Kolejka bez pytania","Chodźmy jeszcze","Nieznajomy z kwiatem","Ktoś tańczy ABBA","Zgubiona torebka","Wszyscy śpiewają","Taksówkarz pyta","Ktoś wysyła mema"];
+  document.getElementById('gameContent').innerHTML=`
+    <div class="q-card"><div class="q-round">🎰 BINGO</div><div class="q-text" style="font-size:1rem;">Obserwuj co się dzieje!</div></div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:8px;">
+      ${bingoItems.map((t,i)=>`<div style="aspect-ratio:1;border:1px solid ${marked[i]?'var(--gold)':'var(--border)'};border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;padding:3px;font-size:.42rem;font-weight:600;background:${i===12?'linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,45,156,.12))':marked[i]?'linear-gradient(135deg,var(--pink),#7B0044)':'var(--card)'};color:${marked[i]||i===12?'white':'var(--text)'};">${esc(t)}</div>`).join('')}
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// TIER LIST PLAYER
+// ══════════════════════════════════════════
+const TIERS=['S','A','B','C','D','F'];
+function renderTierPlayer(state) {
+  const tier = state.tier || {};
+  const items = state.items || [];
+  const category = state.category || 'Tier List';
+  document.getElementById('gameContent').innerHTML=`
+    <div class="q-card"><div class="q-round">🏆 TIER LIST</div><div class="q-text" style="font-size:1rem;">${esc(category)}</div></div>
+    <div class="player-tier">
       ${TIERS.map(t=>`
-        <div class="tier-row">
-          <div class="tier-label ${t}">${t}</div>
-          <div class="tier-drop" data-tier="${t}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="tierDrop(event,'${t}')">
-            ${DATA.tierItems.filter(it=>S.tier[it]===t).map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem='${it.replace(/'/g,"\\'")}'" onclick="tierClick('${it.replace(/'/g,"\\'")}')"><b>${e(it)}</b></div>`).join('')}
+        <div class="ptier-row">
+          <div class="ptier-lbl ${t}">${t}</div>
+          <div class="ptier-items">
+            ${items.filter(it=>tier[it]===t).map(it=>`<div class="ptier-item">${esc(it)}</div>`).join('')}
           </div>
         </div>`).join('')}
     </div>
-    <div class="tier-pool-wrap" ondragover="event.preventDefault()" ondrop="tierDrop(event,'pool')">
-      <div class="tier-pool-label">PULA — PRZECIĄGNIJ DO TIERU (lub kliknij)</div>
-      <div class="tier-pool">${DATA.tierItems.filter(it=>S.tier[it]==='pool').map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem='${it.replace(/'/g,"\\'")}'" onclick="tierClick('${it.replace(/'/g,"\\'")}')"><b>${e(it)}</b></div>`).join('')}</div>
+    <div style="margin-top:8px;">
+      <div class="ptier-pool-lbl">PULA</div>
+      <div class="ptier-pool">${items.filter(it=>!tier[it]||tier[it]==='pool').map(it=>`<div class="ptier-item">${esc(it)}</div>`).join('')}</div>
     </div>`;
-  document.getElementById('gsControls').innerHTML=`
-    <button class="ctrl-btn danger" onclick="S.tier={};renderTierList()">🔄 RESET</button>
-    <span class="counter-badge">${placed}/${DATA.tierItems.length} umieszczonych</span>`;
-  window.pushState?.({game:'tierlist',tier:S.tier,category:DATA.tierCategory,items:DATA.tierItems});
 }
-function tierDrop(ev,t){ev.preventDefault();ev.currentTarget.classList.remove('drag-over');if(!tierDragItem)return;S.tier[tierDragItem]=t;tierDragItem=null;renderTierList();window.pushState?.({game:'tierlist',tier:S.tier,category:DATA.tierCategory,items:DATA.tierItems});}
-function tierClick(it){const cur=S.tier[it]||'pool';const all=['pool',...TIERS];S.tier[it]=all[(all.indexOf(cur)+1)%all.length];renderTierList();}
 
-// ════════════════════════════════════════════
-// AUKCJA
-// ════════════════════════════════════════════
-function renderAuction() {
-  document.getElementById('gsTitle').textContent='💰 AUKCJA ZALET';
-  if(!S.auction.budgets||!Object.keys(S.auction.budgets).length){
-    S.auction={idx:0,phase:'bid',currentBid:0,currentWinner:null,budgets:{},wins:{}};
-    DATA.auctionPlayers.forEach(p=>{S.auction.budgets[p]=DATA.auctionBudget;S.auction.wins[p]=[];});
-  }
-  const st=S.auction, item=DATA.auctionItems[st.idx];
-  document.getElementById('gsSubtitle').textContent=`PRZEDMIOT ${st.idx+1}/${DATA.auctionItems.length} · ${st.phase==='bid'?'LICYTACJA!':'SPRZEDANO!'}`;
-  const budgetsHTML=DATA.auctionPlayers.map(p=>`<div class="player-card ${st.currentWinner===p?'active':''}" onclick="auctionSetPlayer('${p}')"><div class="p-name">${e(p)}</div><div class="p-budget">${st.budgets[p]}</div><div style="font-size:.52rem;color:var(--muted);">MONET</div>${st.wins[p]?.length?`<div style="font-size:.55rem;color:var(--green2);margin-top:2px;">${st.wins[p].map(w=>w.emoji).join(' ')}</div>`:''}</div>`).join('');
-  const body=document.getElementById('gsBody');
-  if(st.phase==='bid'){
-    body.innerHTML=`
-      <div class="auction-item"><div class="round-badge">${item.emoji} PRZEDMIOT ${st.idx+1}/${DATA.auctionItems.length}</div><div class="auction-item-name">${item.emoji} ${e(item.name)}</div>
-      <div style="font-size:.85rem;color:var(--muted);margin-top:6px;">Najwyższa oferta:</div>
-      <div class="auction-current-bid">${st.currentBid} 🪙</div>
-      <div class="auction-bidder">${st.currentWinner?'Licytuje: '+st.currentWinner:'— nikt jeszcze —'}</div></div>
-      <div class="section-label">WYBIERZ GRACZA:</div>
-      <div class="player-budgets">${budgetsHTML}</div>
-      <div class="bid-btns">${[10,25,50,100,200,300].map(a=>`<div class="bid-chip" onclick="auctionBid(${a})">+${a} 🪙</div>`).join('')}</div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="auctionPrev()">◀</button>
-      <button class="ctrl-btn reveal-btn" onclick="auctionSell()">🔨 SPRZEDANO!</button>
-      <button class="ctrl-btn secondary" onclick="auctionNext()">POMIŃ ▶</button>`;
+// ══════════════════════════════════════════
+// COUPLES PLAYER
+// ══════════════════════════════════════════
+function renderCouplesPlayer(state) {
+  const c = document.getElementById('gameContent');
+  const matched = state.matched || [];
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">💑 DOPASUJ PARĘ</div><div class="q-text" style="font-size:1rem;">✅ ${state.score||0} / par dopasowanych</div></div>
+    <div class="idle-card"><div class="idle-emoji">💑</div><div class="idle-text">OGLĄDAJ NA TV!</div><div class="idle-sub">Prowadząca dopasowuje pary na ekranie.<br>Kibicuj i podpowiadaj!</div></div>`;
+}
+
+// ══════════════════════════════════════════
+// VA-BANK PLAYER
+// ══════════════════════════════════════════
+function renderVabankPlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.view==='board') {
+    c.innerHTML=`<div class="idle-card"><div class="idle-emoji">🎲</div><div class="idle-text">VA-BANK</div><div class="idle-sub">Prowadząca wybiera pytanie z tablicy.<br>Zaraz będziesz mogła licytować!</div></div>`;
   } else {
-    body.innerHTML=`
-      <div class="auction-item"><div class="round-badge">${item.emoji} SPRZEDANO!</div><div class="auction-item-name">${item.emoji} ${e(item.name)}</div></div>
-      <div class="answer-box correct"><div class="answer-label">🔨 KUPUJE</div><div class="answer-text">${st.currentWinner||'—'}</div><div class="answer-sub">za ${st.currentBid} monet</div></div>
-      <div class="player-budgets">${budgetsHTML}</div>`;
-    document.getElementById('gsControls').innerHTML=`
-      <button class="ctrl-btn secondary" onclick="auctionPrev()">◀</button>
-      <button class="ctrl-btn primary" onclick="auctionNext()">NASTĘPNA CECHA ▶</button>`;
-    spawnConfetti(40);
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round" style="color:var(--gold);">VA-BANK · ${state.phase==='question'?'LICYTUJ!':'ODPOWIEDŹ!'}</div><div class="q-text">${esc(state.question||'')}</div></div>
+      ${state.phase==='question'?`
+        <div style="text-align:center;font-family:'Bebas Neue';font-size:.8rem;letter-spacing:3px;color:var(--muted);margin:8px 0;">POWIEDZ GŁOŚNO SWOJĄ PEWNOŚĆ:</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+          ${[10,20,30,50,75,100].map(p=>`<div onclick="showToast('Stawiam ${p}%!')" style="background:rgba(255,215,0,.1);border:2px solid rgba(255,215,0,.3);color:var(--gold);border-radius:8px;padding:10px 16px;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:2px;cursor:pointer;">${p}%</div>`).join('')}
+        </div>` :
+        `<div class="answer-card neutral"><div class="answer-lbl neutral">✅ ODPOWIEDŹ</div><div class="answer-val">${esc(state.answer||'')}</div></div>`}`;
   }
-  window.pushState?.({game:'auction',idx:st.idx,item:item.name,emoji:item.emoji,phase:st.phase,currentBid:st.currentBid,winner:st.currentWinner});
-}
-function auctionSetPlayer(p){S.auction.currentWinner=p;renderAuction();}
-function auctionBid(amt){if(!S.auction.currentWinner){showToast('Wybierz gracza!');return;}if(S.auction.budgets[S.auction.currentWinner]<S.auction.currentBid+amt){showToast('Za mało monet!');return;}S.auction.currentBid+=amt;renderAuction();}
-function auctionSell(){if(!S.auction.currentWinner){showToast('Nikt nie licytował!');return;}S.auction.budgets[S.auction.currentWinner]-=S.auction.currentBid;S.auction.wins[S.auction.currentWinner].push(DATA.auctionItems[S.auction.idx]);S.auction.phase='sold';flashResult('win');renderAuction();}
-function auctionNext(){if(S.auction.idx<DATA.auctionItems.length-1){S.auction.idx++;S.auction.phase='bid';S.auction.currentBid=0;S.auction.currentWinner=null;renderAuction();}else showToast('Aukcja zakończona!');}
-function auctionPrev(){if(S.auction.idx>0){S.auction.idx--;S.auction.phase='bid';S.auction.currentBid=0;S.auction.currentWinner=null;renderAuction();}}
-
-// ════════════════════════════════════════════
-// WRÓŻBY
-// ════════════════════════════════════════════
-const FLAMES_M={F:'Znajomi 👋',L:'Miłość ❤️',A:'Atrakcja 🔥',M:'Małżeństwo 💍',E:'Enemies 😤',S:'Siostry 👯'};
-const PROPHECIES=["Twój ślub będzie legendarny — wszyscy będą mówić o nim przez lata 🎉","Czeka cię wielka miłość... i bardzo duże wesele 💒","W tym roku kogoś spotkasz. On ma brodę. I zna się na kuchni 🍳","Twoje przyszłe dzieci będą piękne ale bardzo głośne 👶🎸","Znajdziesz prawdziwą miłość... i 20 złotych w kieszeni 💰","Twój partner będzie bogatszy niż myślisz, ale kto pyta o hajs? ❤️","Gwiazdy mówią: tak, on o tobie myśli. Sprawdź telefon 📱","Los przepowiada: jedno duże szczęście i jeden wielki błąd. Wszystko się ułoży 🌟","Twój mąż będzie gotował lepiej niż ty. Dziękuj bogom 🙏","Niespodziewana randka czeka za rogiem. Dosłownie. Teraz."];
-function renderWrozby() {
-  document.getElementById('gsTitle').textContent='🔮 WRÓŻBY';
-  document.getElementById('gsSubtitle').textContent='FLAMES · DATA ŚLUBU · PRZEPOWIEDNIE';
-  document.getElementById('gsBody').innerHTML=`
-    <div class="wrozba-card">
-      <div class="wrozba-title">🔥 FLAMES</div>
-      <div class="wrozba-input-row">
-        <input class="wrozba-input" id="fn1" placeholder="Twoje imię">
-        <input class="wrozba-input" id="fn2" placeholder="Imię drugiej osoby">
-        <button class="ctrl-btn primary" style="padding:10px 18px;" onclick="calcFlames()">🔮 WRÓŻ!</button>
-      </div>
-      <div id="flamesResult" style="margin-top:12px;"></div>
-    </div>
-    <div class="wrozba-card">
-      <div class="wrozba-title">📅 KIEDY ŚLUB?</div>
-      <div class="wrozba-input-row">
-        <input class="wrozba-input" id="wn" placeholder="Twoje imię">
-        <button class="ctrl-btn primary" style="padding:10px 18px;" onclick="calcWedding()">📅 WRÓŻ!</button>
-      </div>
-      <div id="weddingResult" style="margin-top:12px;"></div>
-    </div>
-    <div class="wrozba-card">
-      <div class="wrozba-title">🌟 PRZEPOWIEDNIA</div>
-      <div style="text-align:center;"><button class="ctrl-btn reveal-btn" style="margin:6px auto;" onclick="calcProphecy()">🌟 LOSUJ!</button></div>
-      <div id="prophecyResult" style="margin-top:10px;"></div>
-    </div>
-    <div class="wrozba-card">
-      <div class="wrozba-title">👶 ILE DZIECI?</div>
-      <div class="wrozba-input-row">
-        <input class="wrozba-input" id="kn" placeholder="Imię">
-        <input class="wrozba-input" id="ky" placeholder="Rok ur." type="number" style="max-width:110px;">
-        <button class="ctrl-btn primary" style="padding:10px 18px;" onclick="calcKids()">👶 WRÓŻ!</button>
-      </div>
-      <div id="kidsResult" style="margin-top:12px;"></div>
-    </div>`;
-  document.getElementById('gsControls').innerHTML='';
-  window.pushState?.({game:'wrozby'});
-}
-function calcFlames(){
-  const n1=(document.getElementById('fn1').value||'').toLowerCase().replace(/\s/g,'');
-  const n2=(document.getElementById('fn2').value||'').toLowerCase().replace(/\s/g,'');
-  if(!n1||!n2){showToast('Wpisz oba imiona!');return;}
-  let a=n1.split(''),b=n2.split('');
-  for(let i=0;i<a.length;i++){const j=b.indexOf(a[i]);if(j!==-1){a[i]=null;b[j]=null;}}
-  const count=a.filter(Boolean).length+b.filter(Boolean).length;
-  let arr=['F','L','A','M','E','S']; let idx=0;
-  while(arr.length>1){idx=(idx+count-1)%arr.length;arr.splice(idx,1);if(idx>=arr.length)idx=0;}
-  const meaning=FLAMES_M[arr[0]]||'Niespodziewane!';
-  document.getElementById('flamesResult').innerHTML=`<div class="wrozba-result">${arr[0]}</div><div class="wrozba-sub">${n1} + ${n2} = <strong>${meaning}</strong></div>`;
-  spawnConfetti(30);
-}
-function calcWedding(){
-  const name=document.getElementById('wn').value.trim();
-  if(!name){showToast('Wpisz imię!');return;}
-  const sum=name.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
-  const year=2025+((sum%5)+1);
-  const month=['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'][sum%12];
-  document.getElementById('weddingResult').innerHTML=`<div class="wrozba-result">${month} ${year}</div><div class="wrozba-sub">${name} wyjdzie za mąż: ${month} ${year} 💍</div>`;
-}
-function calcProphecy(){const p=PROPHECIES[Math.floor(Math.random()*PROPHECIES.length)];document.getElementById('prophecyResult').innerHTML=`<div class="wrozba-result" style="font-size:1.6rem;">✨</div><div class="wrozba-sub" style="font-size:1rem;color:var(--text);">${p}</div>`;spawnConfetti(20);}
-function calcKids(){const name=document.getElementById('kn').value.trim();const year=parseInt(document.getElementById('ky').value)||1990;if(!name){showToast('Wpisz imię!');return;}const num=((name.length+year)%5)+1;document.getElementById('kidsResult').innerHTML=`<div class="wrozba-result">${num} ${'👶'.repeat(num)}</div><div class="wrozba-sub">${name} będzie miała ${num} ${num===1?'dziecko':'dzieci'}</div>`;}
-
-// ════════════════════════════════════════════
-// DOPASUJ PARĘ
-// ════════════════════════════════════════════
-function renderCouples() {
-  document.getElementById('gsTitle').textContent='💑 DOPASUJ PARĘ';
-  document.getElementById('gsSubtitle').textContent=`${S.couples.matched.length}/${DATA.couples.length} par · GOŚCIE MOGĄ GŁOSOWAĆ Z TELEFONU`;
-  if(!S.couples.shuffledB) S.couples.shuffledB=[...DATA.couples].sort(()=>Math.random()-.5);
-  const sh=S.couples.shuffledB;
-  document.getElementById('gsBody').innerHTML=`
-    <div style="font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:3px;text-align:center;color:var(--gold);margin-bottom:8px;">✅ ${S.couples.score} / ${DATA.couples.length} par dopasowanych</div>
-    <div class="couples-board">
-      <div>
-        <div class="couples-col-label" style="color:var(--gold);">LEWA STRONA</div>
-        ${DATA.couples.map((p,i)=>`<div class="couple-item ${S.couples.matched.includes(i)?'matched':''} ${S.couples.selectedA===i?'selected-a':''} ${S.couples.wrong?.includes('a'+i)?'wrong':''}" onclick="couplesPickA(${i})">${e(p.a)}</div>`).join('')}
-      </div>
-      <div>
-        <div class="couples-col-label" style="color:var(--pink);">PRAWA STRONA</div>
-        ${sh.map((p,i)=>`<div class="couple-item ${S.couples.matched.includes(p.origIdx)?'matched':''} ${S.couples.selectedB===p.origIdx?'selected-b':''} ${S.couples.wrong?.includes('b'+p.origIdx)?'wrong':''}" onclick="couplesPickB(${p.origIdx})">${e(p.b)}</div>`).join('')}
-      </div>
-    </div>`;
-  document.getElementById('gsControls').innerHTML=`<button class="ctrl-btn secondary" onclick="S.couples={selectedA:null,selectedB:null,matched:[],score:0,wrong:[]};S.couples.shuffledB=null;renderCouples()">🔄 NOWA GRA</button>`;
-  // Pre-compute origIdx for shuffled
-  if(!sh[0]?.origIdx) S.couples.shuffledB=DATA.couples.map((p,i)=>({...p,origIdx:i})).sort(()=>Math.random()-.5);
-  window.pushState?.({game:'couples',matched:S.couples.matched,score:S.couples.score});
-}
-function couplesPickA(i){if(S.couples.matched.includes(i))return;S.couples.selectedA=i;S.couples.wrong=[];checkCouplesMatch();renderCouples();}
-function couplesPickB(i){if(S.couples.matched.includes(i))return;S.couples.selectedB=i;S.couples.wrong=[];checkCouplesMatch();renderCouples();}
-function checkCouplesMatch(){
-  const st=S.couples;
-  if(st.selectedA===null||st.selectedB===null)return;
-  if(st.selectedA===st.selectedB){st.matched.push(st.selectedA);st.score++;st.selectedA=null;st.selectedB=null;flashResult('win');if(st.matched.length===DATA.couples.length){spawnConfetti(80);showToast('🎉 Wszystkie pary!');}}
-  else{st.wrong=['a'+st.selectedA,'b'+st.selectedB];setTimeout(()=>{st.selectedA=null;st.selectedB=null;st.wrong=[];renderCouples();},800);flashResult('lose');}
 }
 
-// ════════════════════════════════════════════
-// NIGDY NIE
-// ════════════════════════════════════════════
-function renderNever() {
-  const s=S.never, txt=DATA.never[s.idx];
-  document.getElementById('gsTitle').textContent='🙈 NIGDY NIE...';
-  document.getElementById('gsSubtitle').textContent=`KARTA ${s.idx+1}/${DATA.never.length} · GOŚCIE GŁOSUJĄ Z TELEFONU!`;
-  const dots=DATA.never.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
-  document.getElementById('gsBody').innerHTML=`
-    <div class="step-indicator">${dots}</div>
-    <div class="never-card"><div class="never-text">${e(txt)}</div></div>
-    <div class="never-votes">
-      <button class="never-vote-btn yes">🍹 ROBIŁAM!</button>
-      <button class="never-vote-btn no">😇 NIE JA!</button>
-    </div>`;
-  document.getElementById('gsControls').innerHTML=`
-    <button class="ctrl-btn secondary" onclick="neverPrev()">◀ WSTECZ</button>
-    <span class="counter-badge">${s.idx+1}/${DATA.never.length}</span>
-    <button class="ctrl-btn primary" onclick="neverNext()">NASTĘPNA ▶</button>`;
-  pushQuestion('neverhave',{idx:s.idx,statement:txt,opts:['🍹 ROBIŁAM!','😇 NIE JA!']});
+// ══════════════════════════════════════════
+// 8 SEKUND PLAYER
+// ══════════════════════════════════════════
+function renderEightPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">⏱️ ZADANIE ${state.phase==='timer'?'· TIMER!':''}</div><div class="q-text">${esc(state.task||'')}</div></div>
+    ${state.phase==='timer'?`<div style="text-align:center;font-family:'Bebas Neue';font-size:3rem;color:var(--gold);margin:12px 0;" id="playerTimer">${state.seconds||8}</div>`:''}
+    <div class="idle-card" style="margin-top:8px;"><div class="idle-emoji">🎯</div><div class="idle-text">WYKONAJ ZADANIE!</div></div>`;
+  if(state.phase==='timer') startPlayerTimer(state.seconds||8);
 }
-function neverNext(){if(S.never.idx<DATA.never.length-1){S.never.idx++;renderNever();}else showToast('Koniec kart!');}
-function neverPrev(){if(S.never.idx>0){S.never.idx--;renderNever();}}
+let _playerTimerInterval = null;
+function startPlayerTimer(secs) {
+  clearInterval(_playerTimerInterval);
+  let left = secs;
+  _playerTimerInterval = setInterval(()=>{
+    left -= 0.1;
+    const el = document.getElementById('playerTimer');
+    if(!el){clearInterval(_playerTimerInterval);return;}
+    el.textContent = Math.ceil(left);
+    if(left<=secs*.35) el.style.color='var(--red)';
+    if(left<=0){clearInterval(_playerTimerInterval);el.textContent='💥';showToast('CZAS MINĄŁ!');}
+  },100);
+}
 
-// ════════════════════════════════════════════
-// GŁUCHY TELEFON
-// ════════════════════════════════════════════
-function renderTelephone() {
-  document.getElementById('gsTitle').textContent='📞 GŁUCHY TELEFON';
-  const s=window._telState||(window._telState={round:0,phase:'draw',guesses:[],canvasHistory:[]});
-  const players=DATA.telPlayers;
-  document.getElementById('gsSubtitle').textContent=`RUNDA ${s.round+1}/${players.length} · ${players[s.round]?.toUpperCase()||''} ${s.phase==='draw'?'RYSUJE!':'ZGADUJE!'}`;
-  const playersHTML=players.map((p,i)=>`<div class="tel-player ${i===s.round?'active':i<s.round?'done':''}"><div class="p-num">${i+1}</div><div class="p-lbl">${e(p)}</div></div>`).join('');
-  const prompt=s.round===0?DATA.telStartWord:s.guesses.length>0?s.guesses[s.guesses.length-1]:'...';
-  const body=document.getElementById('gsBody');
-  body.innerHTML=`
-    <div class="telephone-round">${playersHTML}</div>
-    ${s.phase==='draw'?`
-      <div class="tel-prompt">📌 Narysuj: <strong>${e(prompt)}</strong></div>
-      <div class="draw-tools">
-        ${['#1a1a2e','#FF2D9C','#FFD700','#00CFFF','#FF4500','#22BB33','#fff'].map(c=>`<div class="color-dot ${telColor===c?'active':''}" style="background:${c};${c==='#fff'?'border:1px solid #aaa':''}" data-color="${c}" onclick="setTelColor(this)"></div>`).join('')}
-        <div style="width:1px;height:20px;background:var(--border);margin:0 4px;"></div>
-        ${[3,7,14,28].map((sz,i)=>`<button class="brush-btn ${telBrush===sz?'active':''}" onclick="setTelBrush(${sz})">${['S','M','L','XL'][i]}</button>`).join('')}
-        <button class="ctrl-btn danger" style="margin-left:auto;padding:5px 10px;font-size:.78rem;" onclick="clearTelCanvas()">🗑</button>
+// ══════════════════════════════════════════
+// AUKCJA PLAYER
+// ══════════════════════════════════════════
+function renderAuctionPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">${state.emoji||'💰'} AUKCJA · PRZEDMIOT ${(state.idx||0)+1}</div><div class="q-text">${esc(state.emoji||'')} ${esc(state.item||'')}</div></div>
+    ${state.phase==='bid'?`
+      <div style="text-align:center;">
+        <div style="font-family:'Bebas Neue';font-size:2.5rem;color:var(--gold);">${state.currentBid||0} 🪙</div>
+        <div style="font-size:.85rem;color:var(--muted);margin-bottom:12px;">${state.winner?'Licytuje: '+esc(state.winner):'Licytuj!'}</div>
       </div>
-      <canvas class="tel-canvas" id="telCanvas"></canvas>
-    `:`
-      <div class="tel-prompt">👀 Co widzisz na rysunku?</div>
-      <div class="advice-input-wrap">
-        <textarea id="telGuessInput" placeholder="Wpisz odpowiedź..." rows="2"></textarea>
-        <div style="display:flex;justify-content:flex-end;margin-top:6px;"><button class="ctrl-btn primary" style="padding:8px 18px;" onclick="addTelGuess()">+ ZATWIERDŹ</button></div>
-      </div>
-      ${s.guesses.length?`<div class="tel-guesses">${s.guesses.map(g=>`<div class="tel-guess-item"><span class="tel-guess-player">${e(players[s.round]||'?')}</span><span>${e(g)}</span></div>`).join('')}</div>`:''}`}`;
-  document.getElementById('gsControls').innerHTML=s.phase==='draw'?`
-    <button class="ctrl-btn secondary" onclick="telBack()">◀</button>
-    <button class="ctrl-btn reveal-btn" onclick="telToGuess()">👀 POKAŻ DO ZGADYWANIA</button>
-  `:`
-    <button class="ctrl-btn secondary" onclick="window._telState.phase='draw';renderTelephone()">← RYSOWANIE</button>
-    <button class="ctrl-btn primary" onclick="telNext()">NASTĘPNA RUNDA ▶</button>
-  `;
-  if(s.phase==='draw') setTimeout(initTelCanvas,50);
-}
-function initTelCanvas(){
-  const c=document.getElementById('telCanvas');if(!c)return;
-  c.width=c.offsetWidth||600;c.height=Math.max(200,c.offsetHeight||280);
-  const ctx=c.getContext('2d');ctx.fillStyle='#F0EBF8';ctx.fillRect(0,0,c.width,c.height);
-  const s=window._telState;
-  if(s.canvasHistory[s.round]){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0);img.src=s.canvasHistory[s.round];}
-  const gp=ev=>{const r=c.getBoundingClientRect();return[ev.clientX-r.left,ev.clientY-r.top];};
-  c.onmousedown=ev=>{telDrawing=true;[telLx,telLy]=gp(ev);};
-  c.onmousemove=ev=>{if(!telDrawing)return;const[x,y]=gp(ev);const ctx2=c.getContext('2d');ctx2.beginPath();ctx2.moveTo(telLx,telLy);ctx2.lineTo(x,y);ctx2.strokeStyle=telColor;ctx2.lineWidth=telBrush;ctx2.lineCap='round';ctx2.lineJoin='round';ctx2.stroke();[telLx,telLy]=[x,y];};
-  c.onmouseup=c.onmouseleave=()=>telDrawing=false;
-  c.ontouchstart=ev=>{ev.preventDefault();telDrawing=true;[telLx,telLy]=gp(ev.touches[0]);};
-  c.ontouchmove=ev=>{ev.preventDefault();if(!telDrawing)return;const[x,y]=gp(ev.touches[0]);const ctx2=c.getContext('2d');ctx2.beginPath();ctx2.moveTo(telLx,telLy);ctx2.lineTo(x,y);ctx2.strokeStyle=telColor;ctx2.lineWidth=telBrush;ctx2.lineCap='round';ctx2.lineJoin='round';ctx2.stroke();[telLx,telLy]=[x,y];};
-  c.ontouchend=()=>telDrawing=false;
-}
-function clearTelCanvas(){const c=document.getElementById('telCanvas');if(!c)return;const ctx=c.getContext('2d');ctx.fillStyle='#F0EBF8';ctx.fillRect(0,0,c.width,c.height);}
-function setTelColor(el){telColor=el.dataset.color;document.querySelectorAll('#gsBody .color-dot').forEach(d=>d.classList.remove('active'));el.classList.add('active');}
-function setTelBrush(s){telBrush=s;renderTelephone();}
-function saveTelCanvas(){const c=document.getElementById('telCanvas');if(c)window._telState.canvasHistory[window._telState.round]=c.toDataURL();}
-function telToGuess(){saveTelCanvas();window._telState.phase='guess';window._telState.guesses=[];renderTelephone();}
-function addTelGuess(){const v=document.getElementById('telGuessInput')?.value.trim();if(!v)return;window._telState.guesses.push(v);document.getElementById('telGuessInput').value='';renderTelephone();}
-function telNext(){const s=window._telState;if(s.round<DATA.telPlayers.length-1){s.round++;s.phase='draw';s.guesses=[];renderTelephone();}else{showToast('Koniec rund! 😂');document.getElementById('gsControls').innerHTML=`<button class="ctrl-btn danger" onclick="window._telState={round:0,phase:'draw',guesses:[],canvasHistory:[]};renderTelephone()">🔄 NOWA GRA</button>`;}}
-function telBack(){const s=window._telState;if(s.round>0){s.round--;s.phase='draw';renderTelephone();}}
-
-// ════════════════════════════════════════════
-// ADMIN BUILDER
-// ════════════════════════════════════════════
-function buildAdmin(g) {
-  const c=document.getElementById('gsAdminContent');
-  if(!c)return;
-  document.getElementById('gsAdminTitle').textContent='⚙ '+g.toUpperCase();
-  if(g==='bingo'){
-    c.innerHTML=DATA.bingo.map((t,i)=>i===12?'':
-      `<div class="admin-item"><div class="admin-label">POLE ${i+1}</div>
-       <input class="admin-input" value="${e(t)}" oninput="DATA.bingo[${i}]=this.value;renderBingo()"></div>`).join('')+
-      '<div class="admin-note">Środkowe (FREE) jest stałe.</div>';return;
-  }
-  if(g==='quiz'){
-    c.innerHTML=DATA.quiz.map((q,i)=>`
-      <div class="admin-item"><div class="admin-label">PYTANIE ${i+1}</div>
-        <textarea class="admin-textarea" rows="2" oninput="DATA.quiz[${i}].q=this.value;renderQuiz()">${e(q.q)}</textarea>
-        ${q.opts.map((o,j)=>`<div class="admin-row" style="margin-top:4px;"><span style="font-family:'Bebas Neue';color:var(--blue);font-size:.9rem;align-self:center;min-width:16px;">${'ABCD'[j]}</span><input class="admin-input" value="${e(o)}" oninput="DATA.quiz[${i}].opts[${j}]=this.value;renderQuiz()"></div>`).join('')}
-        <div style="font-size:.6rem;color:var(--green2);margin:5px 0 3px;">✅ POPRAWNA:</div>
-        <input class="admin-input" value="${e(q.answer)}" oninput="DATA.quiz[${i}].answer=this.value" style="border-color:rgba(57,255,20,.3);">
-        <div class="admin-item-footer"><button class="admin-delete-btn" onclick="DATA.quiz.splice(${i},1);buildAdmin('quiz')">🗑</button></div>
-      </div>`).join('')+`<button class="admin-add-btn" onclick="DATA.quiz.push({q:'Nowe pytanie?',opts:['A','B','C','D'],answer:'A',answerNote:''});buildAdmin('quiz')">+ DODAJ</button>`;return;
-  }
-  if(g==='honornot'){c.innerHTML=DATA.hon.map((h,i)=>`<div class="admin-item"><textarea class="admin-textarea" rows="2" oninput="DATA.hon[${i}]=this.value">${e(h)}</textarea><div class="admin-item-footer"><button class="admin-delete-btn" onclick="DATA.hon.splice(${i},1);buildAdmin('honornot')">🗑</button></div></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.hon.push('Nowe');buildAdmin('honornot')">+ DODAJ</button>`;return;}
-  if(g==='highlow'){c.innerHTML=DATA.highlow.map((h,i)=>`<div class="admin-item"><div class="admin-label">PYT ${i+1}</div><textarea class="admin-textarea" rows="2" oninput="DATA.highlow[${i}].q=this.value">${e(h.q)}</textarea><input class="admin-input" value="${e(h.hint)}" oninput="DATA.highlow[${i}].hint=this.value" style="margin-top:4px;" placeholder="Wskazówka"><input class="admin-input" value="${e(h.answer)}" oninput="DATA.highlow[${i}].answer=this.value" style="margin-top:4px;border-color:rgba(57,255,20,.3);" placeholder="Odpowiedź"><div class="admin-item-footer"><button class="admin-delete-btn" onclick="DATA.highlow.splice(${i},1);buildAdmin('highlow')">🗑</button></div></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.highlow.push({q:'?',hint:'Wskazówka',answer:'Odpowiedź'});buildAdmin('highlow')">+ DODAJ</button>`;return;}
-  if(g==='eight'){c.innerHTML=DATA.eight.map((d,i)=>`<div class="admin-item"><textarea class="admin-textarea" rows="2" oninput="DATA.eight[${i}].task=this.value">${e(d.task)}</textarea><div style="display:flex;gap:8px;align-items:center;margin-top:5px;"><span style="font-size:.7rem;color:var(--gold);">⏱ SEK:</span><input class="admin-input" type="number" min="3" max="60" value="${d.seconds}" oninput="DATA.eight[${i}].seconds=+this.value||8" style="width:65px;"><button class="admin-delete-btn" onclick="DATA.eight.splice(${i},1);buildAdmin('eight')">🗑</button></div></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.eight.push({task:'Nowe zadanie!',seconds:8});buildAdmin('eight')">+ DODAJ</button>`;return;}
-  if(g==='choice'){c.innerHTML=DATA.choice.map((ch,i)=>`<div class="admin-item"><div style="font-size:.6rem;color:var(--gold);margin-bottom:3px;">A:</div><textarea class="admin-textarea" rows="2" oninput="DATA.choice[${i}].a=this.value">${e(ch.a)}</textarea><div style="font-size:.6rem;color:var(--pink);margin:4px 0 3px;">B:</div><textarea class="admin-textarea" rows="2" oninput="DATA.choice[${i}].b=this.value">${e(ch.b)}</textarea><div class="admin-item-footer"><button class="admin-delete-btn" onclick="DATA.choice.splice(${i},1);buildAdmin('choice')">🗑</button></div></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.choice.push({a:'Opcja A',b:'Opcja B'});buildAdmin('choice')">+ DODAJ</button>`;return;}
-  if(g==='neverhave'){c.innerHTML=DATA.never.map((n,i)=>`<div class="admin-item"><textarea class="admin-textarea" rows="2" oninput="DATA.never[${i}]=this.value">${e(n)}</textarea><div class="admin-item-footer"><button class="admin-delete-btn" onclick="DATA.never.splice(${i},1);buildAdmin('neverhave')">🗑</button></div></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.never.push('Nigdy nie...');buildAdmin('neverhave')">+ DODAJ</button>`;return;}
-  if(g==='couples'){c.innerHTML=DATA.couples.map((p,i)=>`<div class="admin-item"><input class="admin-input" value="${e(p.a)}" oninput="DATA.couples[${i}].a=this.value" placeholder="Lewa strona" style="margin-bottom:4px;"><input class="admin-input" value="${e(p.b)}" oninput="DATA.couples[${i}].b=this.value" placeholder="Prawa strona"><div class="admin-item-footer"><button class="admin-delete-btn" onclick="DATA.couples.splice(${i},1);buildAdmin('couples')">🗑</button></div></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.couples.push({a:'Osoba A',b:'Osoba B'});buildAdmin('couples')">+ DODAJ</button>`;return;}
-  if(g==='tierlist'){c.innerHTML=`<div class="admin-label">TYTUŁ KATEGORII</div><input class="admin-input" value="${e(DATA.tierCategory)}" oninput="DATA.tierCategory=this.value" style="margin-bottom:10px;"><div class="admin-label">OSOBY</div>`+DATA.tierItems.map((it,i)=>`<div class="admin-row" style="margin-bottom:5px;"><input class="admin-input" value="${e(it)}" oninput="DATA.tierItems[${i}]=this.value"><button class="admin-delete-btn" onclick="DATA.tierItems.splice(${i},1);buildAdmin('tierlist')">✕</button></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.tierItems.push('Nowa osoba');buildAdmin('tierlist')">+ DODAJ</button>`;return;}
-  if(g==='auction'){c.innerHTML=`<div class="admin-label">BUDŻET NA GRACZA</div><input class="admin-input" type="number" value="${DATA.auctionBudget}" oninput="DATA.auctionBudget=+this.value" style="width:100px;margin-bottom:10px;"><div class="admin-label">GRACZE</div>`+DATA.auctionPlayers.map((p,i)=>`<div class="admin-row" style="margin-bottom:4px;"><input class="admin-input" value="${e(p)}" oninput="DATA.auctionPlayers[${i}]=this.value"><button class="admin-delete-btn" onclick="DATA.auctionPlayers.splice(${i},1);buildAdmin('auction')">✕</button></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.auctionPlayers.push('Gracz '+(DATA.auctionPlayers.length+1));buildAdmin('auction')" style="margin-bottom:10px;">+ GRACZ</button><div class="admin-divider"></div><div class="admin-label">CECHY</div>`+DATA.auctionItems.map((it,i)=>`<div class="admin-item"><div class="admin-row"><input class="admin-input" value="${e(it.name)}" oninput="DATA.auctionItems[${i}].name=this.value"><input class="admin-input" value="${e(it.emoji)}" oninput="DATA.auctionItems[${i}].emoji=this.value" style="width:55px;"><button class="admin-delete-btn" onclick="DATA.auctionItems.splice(${i},1);buildAdmin('auction')">✕</button></div></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.auctionItems.push({name:'Nowa cecha',emoji:'⭐'});buildAdmin('auction')">+ CECHA</button>`;return;}
-  if(g==='telephone'){c.innerHTML=`<div class="admin-label">PIERWSZE HASŁO</div><input class="admin-input" value="${e(DATA.telStartWord)}" oninput="DATA.telStartWord=this.value" style="margin-bottom:10px;"><div class="admin-label">GRACZE</div>`+DATA.telPlayers.map((p,i)=>`<div class="admin-row" style="margin-bottom:4px;"><input class="admin-input" value="${e(p)}" oninput="DATA.telPlayers[${i}]=this.value"><button class="admin-delete-btn" onclick="DATA.telPlayers.splice(${i},1);buildAdmin('telephone')">✕</button></div>`).join('')+`<button class="admin-add-btn" onclick="DATA.telPlayers.push('Gracz '+(DATA.telPlayers.length+1));buildAdmin('telephone')">+ GRACZ</button>`;return;}
-  if(g==='vabank'){
-    c.innerHTML=DATA.vabank.categories.map((cat,ci)=>`<div class="admin-item"><div class="admin-label" style="color:${cat.color}">KATEGORIA ${ci+1}</div><input class="admin-input" value="${e(cat.name)}" oninput="DATA.vabank.categories[${ci}].name=this.value;renderVabank()" style="margin-bottom:6px;">${DATA.vabank.prices.map((p,pi)=>`<div style="font-size:.6rem;color:var(--gold);margin:4px 0 2px;">${p} PKT:</div><textarea class="admin-textarea" rows="2" oninput="DATA.vabank.questions[${ci}][${pi}].q=this.value">${e(DATA.vabank.questions[ci][pi].q)}</textarea><input class="admin-input" value="${e(DATA.vabank.questions[ci][pi].a)}" oninput="DATA.vabank.questions[${ci}][${pi}].a=this.value" style="margin-top:2px;border-color:rgba(57,255,20,.3);margin-bottom:6px;" placeholder="Odpowiedź">`).join('')}</div>`).join('');return;
-  }
-  c.innerHTML=`<div class="admin-note">Brak edytora dla tej gry.</div>`;
+      <div style="text-align:center;font-size:.8rem;color:var(--muted);line-height:1.6;">Powiedz prowadzącej jaką kwotę chcesz podbić!<br>Ona wciśnie za Ciebie przycisk na TV.</div>`:
+    `<div class="answer-card correct"><div class="answer-lbl">🔨 SPRZEDANO!</div><div class="answer-val">${esc(state.winner||'—')}</div><div class="answer-note">za ${state.currentBid||0} monet</div></div>`}`;
+  if(state.phase==='sold') spawnConfetti(30);
 }
 
-// ════════════════════════════════════════════
-// ANIMATIONS
-// ════════════════════════════════════════════
-function spawnConfetti(n=60){
-  const ov=document.getElementById('confettiOverlay');ov.innerHTML='';
-  const cols=['#FFD700','#FF2D9C','#00CFFF','#ADFF2F','#FF6BC8','#FFA500'];
-  for(let i=0;i<n;i++){const d=document.createElement('div');d.className='confetti-piece';d.style.left=Math.random()*100+'%';d.style.background=cols[Math.floor(Math.random()*cols.length)];d.style.width=(7+Math.random()*9)+'px';d.style.height=(7+Math.random()*9)+'px';d.style.borderRadius=Math.random()>.5?'50%':'2px';d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=(Math.random()*.7)+'s';ov.appendChild(d);}
-  setTimeout(()=>ov.innerHTML='',3500);
+// ══════════════════════════════════════════
+// IDLE
+// ══════════════════════════════════════════
+function renderIdleCard(txt) {
+  document.getElementById('gameContent').innerHTML=`<div class="idle-card"><div class="idle-emoji">🪩</div><div class="idle-text">${esc(txt)}</div><div class="idle-sub">Patrz na TV i kibicuj!</div></div>`;
 }
-function flashResult(type){const div=document.createElement('div');div.className='result-flash '+type;div.innerHTML=`<div class="result-emoji">${type==='win'?'🎉':'😬'}</div>`;document.body.appendChild(div);if(type==='win')spawnConfetti();setTimeout(()=>div.remove(),900);}
 
-// ════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════
-function e(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+// ══════════════════════════════════════════
+// GENERIC VOTED UI
+// ══════════════════════════════════════════
+function renderSimpleVoted() {
+  document.querySelector('.vote-grid')?.remove();
+  document.getElementById('gameContent').insertAdjacentHTML('beforeend','<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GŁOS WYSŁANY!</div></div>');
+}
+
+// ══════════════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════════════
+function spawnConfetti(n=30) {
+  const ov=document.getElementById('confettiOverlay');
+  const cols=['#FFD700','#FF2D9C','#00CFFF','#ADFF2F','#FF6BC8'];
+  for(let i=0;i<n;i++){const d=document.createElement('div');d.className='confetti-piece';d.style.left=Math.random()*100+'%';d.style.background=cols[~~(Math.random()*cols.length)];d.style.width=(6+Math.random()*8)+'px';d.style.height=(6+Math.random()*8)+'px';d.style.borderRadius=Math.random()>.5?'50%':'2px';d.style.animationDuration=(1.2+Math.random()*1.5)+'s';d.style.animationDelay=(Math.random()*.5)+'s';ov.appendChild(d);}
+  setTimeout(()=>ov.innerHTML='',3000);
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
 let _tt;
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2400);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2200);}
 
-// ── KEYBOARD ──
-document.addEventListener('keydown',ev=>{
-  if(ev.target.tagName==='INPUT'||ev.target.tagName==='TEXTAREA')return;
-  if(ev.key==='Enter'||ev.key===' '){
-    ev.preventDefault();
-    const g=window._currentGame;
-    if(g==='quiz'){S.quiz.phase==='question'?quizReveal():quizNext();}
-    if(g==='highlow'){S.highlow.phase==='question'?hlReveal():hlNext();}
-    if(g==='eight'){S.eight.phase==='task'?eightStartTimer():eightNext();}
-    if(g==='vabank'&&S.vabank.view==='question'&&S.vabank.phase==='question')vbReveal();
-  }
-  if(ev.key==='ArrowRight'){
-    const g=window._currentGame;
-    if(g==='quiz')quizNext();if(g==='honornot')honNext();if(g==='highlow')hlNext();
-    if(g==='eight')eightNext();if(g==='choice')choiceNext();if(g==='neverhave')neverNext();
-  }
-  if(ev.key==='ArrowLeft'){
-    const g=window._currentGame;
-    if(g==='quiz')quizPrev();if(g==='honornot')honPrev();if(g==='highlow')hlPrev();
-    if(g==='eight')eightPrev();if(g==='choice')choicePrev();if(g==='neverhave')neverPrev();
-  }
-});
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
 </script>
 </body>
 </html>
