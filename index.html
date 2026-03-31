@@ -430,6 +430,9 @@ window._handleGameState = function(state) {
     case 'vabank':    renderVabankPlayer(state); break;
     case 'eight':     renderEightPlayer(state); break;
     case 'auction':   renderAuctionPlayer(state); break;
+    case 'wrozby':    renderWrozbyPlayer(state); break;
+    case 'draw':      renderDrawPlayer(state); break;
+    case 'telephone': renderTelephonePlayer(state); break;
     default:          renderIdleCard('Gra: ' + state.game); break;
   }
 };
@@ -663,9 +666,13 @@ function assignTier(t) {
 function renderCouplesPlayer(state) {
   const c = document.getElementById('gameContent');
   const matched = state.matched || [];
+  const score = state.score || 0;
   c.innerHTML=`
-    <div class="q-card"><div class="q-round">💑 DOPASUJ PARĘ</div><div class="q-text" style="font-size:1rem;">✅ ${state.score||0} / par dopasowanych</div></div>
-    <div class="idle-card"><div class="idle-emoji">💑</div><div class="idle-text">OGLĄDAJ NA TV!</div><div class="idle-sub">Prowadząca dopasowuje pary na ekranie.<br>Kibicuj i podpowiadaj!</div></div>`;
+    <div class="q-card"><div class="q-round">💑 DOPASUJ PARĘ</div><div class="q-text" style="font-size:1rem;">✅ ${score} par dopasowanych</div></div>
+    <div class="idle-card"><div class="idle-emoji">💑</div><div class="idle-text">PODPOWIADAJ PROWADZĄCEJ!</div>
+      <div class="idle-sub">Prowadząca dopasowuje pary na TV.<br>Krzycz swoją propozycję!</div>
+    </div>`;
+  if(score > 0) spawnConfetti(10);
 }
 
 // ══════════════════════════════════════════
@@ -727,6 +734,33 @@ function renderAuctionPlayer(state) {
       <div style="text-align:center;font-size:.8rem;color:var(--muted);line-height:1.6;">Powiedz prowadzącej jaką kwotę chcesz podbić!<br>Ona wciśnie za Ciebie przycisk na TV.</div>`:
     `<div class="answer-card correct"><div class="answer-lbl">🔨 SPRZEDANO!</div><div class="answer-val">${esc(state.winner||'—')}</div><div class="answer-note">za ${state.currentBid||0} monet</div></div>`}`;
   if(state.phase==='sold') spawnConfetti(30);
+}
+
+// ══════════════════════════════════════════
+// WRÓŻBY PLAYER
+// ══════════════════════════════════════════
+function renderWrozbyPlayer(state) {
+  document.getElementById('gameContent').innerHTML=`
+    <div class="q-card"><div class="q-round">🔮 WRÓŻBY</div><div class="q-text" style="font-size:1.1rem;">Prowadząca wróży na TV!</div></div>
+    <div class="idle-card"><div class="idle-emoji">🔮</div><div class="idle-text">PATRZCIE NA EKRAN!</div><div class="idle-sub">Podawajcie imiona i daty urodzenia<br>prowadzącej — ona wpisuje na TV.</div></div>`;
+}
+
+// ══════════════════════════════════════════
+// DRAW PLAYER
+// ══════════════════════════════════════════
+function renderDrawPlayer(state) {
+  document.getElementById('gameContent').innerHTML=`
+    <div class="q-card"><div class="q-round">✏️ DORYSUJ TO</div><div class="q-text" style="font-size:1.1rem;">Zgadnij co jest rysowane!</div></div>
+    <div class="idle-card"><div class="idle-emoji">🎨</div><div class="idle-text">PATRZ NA TV I ZGADUJ!</div><div class="idle-sub">Ktoś rysuje na ekranie.<br>Krzycz swoją odpowiedź głośno!</div></div>`;
+}
+
+// ══════════════════════════════════════════
+// TELEPHONE PLAYER
+// ══════════════════════════════════════════
+function renderTelephonePlayer(state) {
+  document.getElementById('gameContent').innerHTML=`
+    <div class="q-card"><div class="q-round">📞 GŁUCHY TELEFON</div><div class="q-text" style="font-size:1.1rem;">Rysowany głuchy telefon!</div></div>
+    <div class="idle-card"><div class="idle-emoji">📞</div><div class="idle-text">TWOJA KOLEJ NADCHODZI!</div><div class="idle-sub">Prowadząca steruje turami na TV.<br>Gdy przyjdzie Twoja tura — rysujesz lub zgadujesz!</div></div>`;
 }
 
 // ══════════════════════════════════════════

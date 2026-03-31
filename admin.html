@@ -750,6 +750,19 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .xlsx-btn.global{background:rgba(255,215,0,.07);border-color:rgba(255,215,0,.3);color:#FFD700;}
 .xlsx-btn.global:hover{background:rgba(255,215,0,.18);border-color:#FFD700;}
 .xlsx-file-input{display:none;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .home-layout{grid-template-columns:1fr;grid-template-rows:1fr auto;height:100vh;}
+  .home-left{overflow-y:auto;border-right:none;border-bottom:1px solid rgba(255,215,0,.1);}
+  .home-right{max-height:35vh;overflow-y:auto;}
+  .games-grid{grid-template-columns:repeat(4,1fr);}
+  .admin-panel.open{width:260px;}
+}
+@media(max-width:600px){
+  .games-grid{grid-template-columns:repeat(3,1fr);}
+  .admin-panel.open{width:100%;position:absolute;right:0;top:0;bottom:0;z-index:50;}
+}
 </style>
 </head>
 <body>
@@ -758,8 +771,20 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 <div class="confetti-overlay" id="confettiOverlay"></div>
 <div class="fb-status" id="fbStatus">⬤ ŁĄCZENIE...</div>
 
+<!-- ══ PIN GATE ══ -->
+<div class="screen active" id="pinGate" style="align-items:center;justify-content:center;text-align:center;gap:16px;">
+  <div style="font-size:3rem;">🪩</div>
+  <div style="font-family:'Bebas Neue';font-size:2rem;letter-spacing:5px;background:linear-gradient(135deg,var(--gold),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">LAST DISCO</div>
+  <div style="font-size:.75rem;color:var(--muted);letter-spacing:2px;">PANEL HOSTA</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;max-width:300px;width:100%;">
+    <div style="font-family:'Bebas Neue';font-size:.7rem;letter-spacing:4px;color:var(--gold);margin-bottom:8px;">WPISZ PIN</div>
+    <input type="password" id="pinInput" maxlength="10" placeholder="••••" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,215,0,.3);border-radius:10px;color:var(--text);font-family:'Bebas Neue';font-size:1.8rem;padding:14px;outline:none;text-align:center;letter-spacing:8px;">
+    <button onclick="checkPin()" style="width:100%;margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);border:none;border-radius:10px;padding:14px;font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:3px;cursor:pointer;">WEJDŹ</button>
+  </div>
+</div>
+
 <!-- ══ HOME ══ -->
-<div class="screen active" id="home">
+<div class="screen" id="home">
   <div class="home-layout">
 
     <!-- ── LEFT: Logo + Games ── -->
@@ -794,7 +819,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
     <div class="home-right">
       <!-- QR compact -->
       <div class="qr-compact">
-        <canvas id="qrCanvas" width="64" height="64"></canvas>
+        <img id="qrImg" width="64" height="64" style="border-radius:6px;background:white;padding:3px;" alt="QR">
         <div class="qr-compact-info">
           <div class="qr-compact-label">LINK DLA GOŚCI</div>
           <div class="qr-compact-url" id="playerUrl">ładowanie...</div>
@@ -858,6 +883,9 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 <div class="print-page" id="printPage"></div>
 <div class="toast" id="toast"></div>
+<input type="file" id="xlsxFileInput" class="xlsx-file-input" accept=".xlsx,.xls" onchange="xlsxImportGame(this.dataset.game, this.files[0]);this.value='';">
+<input type="file" id="xlsxFileInputAll" class="xlsx-file-input" accept=".xlsx,.xls" onchange="xlsxImportAll(this.files[0]);this.value='';">
+
 
 <!-- ══ FIREBASE ══ -->
 <script type="module">
@@ -957,20 +985,9 @@ window.FB = { db, ref, set, get, onValue, push, remove, pushState, pushVotesRese
 // ── QR CODE (simple, no library) ──
 const playerUrl = window.location.origin + window.location.pathname.replace('admin.html','');
 document.getElementById('playerUrl').textContent = playerUrl;
-// Draw simple QR placeholder directing user
-const qCtx = document.getElementById('qrCanvas').getContext('2d');
-qCtx.fillStyle = '#ffffff';
-qCtx.fillRect(0,0,80,80);
-qCtx.fillStyle = '#1a0033';
-qCtx.font = '7px sans-serif';
-qCtx.textAlign = 'center';
-qCtx.fillText('Skanuj QR', 40, 20);
-qCtx.fillText('lub wejdź na:', 40, 32);
-qCtx.font = 'bold 6px sans-serif';
-// wrap url
-const words = playerUrl.split('/');
-qCtx.fillText(words[words.length-1], 40, 50);
-qCtx.fillText(window.location.hostname, 40, 62);
+// Real QR code via Google Charts API
+const qrImg = document.getElementById('qrImg');
+if(qrImg) qrImg.src = 'https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=' + encodeURIComponent(playerUrl) + '&choe=UTF-8';
 
 window.PLAYER_URL = playerUrl;
 window.pushState = pushState;
@@ -983,6 +1000,29 @@ window.dispatchEvent(new Event('fbReady'));
 </script>
 
 <script>
+// ════════════════════════════════════════════
+// PIN GATE
+// ════════════════════════════════════════════
+const ADMIN_PIN = '1234'; // ← zmień na swój PIN
+function checkPin() {
+  const v = document.getElementById('pinInput').value;
+  if(v === ADMIN_PIN || sessionStorage.getItem('admin_ok')==='1') {
+    sessionStorage.setItem('admin_ok','1');
+    document.getElementById('pinGate').classList.remove('active');
+    document.getElementById('home').classList.add('active');
+  } else {
+    document.getElementById('pinInput').style.borderColor = 'var(--red)';
+    document.getElementById('pinInput').value = '';
+    showToast('Zły PIN!');
+  }
+}
+document.getElementById('pinInput')?.addEventListener('keydown', ev => { if(ev.key==='Enter') checkPin(); });
+// Auto-unlock if already authenticated in this session
+if(sessionStorage.getItem('admin_ok')==='1') {
+  document.getElementById('pinGate')?.classList.remove('active');
+  document.getElementById('home')?.classList.add('active');
+}
+
 // ════════════════════════════════════════════
 // DATA
 // ════════════════════════════════════════════
@@ -1085,6 +1125,19 @@ let telDrawing=false,telLx=0,telLy=0,telColor='#1a1a2e',telBrush=5;
 window.addEventListener('fbReady', () => {
   // listen to game state changes — but as host we only write, not follow
   console.log('Firebase ready');
+  // Restore scores from Firebase
+  window.FB?.get(window.FB.ref(window.FB.db, 'scores')).then(snap => {
+    const saved = snap.val();
+    if(!saved) return;
+    // Rebuild SCORES from Firebase data (each key = playerKey, val = {total, lastGame, ...})
+    Object.entries(saved).forEach(([pKey, data]) => {
+      const name = pKey.replace(/_/g,' ');
+      if(!SCORES[name]) SCORES[name] = {total: data.total||0, games:{}};
+      else SCORES[name].total = data.total||0;
+    });
+    renderGlobalSB();
+    console.log('Scores restored:', Object.keys(SCORES).length, 'players');
+  }).catch(()=>{});
 });
 
 // ════════════════════════════════════════════
@@ -1796,6 +1849,7 @@ function hostBack() {
   window._currentGame = '';
   window.FB?.setVotesCallback(null);
   window.FB?.pushState({game:'idle'});
+  clearInterval(S.eight.interval);
   const vz=document.getElementById('gsVotesZone');if(vz)vz.innerHTML='';
   document.getElementById('gameScreen').classList.remove('active');
   document.getElementById('home').classList.add('active');
@@ -2005,9 +2059,10 @@ function renderQuiz(resetVotes=true) {
   }
 }
 function quizReveal(){
+  if(S.quiz._scored === S.quiz.idx) { renderQuiz(false); return; }
+  S.quiz._scored = S.quiz.idx;
   S.quiz.phase='answer';
   flashResult('win');
-  // Score players: 1pt for correct answer, 0.5pt for any answer
   const d=DATA.quiz[S.quiz.idx];
   const votes=window._lastVotes||{};
   const players=window._onlinePlayers||[];
@@ -2070,7 +2125,7 @@ function renderVabank() {
         <div style="margin-top:8px;">
           <div style="font-family:'Bebas Neue';font-size:.65rem;letter-spacing:3px;color:rgba(255,248,231,.4);margin-bottom:6px;">KTO ODPOWIEDZIAŁ POPRAWNIE? PRZYZNAJ ${price} PKT:</div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            ${(window._onlinePlayers||[]).map(p=>`<button onclick="vbAward('${p.replace(/'/g,"\\'")}');this.style.opacity='.4';this.disabled=true;" style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);color:#FFD700;border-radius:8px;padding:6px 14px;font-family:'Bebas Neue';font-size:.82rem;letter-spacing:2px;cursor:pointer;">+${price} ${e(p)}</button>`).join('')}
+            ${(window._onlinePlayers||[]).map((p,pi)=>`<button onclick="vbAward(window._onlinePlayers[${pi}]);this.style.opacity='.4';this.disabled=true;" style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);color:#FFD700;border-radius:8px;padding:6px 14px;font-family:'Bebas Neue';font-size:.82rem;letter-spacing:2px;cursor:pointer;">+${price} ${e(p)}</button>`).join('')}
           </div>
         </div>
       </div>`;
@@ -2118,21 +2173,22 @@ function renderHon(resetVotes=true) {
   pushQuestion('honornot',{idx:s.idx,statement:txt,opts:['🔥 HOT','❄️ NOT']},resetVotes);
 }
 function honNext(){
-  // Award 1pt to everyone who voted
-  const votes=window._lastVotes||{};
-  const players=window._onlinePlayers||[];
-  // majority choice
-  const counts={};
-  Object.values(votes).forEach(v=>{counts[v]=(counts[v]||0)+1;});
-  const majority=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];
-  players.forEach(p=>{
-    const key=p.replace(/\s/g,'_');
-    const v=votes[key]!==undefined?votes[key]:votes[p];
-    if(v===undefined) return;
-    const pts = v===majority ? 2 : 1;
-    scoreAdd(p,'honornot',pts,'Głos oddany');
-  });
-  renderLocalSB('honornot');
+  if(S.hon._scored !== S.hon.idx) {
+    S.hon._scored = S.hon.idx;
+    const votes=window._lastVotes||{};
+    const players=window._onlinePlayers||[];
+    const counts={};
+    Object.values(votes).forEach(v=>{counts[v]=(counts[v]||0)+1;});
+    const majority=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+    players.forEach(p=>{
+      const key=p.replace(/\s/g,'_');
+      const v=votes[key]!==undefined?votes[key]:votes[p];
+      if(v===undefined) return;
+      const pts = v===majority ? 2 : 1;
+      scoreAdd(p,'honornot',pts,'Głos oddany');
+    });
+    renderLocalSB('honornot');
+  }
   if(S.hon.idx<DATA.hon.length-1){S.hon.idx++;renderHon();}else { showEndOfGameSB('honornot'); }
 }
 function honPrev(){if(S.hon.idx>0){S.hon.idx--;renderHon();}}
@@ -2214,12 +2270,12 @@ function renderHL(resetVotes=true) {
   }
 }
 function hlReveal(){
+  if(S.highlow._scored === S.highlow.idx) { renderHL(false); return; }
+  S.highlow._scored = S.highlow.idx;
   S.highlow.phase='answer';
   flashResult('win');
-  const d=DATA.highlow[S.highlow.idx];
   const votes=window._lastVotes||{};
   const players=window._onlinePlayers||[];
-  // Use stored correct direction (set by host via toggle before reveal)
   const correctDir = S.highlow.correctDir || null;
   players.forEach(p=>{
     const key=p.replace(/\s/g,'_');
@@ -2322,18 +2378,21 @@ function renderChoice(resetVotes=true) {
   pushQuestion('choice',{idx:s.idx,a:d.a,b:d.b,opts:[d.a,d.b]},resetVotes);
 }
 function choiceNext(){
-  const votes=window._lastVotes||{};
-  const players=window._onlinePlayers||[];
-  const counts={};
-  Object.values(votes).forEach(v=>{counts[v]=(counts[v]||0)+1;});
-  const majority=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];
-  players.forEach(p=>{
-    const key=p.replace(/\s/g,'_');
-    const v=votes[key]!==undefined?votes[key]:votes[p];
-    if(v===undefined) return;
-    scoreAdd(p,'choice', v===majority?2:1, v===majority?'Większość!':'Własny wybór');
-  });
-  renderLocalSB('choice');
+  if(S.choice._scored !== S.choice.idx) {
+    S.choice._scored = S.choice.idx;
+    const votes=window._lastVotes||{};
+    const players=window._onlinePlayers||[];
+    const counts={};
+    Object.values(votes).forEach(v=>{counts[v]=(counts[v]||0)+1;});
+    const majority=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+    players.forEach(p=>{
+      const key=p.replace(/\s/g,'_');
+      const v=votes[key]!==undefined?votes[key]:votes[p];
+      if(v===undefined) return;
+      scoreAdd(p,'choice', v===majority?2:1, v===majority?'Większość!':'Własny wybór');
+    });
+    renderLocalSB('choice');
+  }
   if(S.choice.idx<DATA.choice.length-1){S.choice.idx++;renderChoice();}else { showEndOfGameSB('choice'); }
 }
 function choicePrev(){if(S.choice.idx>0){S.choice.idx--;renderChoice(false);}}
@@ -2395,13 +2454,13 @@ function renderTierList() {
         <div class="tier-row">
           <div class="tier-label ${t}">${t}</div>
           <div class="tier-drop" data-tier="${t}" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="tierDrop(event,'${t}')">
-            ${DATA.tierItems.filter(it=>S.tier[it]===t).map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem=DATA.tierItems[${DATA.tierItems.indexOf(it)}];event.dataTransfer.setData('text/plain',it)" onclick="tierClick(it)"><b>${e(it)}</b></div>`).join('')}
+            ${DATA.tierItems.filter(it=>S.tier[it]===t).map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem=DATA.tierItems[${DATA.tierItems.indexOf(it)}];event.dataTransfer.setData('text/plain','')" onclick="tierClick(DATA.tierItems[${DATA.tierItems.indexOf(it)}])"><b>${e(it)}</b></div>`).join('')}
           </div>
         </div>`).join('')}
     </div>
     <div class="tier-pool-wrap" ondragover="event.preventDefault()" ondrop="tierDrop(event,'pool')">
       <div class="tier-pool-label">PULA — PRZECIĄGNIJ DO TIERU (lub kliknij)</div>
-      <div class="tier-pool">${DATA.tierItems.filter(it=>S.tier[it]==='pool').map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem=DATA.tierItems[${DATA.tierItems.indexOf(it)}];event.dataTransfer.setData('text/plain',it)" onclick="tierClick(it)"><b>${e(it)}</b></div>`).join('')}</div>
+      <div class="tier-pool">${DATA.tierItems.filter(it=>S.tier[it]==='pool').map(it=>`<div class="tier-item" draggable="true" ondragstart="tierDragItem=DATA.tierItems[${DATA.tierItems.indexOf(it)}];event.dataTransfer.setData('text/plain','')" onclick="tierClick(DATA.tierItems[${DATA.tierItems.indexOf(it)}])"><b>${e(it)}</b></div>`).join('')}</div>
     </div>`;
   document.getElementById('gsControls').innerHTML=`
     <button class="ctrl-btn danger" onclick="S.tier={};renderTierList()">🔄 RESET</button>
@@ -2416,13 +2475,21 @@ function tierClick(it){if(typeof it !== 'string') return; const cur=S.tier[it]||
 // ════════════════════════════════════════════
 function renderAuction() {
   document.getElementById('gsTitle').textContent='💰 AUKCJA ZALET';
+  // Sync auction players with online players if available
+  if(window._onlinePlayers?.length && DATA.auctionPlayers.join(',') !== window._onlinePlayers.join(',')) {
+    DATA.auctionPlayers = [...window._onlinePlayers];
+  }
   if(!S.auction.budgets||!Object.keys(S.auction.budgets).length){
     S.auction={idx:0,phase:'bid',currentBid:0,currentWinner:null,budgets:{},wins:{}};
     DATA.auctionPlayers.forEach(p=>{S.auction.budgets[p]=DATA.auctionBudget;S.auction.wins[p]=[];});
   }
+  // Add new online players that joined after auction started
+  DATA.auctionPlayers.forEach(p=>{
+    if(!(p in S.auction.budgets)){S.auction.budgets[p]=DATA.auctionBudget;S.auction.wins[p]=[];}
+  });
   const st=S.auction, item=DATA.auctionItems[st.idx];
   document.getElementById('gsSubtitle').textContent=`PRZEDMIOT ${st.idx+1}/${DATA.auctionItems.length} · ${st.phase==='bid'?'LICYTACJA!':'SPRZEDANO!'}`;
-  const budgetsHTML=DATA.auctionPlayers.map(p=>`<div class="player-card ${st.currentWinner===p?'active':''}" onclick="auctionSetPlayer('${p}')"><div class="p-name">${e(p)}</div><div class="p-budget">${st.budgets[p]}</div><div style="font-size:.52rem;color:var(--muted);">MONET</div>${st.wins[p]?.length?`<div style="font-size:.55rem;color:var(--green2);margin-top:2px;">${st.wins[p].map(w=>w.emoji).join(' ')}</div>`:''}</div>`).join('');
+  const budgetsHTML=DATA.auctionPlayers.map((p,pi)=>`<div class="player-card ${st.currentWinner===p?'active':''}" onclick="auctionSetPlayer(DATA.auctionPlayers[${pi}])"><div class="p-name">${e(p)}</div><div class="p-budget">${st.budgets[p]}</div><div style="font-size:.52rem;color:var(--muted);">MONET</div>${st.wins[p]?.length?`<div style="font-size:.55rem;color:var(--green2);margin-top:2px;">${st.wins[p].map(w=>w.emoji).join(' ')}</div>`:''}</div>`).join('');
   const body=document.getElementById('gsBody');
   if(st.phase==='bid'){
     body.innerHTML=`
@@ -2605,15 +2672,18 @@ function renderNever(resetVotes=true) {
   pushQuestion('neverhave',{idx:s.idx,statement:txt,opts:['🍹 ROBIŁAM!','😇 NIE JA!']},resetVotes);
 }
 function neverNext(){
-  const votes=window._lastVotes||{};
-  const players=window._onlinePlayers||[];
-  const ROBILAM='🍹 ROBIŁAM!';
-  players.forEach(p=>{
-    const key=p.replace(/\s/g,'_');
-    const v=votes[key]!==undefined?votes[key]:votes[p];
-    if(v===ROBILAM) scoreAdd(p,'neverhave',1,'🍹 Robiłam!');
-  });
-  renderLocalSB('neverhave');
+  if(S.never._scored !== S.never.idx) {
+    S.never._scored = S.never.idx;
+    const votes=window._lastVotes||{};
+    const players=window._onlinePlayers||[];
+    const ROBILAM='🍹 ROBIŁAM!';
+    players.forEach(p=>{
+      const key=p.replace(/\s/g,'_');
+      const v=votes[key]!==undefined?votes[key]:votes[p];
+      if(v===ROBILAM) scoreAdd(p,'neverhave',1,'🍹 Robiłam!');
+    });
+    renderLocalSB('neverhave');
+  }
   if(S.never.idx<DATA.never.length-1){S.never.idx++;renderNever();}else { showEndOfGameSB('neverhave'); }
 }
 function neverPrev(){if(S.never.idx>0){S.never.idx--;renderNever(false);}}
@@ -2622,6 +2692,8 @@ function neverPrev(){if(S.never.idx>0){S.never.idx--;renderNever(false);}}
 // GŁUCHY TELEFON
 // ════════════════════════════════════════════
 function renderTelephone() {
+  // Sync telephone players with online players if available
+  if(window._onlinePlayers?.length) DATA.telPlayers = [...window._onlinePlayers];
   document.getElementById('gsTitle').textContent='📞 GŁUCHY TELEFON';
   const s=window._telState||(window._telState={round:0,phase:'draw',guesses:[],canvasHistory:[]});
   const players=DATA.telPlayers;
@@ -2720,11 +2792,13 @@ function buildAdmin(g) {
 // ════════════════════════════════════════════
 // ANIMATIONS
 // ════════════════════════════════════════════
+let _confettiTimer = null;
 function spawnConfetti(n=60){
   const ov=document.getElementById('confettiOverlay');ov.innerHTML='';
+  clearTimeout(_confettiTimer);
   const cols=['#FFD700','#FF2D9C','#00CFFF','#ADFF2F','#FF6BC8','#FFA500'];
   for(let i=0;i<n;i++){const d=document.createElement('div');d.className='confetti-piece';d.style.left=Math.random()*100+'%';d.style.background=cols[Math.floor(Math.random()*cols.length)];d.style.width=(7+Math.random()*9)+'px';d.style.height=(7+Math.random()*9)+'px';d.style.borderRadius=Math.random()>.5?'50%':'2px';d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=(Math.random()*.7)+'s';ov.appendChild(d);}
-  setTimeout(()=>ov.innerHTML='',3500);
+  _confettiTimer=setTimeout(()=>ov.innerHTML='',3500);
 }
 function flashResult(type){const div=document.createElement('div');div.className='result-flash '+type;div.innerHTML=`<div class="result-emoji">${type==='win'?'🎉':'😬'}</div>`;document.body.appendChild(div);if(type==='win')spawnConfetti();setTimeout(()=>div.remove(),900);}
 
@@ -2755,6 +2829,14 @@ document.addEventListener('keydown',ev=>{
     const g=window._currentGame;
     if(g==='quiz')quizPrev();if(g==='honornot')honPrev();if(g==='highlow')hlPrev();
     if(g==='eight')eightPrev();if(g==='choice')choicePrev();if(g==='neverhave')neverPrev();
+  }
+});
+
+// ── PREVENT ACCIDENTAL REFRESH DURING GAME ──
+window.addEventListener('beforeunload', ev => {
+  if(window._currentGame) {
+    ev.preventDefault();
+    ev.returnValue = '';
   }
 });
 </script>
