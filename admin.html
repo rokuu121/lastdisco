@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🪩 LAST DISCO – Admin / Host</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -427,14 +428,6 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .mini-sb-title{font-family:'Bebas Neue';font-size:.62rem;letter-spacing:3px;
   color:rgba(255,248,231,.3);margin-bottom:6px;}
 .mini-sb-rows{display:flex;gap:6px;flex-wrap:wrap;}
-.mini-sb-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);}
-.mini-sb-chip.lead{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.3);}
-.mini-sb-chip .mn{font-family:'Bebas Neue';font-size:.75rem;letter-spacing:1px;color:rgba(255,248,231,.7);}
-.mini-sb-chip.lead .mn{color:#FFD700;}
-.mini-sb-chip .mp{font-family:'Bebas Neue';font-size:.95rem;color:rgba(255,248,231,.5);}
-.mini-sb-chip.lead .mp{color:#FFD700;}
-.mini-sb-chip .mdelta{font-size:.6rem;color:#39FF14;margin-left:2px;}
 
 /* ── LOCAL SB (in-game) ── */
 .local-sb-wrap{padding:6px 20px 4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,215,0,.03);border-top:1px solid rgba(255,215,0,.08);}
@@ -553,7 +546,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   border-bottom:1px solid rgba(255,215,0,.08);
   flex-shrink:0;
 }
-.qr-compact canvas{border-radius:6px;background:white;padding:3px;flex-shrink:0;}
+.qr-compact img{border-radius:6px;background:white;padding:3px;flex-shrink:0;}
 .qr-compact-info{flex:1;min-width:0;}
 .qr-compact-label{font-family:'Bebas Neue';font-size:.58rem;letter-spacing:3px;color:var(--gold);margin-bottom:3px;}
 .qr-compact-url{font-size:.65rem;color:var(--blue);word-break:break-all;line-height:1.4;opacity:.85;}
@@ -763,6 +756,9 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   .games-grid{grid-template-columns:repeat(3,1fr);}
   .admin-panel.open{width:100%;position:absolute;right:0;top:0;bottom:0;z-index:50;}
 }
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
 </style>
 </head>
 <body>
@@ -795,6 +791,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
           <div class="home-title-small">LAST DISCO</div>
           <div class="home-sub-small">Wieczór Panieński Kasi · <span style="color:var(--green);font-size:.75em;">📺 HOST</span></div>
         </div>
+        <button onclick="document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})" style="margin-left:auto;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:'Bebas Neue';font-size:.7rem;letter-spacing:2px;cursor:pointer;">⛶ FULLSCREEN</button>
       </div>
       <div class="games-grid" id="gamesGrid">
         <div class="game-btn" onclick="showGameIntro('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div></div>
@@ -1003,10 +1000,21 @@ window.dispatchEvent(new Event('fbReady'));
 // ════════════════════════════════════════════
 // PIN GATE
 // ════════════════════════════════════════════
-const ADMIN_PIN = '1234'; // ← zmień na swój PIN
-function checkPin() {
+// PIN hash (SHA-256 of '0108') — to change PIN: hash your new PIN and replace
+const ADMIN_PIN_HASH = '61f9dc872774a4ba7e0034069aca7208febce8fae5bd55edf78bdc7a3286982e';
+async function hashPin(pin) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function checkPin() {
+  if(sessionStorage.getItem('admin_ok')==='1') {
+    document.getElementById('pinGate').classList.remove('active');
+    document.getElementById('home').classList.add('active');
+    return;
+  }
   const v = document.getElementById('pinInput').value;
-  if(v === ADMIN_PIN || sessionStorage.getItem('admin_ok')==='1') {
+  const h = await hashPin(v);
+  if(h === ADMIN_PIN_HASH) {
     sessionStorage.setItem('admin_ok','1');
     document.getElementById('pinGate').classList.remove('active');
     document.getElementById('home').classList.add('active');
@@ -1124,7 +1132,6 @@ let telDrawing=false,telLx=0,telLy=0,telColor='#1a1a2e',telBrush=5;
 // ════════════════════════════════════════════
 window.addEventListener('fbReady', () => {
   // listen to game state changes — but as host we only write, not follow
-  console.log('Firebase ready');
   // Restore scores from Firebase
   window.FB?.get(window.FB.ref(window.FB.db, 'scores')).then(snap => {
     const saved = snap.val();
@@ -1135,7 +1142,6 @@ window.addEventListener('fbReady', () => {
       SCORES[name] = {total: data.total||0, games: data.games||{}};
     });
     renderGlobalSB();
-    console.log('Scores restored:', Object.keys(SCORES).length, 'players');
   }).catch(()=>{});
 });
 
@@ -1177,18 +1183,6 @@ function scoreAdd(player, game, pts, label='') {
   renderLocalSB(game);
   renderGlobalSB();
 
-}
-
-function scoreAddMany(playerPtsMap, game, label='') {
-  // playerPtsMap = { playerName: pts }
-  scoresInit();
-  Object.entries(playerPtsMap).forEach(([p, pts]) => scoreAdd(p, game, pts, label));
-}
-
-function updateFabBadge() {
-  const total = Object.values(SCORES).reduce((a,v)=>a+v.total,0);
-  const badge = document.getElementById('sbFabBadge');
-  if(badge) badge.textContent = total;
 }
 
 function toggleSB() {
@@ -1274,16 +1268,12 @@ function renderLocalSB(game) {
   </div>`;
 }
 
-// Legacy compat
-function renderSB() { renderGlobalSB(); }
-
 function resetScores() {
+  if(!confirm('Na pewno zresetować WSZYSTKIE wyniki?')) return;
   SCORES = {};
   renderGlobalSB();
   renderLocalSB(window._currentGame);
-  // Clear Firebase scores
   window.FB?.set(window.FB.ref(window.FB.db,'scores'), null);
-
   showToast('Wyniki zresetowane!');
 }
 
@@ -1418,8 +1408,19 @@ function _gameToRows(game) {
   }
 }
 
-function xlsxExportGame(game) {
-  if(typeof XLSX === 'undefined') { showToast('Ładowanie biblioteki…'); return; }
+function loadXLSX(){
+  return new Promise((resolve)=>{
+    if(typeof XLSX!=='undefined'){resolve();return;}
+    showToast('Ładuję bibliotekę XLSX…');
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload=()=>{showToast('XLSX gotowy!');resolve();};
+    s.onerror=()=>{showToast('Błąd ładowania XLSX!');resolve();};
+    document.head.appendChild(s);
+  });
+}
+async function xlsxExportGame(game) {
+  if(typeof XLSX === 'undefined') { await loadXLSX(); if(typeof XLSX === 'undefined') return; }
   const label = (GAME_LABELS[game]||game).replace(/[🎤🎲🔥💌📊⏱️⚡✏️🏆💰🔮💑🙈📞🎰]/gu,'').trim();
   const rows = _gameToRows(game);
   const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -1432,8 +1433,8 @@ function xlsxExportGame(game) {
   showToast('📥 Zapisano: lastdisco_' + game + '.xlsx');
 }
 
-function xlsxExportAll() {
-  if(typeof XLSX === 'undefined') { showToast('Ładowanie biblioteki…'); return; }
+async function xlsxExportAll() {
+  if(typeof XLSX === 'undefined') { await loadXLSX(); if(typeof XLSX === 'undefined') return; }
   const wb = XLSX.utils.book_new();
   const games = ['quiz','honornot','highlow','eight','choice','neverhave','couples',
                  'tierlist','bingo','vabank','auction'];
@@ -1880,7 +1881,7 @@ function renderGame(game) {
     tierlist:renderTierList, auction:renderAuction, wrozby:renderWrozby,
     couples:renderCouples, neverhave:renderNever, telephone:renderTelephone,
   };
-  renders[game]?.();
+  try { renders[game]?.(); } catch(err) { showToast('Błąd gry: '+err.message); document.getElementById('gsBody').innerHTML='<div style="padding:20px;color:var(--red);">Błąd: '+e(err.message)+'</div>'; }
 }
 
 function toggleAdmin(game) {
@@ -1982,6 +1983,12 @@ function pushQuestion(game, data, resetVotes=true) {
     const vz=document.getElementById('gsVotesZone');if(vz)vz.innerHTML='';
   }
 }
+function warnIfFewVotes() {
+  const votes = Object.keys(window._lastVotes||{}).length;
+  const players = (window._onlinePlayers||[]).length;
+  if(players > 0 && votes === 0) { showToast('Nikt jeszcze nie zagłosował!'); return false; }
+  return true;
+}
 
 // ════════════════════════════════════════════
 // BINGO
@@ -2026,7 +2033,7 @@ function checkBingo() {
   for(const l of lines)
     if(l.every(i=>S.bingo.marked[i]||i===12)){showToast('🎉 BINGO!');spawnConfetti();return;}
 }
-function resetBingo() { S.bingo.marked=new Array(25).fill(false); renderBingo(); showToast('Reset!'); }
+function resetBingo() { if(!confirm('Zresetować planszę Bingo?')) return; S.bingo.marked=new Array(25).fill(false); renderBingo(); showToast('Reset!'); }
 
 // ════════════════════════════════════════════
 // QUIZ
@@ -2057,7 +2064,7 @@ function renderQuiz(resetVotes=true) {
     document.getElementById('gsControls').innerHTML=`
       <button class="ctrl-btn secondary" onclick="quizPrev()">◀ WSTECZ</button>
       <button class="ctrl-btn primary" onclick="quizNext()">NASTĘPNE ▶</button>`;
-    pushQuestion('quiz',{idx:s.idx,phase:'answer',answer:d.answer,correctIdx:ci});
+    pushQuestion('quiz',{idx:s.idx,phase:'answer',question:d.q,opts:d.opts,answer:d.answer,correctIdx:ci});
     // inject mini scoreboard after body renders
     renderLocalSB('quiz');
   }
@@ -2154,7 +2161,7 @@ function vbAward(playerName) {
   const price=DATA.vabank.prices[S.vabank.priceIdx];
   scoreAdd(playerName,'vabank',price,'Va-Bank '+price+' pkt');
   showToast(playerName+': +'+price+' pkt!');
-  renderSB();
+  renderGlobalSB();
 }
 function hexToRgb(h){const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);return r?`${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}`:'255,215,0';}
 
@@ -2342,7 +2349,7 @@ function eightStop(){clearInterval(S.eight.interval);S.eight.phase='task';showTo
 function eightNext(){
   clearInterval(S.eight.interval);
   if(S.eight.idx<DATA.eight.length-1){S.eight.idx++;S.eight.phase='task';renderEight();}
-  else { showToast('Koniec zadań! 🎉'); }
+  else { showToast('Koniec zadań! 🎉'); showEndOfGameSB('eight'); }
 }
 function eightPrev(){clearInterval(S.eight.interval);if(S.eight.idx>0){S.eight.idx--;S.eight.phase='task';renderEight();}}
 function runTimer(secs){
@@ -2479,9 +2486,10 @@ function tierClick(it){if(typeof it !== 'string') return; const cur=S.tier[it]||
 // ════════════════════════════════════════════
 function renderAuction() {
   document.getElementById('gsTitle').textContent='💰 AUKCJA ZALET';
-  // Sync auction players with online players if available
-  if(window._onlinePlayers?.length && DATA.auctionPlayers.join(',') !== window._onlinePlayers.join(',')) {
+  // Sync auction players with online players (only on first render, not after manual edits)
+  if(!S.auction._playersLocked && window._onlinePlayers?.length) {
     DATA.auctionPlayers = [...window._onlinePlayers];
+    S.auction._playersLocked = true;
   }
   if(!S.auction.budgets||!Object.keys(S.auction.budgets).length){
     S.auction={idx:0,phase:'bid',currentBid:0,currentWinner:null,budgets:{},wins:{}};
@@ -2630,7 +2638,7 @@ function renderCouples() {
       </div>
     </div>`;
   document.getElementById('gsControls').innerHTML=`
-    <button class="ctrl-btn secondary" onclick="S.couples={selectedA:null,selectedB:null,matched:[],score:0,wrong:[]};S.couples.shuffledB=null;renderCouples()">🔄 NOWA GRA</button>
+    <button class="ctrl-btn secondary" onclick="if(confirm('Nowa gra Couples?')){S.couples={selectedA:null,selectedB:null,matched:[],score:0,wrong:[]};S.couples.shuffledB=null;renderCouples();}">🔄 NOWA GRA</button>
     <button class="ctrl-btn secondary" onclick="toggleSB()">🏆 WYNIKI</button>`;
   // Pre-compute origIdx for shuffled
   if(!sh[0]?.origIdx) S.couples.shuffledB=DATA.couples.map((p,i)=>({...p,origIdx:i})).sort(()=>Math.random()-.5);
@@ -2696,8 +2704,11 @@ function neverPrev(){if(S.never.idx>0){S.never.idx--;renderNever(false);}}
 // GŁUCHY TELEFON
 // ════════════════════════════════════════════
 function renderTelephone() {
-  // Sync telephone players with online players if available
-  if(window._onlinePlayers?.length) DATA.telPlayers = [...window._onlinePlayers];
+  // Sync telephone players on first render only
+  if(!window._telPlayersLocked && window._onlinePlayers?.length) {
+    DATA.telPlayers = [...window._onlinePlayers];
+    window._telPlayersLocked = true;
+  }
   document.getElementById('gsTitle').textContent='📞 GŁUCHY TELEFON';
   const s=window._telState||(window._telState={round:0,phase:'draw',guesses:[],canvasHistory:[]});
   const players=DATA.telPlayers;
@@ -2833,6 +2844,14 @@ document.addEventListener('keydown',ev=>{
     const g=window._currentGame;
     if(g==='quiz')quizPrev();if(g==='honornot')honPrev();if(g==='highlow')hlPrev();
     if(g==='eight')eightPrev();if(g==='choice')choicePrev();if(g==='neverhave')neverPrev();
+  }
+  if(ev.key==='Escape'){
+    // Close intro overlay first, then admin panel, then go to menu
+    const intro=document.getElementById('introOverlay');
+    if(intro){intro.remove();return;}
+    const admin=document.getElementById('gsAdmin');
+    if(admin?.classList.contains('open')){toggleAdmin();return;}
+    if(window._currentGame) hostBack();
   }
 });
 

@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#07000F">
 <title>🪩 Last Disco – Dołącz!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -132,17 +134,6 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .answer-val{font-family:'Outfit';font-weight:800;font-size:clamp(1.3rem,5vw,2rem);color:var(--text);line-height:1.15;}
 .answer-note{font-size:.8rem;color:var(--muted);margin-top:6px;line-height:1.4;}
 
-/* ── RESULTS BAR ── */
-.results-wrap{background:rgba(57,255,20,.05);border:1px solid rgba(57,255,20,.2);border-radius:10px;padding:10px 14px;}
-.results-title{font-family:'Bebas Neue';font-size:.68rem;letter-spacing:3px;color:var(--green);margin-bottom:8px;}
-.result-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
-.result-lbl{font-family:'Bebas Neue';font-size:.75rem;color:var(--text);min-width:70px;letter-spacing:1px;}
-.result-bar-wrap{flex:1;height:10px;background:rgba(255,255,255,.08);border-radius:5px;overflow:hidden;}
-.result-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s ease;}
-.result-bar-fill.pink{background:linear-gradient(90deg,var(--pink),var(--pink2));}
-.result-bar-fill.blue{background:linear-gradient(90deg,var(--blue),#0080FF);}
-.result-count{font-family:'Bebas Neue';font-size:.8rem;color:var(--gold);min-width:24px;text-align:right;}
-
 /* ── ADVICE INPUT ── */
 .advice-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
 .advice-label{font-family:'Bebas Neue';font-size:.72rem;letter-spacing:4px;color:var(--gold);margin-bottom:8px;}
@@ -219,7 +210,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .score-bar-track{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
 .score-bar-fill{height:100%;background:linear-gradient(90deg,#FFD700,#FFA500);border-radius:2px;
   transition:width .6s cubic-bezier(.34,1.1,.64,1);}
-.score-feedback{position:fixed;bottom:calc(68px + env(safe-area-inset-bottom));right:16px;z-index:300;
+.score-feedback{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));right:16px;z-index:300;
   font-family:'Bebas Neue';font-size:1.2rem;letter-spacing:2px;
   padding:8px 18px;border-radius:50px;
   animation:feedbackPop .4s cubic-bezier(.34,1.56,.64,1) forwards, feedbackFade 2s 1s forwards;
@@ -229,6 +220,16 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .score-feedback.minus{background:rgba(255,51,51,.12);border:1px solid rgba(255,51,51,.3);color:#FF3333;}
 @keyframes feedbackPop{from{opacity:0;transform:translateY(20px) scale(.8);}to{opacity:1;transform:translateY(0) scale(1);}}
 @keyframes feedbackFade{from{opacity:1;}to{opacity:0;transform:translateY(-8px);}}
+
+/* ── SCREEN TRANSITIONS ── */
+.screen{transition:opacity .25s ease;}
+
+/* ── REDUCED MOTION ── */
+@media(prefers-reduced-motion:reduce){
+  *,.screen,.confetti-piece,.join-disco,.wait-emoji,.idle-emoji,.score-bar-fill,.answer-card,.score-feedback{
+    animation:none!important;transition:none!important;
+  }
+}
 </style>
 </head>
 <body>
@@ -257,7 +258,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
   <div class="wait-name" id="waitName"></div>
   <div class="wait-online" id="waitOnline">⬤ 0 graczy online</div>
   <div class="wait-sub">Prowadząca zaraz wybierze grę.<br>Telefon zostaw odblokowany!</div>
-  <button onclick="switchScreen('join');_playerName='';window._playerName='';" style="margin-top:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.2);color:var(--muted);border-radius:8px;padding:8px 16px;font-family:'Bebas Neue';font-size:.7rem;letter-spacing:2px;cursor:pointer;">ZMIEŃ IMIĘ</button>
+  <button onclick="changeName()" style="margin-top:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.2);color:var(--muted);border-radius:8px;padding:8px 16px;font-family:'Bebas Neue';font-size:.7rem;letter-spacing:2px;cursor:pointer;">ZMIEŃ IMIĘ</button>
 </div>
 
 <!-- GAME -->
@@ -310,8 +311,11 @@ window.DB = { db, ref, set, get, push, onValue, onDisconnect };
 window.addEventListener('fbReady_player', async () => {
   const name = window._playerName;
   if(!name) return;
+  // Remove old presence if changing name
+  if(window._presRef) { try { await set(window._presRef, null); } catch(e){} }
   // Presence
   const presRef = ref(db, 'presence/'+name+'_'+Date.now());
+  window._presRef = presRef;
   await set(presRef, {name, ts: Date.now()});
   onDisconnect(presRef).remove();
 });
@@ -381,6 +385,16 @@ async function joinGame() {
   showToast('Dołączyłaś! 🪩');
 }
 
+function changeName() {
+  // Clear old presence via Firebase event
+  _playerName = '';
+  window._playerName = '';
+  window.dispatchEvent(new Event('fbReady_player'));
+  switchScreen('join');
+  document.getElementById('nameInput').value = '';
+  document.getElementById('nameInput').focus();
+}
+
 document.getElementById('nameInput').addEventListener('keydown', ev => {
   if(ev.key === 'Enter') joinGame();
 });
@@ -404,8 +418,12 @@ window._handleGameState = function(state) {
   if(!state || state.game === 'idle') {
     switchScreen('waiting');
     _currentPlayerGame = '';
+    document.getElementById('waitOnline').textContent = document.getElementById('waitOnline').textContent.replace(/ · .*$/,'');
     return;
   }
+  // Update waiting screen with active game name (visible before switch)
+  const wo = document.getElementById('waitOnline');
+  if(wo) wo.textContent = wo.textContent.replace(/ · .*$/,'') + ' · Gra: ' + (state.game||'').toUpperCase();
   switchScreen('game');
   _currentPlayerGame = state.game;
   document.getElementById('gameTag').textContent = gameEmoji(state.game) + ' ' + state.game.toUpperCase();
@@ -451,6 +469,7 @@ function sendVote(value) {
   _playerVoted = true;
   window.DB?.set(window.DB.ref(window.DB.db,'votes/'+_playerName.replace(/\s/g,'_')), value);
   showToast('✅ Głos wysłany!');
+  try { navigator.vibrate?.(50); } catch(e){}
   spawnConfetti(15);
   // Update score label to show pending
   const lbl = document.getElementById('scoreLabel');
@@ -493,7 +512,6 @@ function quizVoteIdx(i) {
   sendVote(val);
   renderQuizVotedUI();
 }
-function quizVote(val) { sendVote(val); renderQuizVotedUI(); }
 function renderQuizVotedUI(){
   document.querySelectorAll('.opt').forEach(el => el.classList.add('sent'));
   const badge = document.createElement('div');
@@ -615,8 +633,18 @@ function renderBingoPlayer(state) {
 function togglePlayerBingo(i) {
   _playerBingo[i] = !_playerBingo[i];
   if(_playerBingo[i]) { showToast('Zaznaczono!'); spawnConfetti(8); }
-  // Re-render with current game state
   if(window._lastBingoState) renderBingoPlayer(window._lastBingoState);
+  checkPlayerBingo();
+}
+function checkPlayerBingo() {
+  const hostMarked = window._lastBingoState?.marked || [];
+  const merged = hostMarked.map((h,i) => h || _playerBingo[i]);
+  merged[12] = true; // FREE
+  const lines=[[0,1,2,3,4],[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24],
+    [0,5,10,15,20],[1,6,11,16,21],[2,7,12,17,22],[3,8,13,18,23],[4,9,14,19,24],
+    [0,6,12,18,24],[4,8,12,16,20]];
+  for(const l of lines)
+    if(l.every(idx=>merged[idx])){showToast('BINGO! 🎉');spawnConfetti(40);try{navigator.vibrate?.([100,50,100]);}catch(e){}return;}
 }
 
 // ══════════════════════════════════════════
@@ -666,16 +694,17 @@ function assignTier(t) {
 // ══════════════════════════════════════════
 // COUPLES PLAYER
 // ══════════════════════════════════════════
+let _lastCouplesScore = 0;
 function renderCouplesPlayer(state) {
   const c = document.getElementById('gameContent');
-  const matched = state.matched || [];
   const score = state.score || 0;
   c.innerHTML=`
     <div class="q-card"><div class="q-round">💑 DOPASUJ PARĘ</div><div class="q-text" style="font-size:1rem;">✅ ${score} par dopasowanych</div></div>
     <div class="idle-card"><div class="idle-emoji">💑</div><div class="idle-text">PODPOWIADAJ PROWADZĄCEJ!</div>
       <div class="idle-sub">Prowadząca dopasowuje pary na TV.<br>Krzycz swoją propozycję!</div>
     </div>`;
-  if(score > 0) spawnConfetti(10);
+  if(score > _lastCouplesScore && score > 0) spawnConfetti(10);
+  _lastCouplesScore = score;
 }
 
 // ══════════════════════════════════════════
@@ -823,7 +852,7 @@ window._renderScoreBar = function() {
   // Update pts display
   if(ptsEl) ptsEl.innerHTML = total + ' <small>pkt</small>';
   if(fillEl) {
-    fillEl.style.width = Math.min(100, total * 4) + '%';
+    fillEl.style.width = Math.min(100, total / Math.max(total, 30) * 100) + '%';
     fillEl.style.background = lastPts > 1.5 ? 'linear-gradient(90deg,#39FF14,#ADFF2F)'
       : lastPts > 0 ? 'linear-gradient(90deg,#FFD700,#FFA500)'
       : 'linear-gradient(90deg,#FFD700,#FFA500)';
