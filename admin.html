@@ -985,9 +985,9 @@ window.FB = { db, ref, set, get, onValue, push, remove, pushState, pushVotesRese
 // ── QR CODE (simple, no library) ──
 const playerUrl = window.location.origin + window.location.pathname.replace('admin.html','');
 document.getElementById('playerUrl').textContent = playerUrl;
-// Real QR code via Google Charts API
+// QR code via qrserver.com API (stable, free)
 const qrImg = document.getElementById('qrImg');
-if(qrImg) qrImg.src = 'https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=' + encodeURIComponent(playerUrl) + '&choe=UTF-8';
+if(qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(playerUrl);
 
 window.PLAYER_URL = playerUrl;
 window.pushState = pushState;
@@ -1129,11 +1129,10 @@ window.addEventListener('fbReady', () => {
   window.FB?.get(window.FB.ref(window.FB.db, 'scores')).then(snap => {
     const saved = snap.val();
     if(!saved) return;
-    // Rebuild SCORES from Firebase data (each key = playerKey, val = {total, lastGame, ...})
+    // Rebuild SCORES from Firebase data (full breakdown)
     Object.entries(saved).forEach(([pKey, data]) => {
       const name = pKey.replace(/_/g,' ');
-      if(!SCORES[name]) SCORES[name] = {total: data.total||0, games:{}};
-      else SCORES[name].total = data.total||0;
+      SCORES[name] = {total: data.total||0, games: data.games||{}};
     });
     renderGlobalSB();
     console.log('Scores restored:', Object.keys(SCORES).length, 'players');
@@ -1165,10 +1164,11 @@ function scoreAdd(player, game, pts, label='') {
   SCORES[player].total = Math.round((SCORES[player].total + pts) * 10) / 10;
   if(!SCORES[player].games[game]) SCORES[player].games[game] = [];
   SCORES[player].games[game].push({ pts, label, ts: Date.now() });
-  // Push to Firebase so player view shows score + feedback
+  // Push to Firebase so player view shows score + feedback + host can restore
   const pKey = player.replace(/\s/g,'_');
   window.FB?.set(window.FB.ref(window.FB.db, 'scores/' + pKey), {
     total: SCORES[player].total,
+    games: SCORES[player].games,
     lastGame: game,
     lastPts: pts,
     lastLabel: label,
@@ -1990,6 +1990,10 @@ function renderBingo() {
   document.getElementById('gsTitle').textContent = '🎰 BINGO';
   document.getElementById('gsSubtitle').textContent = 'KLIKAJ POLA GDY SIĘ ZDARZAJĄ';
   const body = document.getElementById('gsBody');
+  // Ensure exactly 25 bingo items
+  while(DATA.bingo.length < 25) DATA.bingo.push('Pole '+(DATA.bingo.length+1));
+  if(DATA.bingo.length > 25) DATA.bingo.length = 25;
+  while(S.bingo.marked.length < 25) S.bingo.marked.push(false);
   const marked = S.bingo.marked.filter(Boolean).length;
   body.innerHTML = `
     <div class="bingo-letters">
@@ -2008,7 +2012,7 @@ function renderBingo() {
   document.getElementById('gsControls').innerHTML = `
     <button class="ctrl-btn secondary" onclick="resetBingo()">🔄 RESET</button>
     <span class="counter-badge">${marked}/25 zaznaczonych</span>`;
-  window.pushState?.({game:'bingo', marked: S.bingo.marked});
+  window.pushState?.({game:'bingo', marked: S.bingo.marked, items: DATA.bingo});
 }
 function toggleBingo(i) {
   S.bingo.marked[i] = !S.bingo.marked[i];

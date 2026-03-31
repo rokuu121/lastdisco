@@ -191,7 +191,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .fb-dot.ok{color:var(--green);}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;
+.toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));left:50%;
   transform:translateX(-50%) translateY(100px);
   background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);
   font-family:'Bebas Neue';font-size:1rem;letter-spacing:2px;
@@ -257,6 +257,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
   <div class="wait-name" id="waitName"></div>
   <div class="wait-online" id="waitOnline">⬤ 0 graczy online</div>
   <div class="wait-sub">Prowadząca zaraz wybierze grę.<br>Telefon zostaw odblokowany!</div>
+  <button onclick="switchScreen('join');_playerName='';window._playerName='';" style="margin-top:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.2);color:var(--muted);border-radius:8px;padding:8px 16px;font-family:'Bebas Neue';font-size:.7rem;letter-spacing:2px;cursor:pointer;">ZMIEŃ IMIĘ</button>
 </div>
 
 <!-- GAME -->
@@ -273,7 +274,7 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, push, serverTimestamp, onDisconnect }
+import { getDatabase, ref, set, get, onValue, push, onDisconnect }
   from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -298,8 +299,9 @@ onValue(ref(db,'.info/connected'), snap => {
 
 // Online count
 onValue(ref(db,'presence'), snap => {
-  const count = snap.val() ? Object.keys(snap.val()).length : 0;
-  document.getElementById('waitOnline').textContent = `⬤ ${count} graczy online`;
+  const raw = snap.val() || {};
+  const uniqueNames = new Set(Object.values(raw).map(v => v && v.name).filter(Boolean));
+  document.getElementById('waitOnline').textContent = `⬤ ${uniqueNames.size} graczy online`;
 });
 
 // Expose
@@ -398,6 +400,7 @@ function switchScreen(id) {
 // GAME STATE HANDLER
 // ══════════════════════════════════════════
 window._handleGameState = function(state) {
+  clearInterval(_playerTimerInterval);
   if(!state || state.game === 'idle') {
     switchScreen('waiting');
     _currentPlayerGame = '';
@@ -598,7 +601,7 @@ function renderBingoPlayer(state) {
   const hostMarked = state.marked || new Array(25).fill(false);
   // Merge host marks with player's own marks
   const merged = hostMarked.map((h,i) => h || _playerBingo[i]);
-  const bingoItems=["Ktoś śpiewa do szczotki","Kasia płacze ze śmiechu","Kogoś bolą nogi","Selfie z ochroniarzem","Kelner dostaje numer","Ktoś zakłada tiare","Foto bez filtra","Kasia opowiada jak się poznali","Tylko jeden drink","Ktoś gubi szpilkę","Disco polo po 1","Cola dla trzeźwości","FREE\n🪩","Ktoś dzwoni do chłopaka","Choreograf","Kasia na stole","Ktoś płacze","Kolejka bez pytania","Chodźmy jeszcze","Nieznajomy z kwiatem","Ktoś tańczy ABBA","Zgubiona torebka","Wszyscy śpiewają","Taksówkarz pyta","Ktoś wysyła mema"];
+  const bingoItems = state.items || ["Ktoś śpiewa do szczotki","Kasia płacze ze śmiechu","Kogoś bolą nogi","Selfie z ochroniarzem","Kelner dostaje numer","Ktoś zakłada tiare","Foto bez filtra","Kasia opowiada jak się poznali","Tylko jeden drink","Ktoś gubi szpilkę","Disco polo po 1","Cola dla trzeźwości","FREE\n🪩","Ktoś dzwoni do chłopaka","Choreograf","Kasia na stole","Ktoś płacze","Kolejka bez pytania","Chodźmy jeszcze","Nieznajomy z kwiatem","Ktoś tańczy ABBA","Zgubiona torebka","Wszyscy śpiewają","Taksówkarz pyta","Ktoś wysyła mema"];
   document.getElementById('gameContent').innerHTML=`
     <div class="q-card"><div class="q-round">🎰 BINGO</div><div class="q-text" style="font-size:1rem;">Klikaj pola gdy się zdarzą!</div></div>
     <div class="player-bingo-grid">
@@ -681,7 +684,9 @@ function renderCouplesPlayer(state) {
 function renderVabankPlayer(state) {
   const c = document.getElementById('gameContent');
   if(state.view==='board') {
-    c.innerHTML=`<div class="idle-card"><div class="idle-emoji">🎲</div><div class="idle-text">VA-BANK</div><div class="idle-sub">Prowadząca wybiera pytanie z tablicy.<br>Zaraz będziesz mogła licytować!</div></div>`;
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round">🎲 VA-BANK</div><div class="q-text" style="font-size:1.1rem;">Prowadząca wybiera pytanie!</div></div>
+      <div class="idle-card"><div class="idle-emoji">🎲</div><div class="idle-text">CZEKAJ NA PYTANIE</div><div class="idle-sub">Prowadząca wybiera kategorię i wartość z tablicy.<br>Zaraz będziesz mogła licytować!</div></div>`;
   } else {
     c.innerHTML=`
       <div class="q-card"><div class="q-round" style="color:var(--gold);">VA-BANK · ${state.phase==='question'?'LICYTUJ!':'ODPOWIEDŹ!'}</div><div class="q-text">${esc(state.question||'')}</div></div>
@@ -781,11 +786,13 @@ function renderSimpleVoted() {
 // ══════════════════════════════════════════
 // CONFETTI
 // ══════════════════════════════════════════
+let _confettiTimer = null;
 function spawnConfetti(n=30) {
-  const ov=document.getElementById('confettiOverlay');
+  const ov=document.getElementById('confettiOverlay');ov.innerHTML='';
+  clearTimeout(_confettiTimer);
   const cols=['#FFD700','#FF2D9C','#00CFFF','#ADFF2F','#FF6BC8'];
   for(let i=0;i<n;i++){const d=document.createElement('div');d.className='confetti-piece';d.style.left=Math.random()*100+'%';d.style.background=cols[~~(Math.random()*cols.length)];d.style.width=(6+Math.random()*8)+'px';d.style.height=(6+Math.random()*8)+'px';d.style.borderRadius=Math.random()>.5?'50%':'2px';d.style.animationDuration=(1.2+Math.random()*1.5)+'s';d.style.animationDelay=(Math.random()*.5)+'s';ov.appendChild(d);}
-  setTimeout(()=>ov.innerHTML='',3000);
+  _confettiTimer=setTimeout(()=>ov.innerHTML='',3000);
 }
 
 // ══════════════════════════════════════════
