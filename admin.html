@@ -821,6 +821,11 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
       <div class="game-btn" data-cat="tv" onclick="showGameIntro('wrozby')"><span class="icon">🔮</span><div class="name">WROZBY</div><div class="cat-tag tv">📺 TV</div></div>
       <div class="game-btn" data-cat="tv" onclick="showGameIntro('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARE</div><div class="cat-tag tv">📺 TV</div></div>
       <div class="game-btn" data-cat="tv" onclick="showGameIntro('telephone')"><span class="icon">📞</span><div class="name">GLUCHY TELEFON</div><div class="cat-tag tv">📺 TV</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('timeline')"><span class="icon">📅</span><div class="name">OS CZASU KASI</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('dilemmas')"><span class="icon">🤔</span><div class="name">DYLEMATY KASI</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('dedications')"><span class="icon">💌</span><div class="name">DEDYKACJE</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('lovestory')"><span class="icon">💑</span><div class="name">HISTORIA MILOSNA</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('whomost')"><span class="icon">🏆</span><div class="name">KTO NAJBARDZIEJ</div><div class="cat-tag phone">📱 TELEFON</div></div>
     </div>
 
     <!-- ── BOTTOM BAR ── -->
@@ -1007,6 +1012,12 @@ onValue(ref(db,'advice'), snap => {
   if(window._currentGame === 'advice') window.renderAdviceDisplay?.();
 });
 
+// ── DEDICATIONS (players submit) ──
+onValue(ref(db,'dedications'), snap => {
+  window._dedications = snap.val() ? Object.values(snap.val()) : [];
+  if(window._currentGame === 'dedications') window.renderDedDisplay?.();
+});
+
 // Expose to global scope
 window.FB = { db, ref, set, get, onValue, push, remove, pushState, pushVotesReset,
   setVotesCallback(cb){ votesCallback = cb; } };
@@ -1158,6 +1169,55 @@ let DATA = {
   never:["Nigdy nie... całowałam kogoś na pierwszej randce","Nigdy nie... pisałam do ex o 3 w nocy","Nigdy nie... okłamałam chłopaka o tym gdzie byłam","Nigdy nie... płakałam przez film romantyczny","Nigdy nie... śledziłam ex na instagramie","Nigdy nie... tańczyłam na stole lub barze","Nigdy nie... dałam fałszywy numer telefonu","Nigdy nie... pisałam SMS do niewłaściwej osoby","Nigdy nie... robiłam coś głupiego przez zazdrość","Nigdy nie... kłamałam ile kosztują buty","Nigdy nie... udawałam że mi się podoba prezent","Nigdy nie... zjadłam jedzenie partnera i zaprzeczałam","Nigdy nie... zgadywałam hasło do czyjegoś telefonu"],
   telPlayers:["Zosia","Ania","Marta","Kasia","Ela","Basia"],
   telStartWord:"Zakochana para tańczy disco 🕺💃",
+  timeline:[
+    {event:"Pierwsze spotkanie",year:2019,hint:"Bylo lato"},
+    {event:"Pierwsza randka",year:2019,hint:""},
+    {event:"Pierwszy pocalunek",year:2019,hint:""},
+    {event:"Pierwsze 'kocham cie'",year:2020,hint:""},
+    {event:"Pierwsza wspolna podroz",year:2020,hint:""},
+    {event:"Pierwsza klotnia (i pogodzenie)",year:2020,hint:""},
+    {event:"Wprowadzka do wspolnego mieszkania",year:2021,hint:""},
+    {event:"Oswiadczyny",year:2023,hint:""},
+    {event:"Wesele!",year:2025,hint:"Juz niedlugo"},
+  ],
+  dilemmas:[
+    {q:"Kto czesciej sie spoznia?",opts:["Kasia","Narzeczony"],answer:"Kasia",answerNote:"Zawsze te 5 minut"},
+    {q:"Kto pierwszy mowi 'przepraszam' po klotni?",opts:["Kasia","Narzeczony"],answer:"Narzeczony",answerNote:""},
+    {q:"Kto zarzadza domowym budzetem?",opts:["Kasia","Narzeczony"],answer:"Kasia",answerNote:""},
+    {q:"Kto ma lepszy zmysl orientacji?",opts:["Kasia","Narzeczony"],answer:"Narzeczony",answerNote:""},
+    {q:"Kto glosniej chrapie?",opts:["Kasia","Narzeczony"],answer:"Narzeczony",answerNote:""},
+    {q:"Kto wiecej wydaje na ubrania?",opts:["Kasia","Narzeczony"],answer:"Kasia",answerNote:""},
+    {q:"Kto jest bardziej zazdrosny?",opts:["Kasia","Narzeczony"],answer:"Kasia",answerNote:""},
+    {q:"Kto pierwszy zasypia na kanapie?",opts:["Kasia","Narzeczony"],answer:"Narzeczony",answerNote:""},
+    {q:"Kto czesciej inicjuje romantyczny wieczor?",opts:["Kasia","Narzeczony"],answer:"Narzeczony",answerNote:""},
+    {q:"Kto jest lepszym kucharzem?",opts:["Kasia","Narzeczony"],answer:"Kasia",answerNote:""},
+  ],
+  lovestory:[
+    {statement:"Poznali sie na imprezie u wspolnych znajomych",truth:true,reveal:"To prawda! Byl sierpien 2019."},
+    {statement:"Pierwsza randka byla w McDonald's",truth:false,reveal:"Nieprawda! Byla w restauracji."},
+    {statement:"Narzeczony przez tydzien zbieral odwage zeby napisac pierwszy",truth:true,reveal:"Tak bylo!"},
+    {statement:"Kasia wiedziala ze to 'ten jedyny' juz po pierwszym spotkaniu",truth:false,reveal:"Potrzebowala troche wiecej czasu ;)"},
+    {statement:"Oswiadczyny byly kompletna niespodzianka",truth:true,reveal:"Totalny szok!"},
+    {statement:"Para ma imie dla przyszlego psa juz ustalone",truth:false,reveal:"Jeszcze nie!"},
+    {statement:"Narzeczony plakal przy oswiadczynach",truth:false,reveal:"Nie plakal, ale oczy mu sie szkliły"},
+    {statement:"Kasia powiedziala 'tak' natychmiast",truth:true,reveal:"Bez sekundy wahania!"},
+    {statement:"Maja tradycje — jedza razem sniadanie kazdego weekendu",truth:true,reveal:"Swiety rytuał!"},
+    {statement:"Kasia zna haslo do telefonu Narzeczonego",truth:true,reveal:"Oczywiscie!"},
+  ],
+  whomost:[
+    {q:"Kto w grupie najbardziej plakalaby na Titanicu?",emoji:"🚢"},
+    {q:"Kto w grupie najdluzej przygotowuje sie przed wyjsciem?",emoji:"💄"},
+    {q:"Kto w grupie pierwsza wyjdzie za maz (po Kasi)?",emoji:"💍"},
+    {q:"Kto w grupie jest dusza towarzystwa?",emoji:"🎉"},
+    {q:"Kto w grupie najlepiej gotuje?",emoji:"👨‍🍳"},
+    {q:"Kto w grupie najlepiej tanczy?",emoji:"💃"},
+    {q:"Kto w grupie najbardziej dramatyzuje?",emoji:"🎭"},
+    {q:"Kto w grupie jako pierwsza powiedzialaby 'tak' na spontaniczna podroz?",emoji:"✈️"},
+    {q:"Kto w grupie ma najbardziej zarazliwy smiech?",emoji:"😂"},
+    {q:"Kto w grupie za 10 lat bedzie wygladac tak samo?",emoji:"✨"},
+    {q:"Kto w grupie jako ostatnia idzie spac na imprezie?",emoji:"🌙"},
+    {q:"Kto w grupie jest najbardziej podobna do Kasi?",emoji:"👯"},
+  ],
 };
 
 // ════════════════════════════════════════════
@@ -1177,6 +1237,11 @@ let S = {
   auction:{idx:0,phase:'bid',currentBid:0,currentWinner:null,budgets:{},wins:{}},
   couples:{selectedA:null,selectedB:null,matched:[],score:0,wrong:[]},
   tel:{round:0,phase:'draw',guesses:[],canvasHistory:[]},
+  timeline:{phase:'arranging',revealed:false},
+  dilemmas:{idx:0,phase:'voting'},
+  dedications:{currentIdx:0,auto:false},
+  lovestory:{idx:0,phase:'voting'},
+  whomost:{idx:0},
 };
 window._advices = [];
 window._currentGame = '';
@@ -1256,6 +1321,8 @@ const GAME_LABELS = {
   quiz:'🎤 Quiz', honornot:'🔥 Hot or Not', highlow:'📊 Wyżej/Niżej',
   choice:'⚡ Co Wybierasz', neverhave:'🙈 Nigdy Nie', bingo:'🎰 Bingo',
   vabank:'🎲 Va-Bank', couples:'💑 Dopasuj Parę', auction:'💰 Aukcja',
+  timeline:'📅 Oś Czasu', dilemmas:'🤔 Dylematy Kasi', dedications:'💌 Dedykacje',
+  lovestory:'💑 Historia Miłosna', whomost:'🏆 Kto Najbardziej',
 };
 const MEDALS = ['🥇','🥈','🥉'];
 
@@ -1458,6 +1525,16 @@ function _gameToRows(game) {
       return rows;
     case 'auction':
       return [['Cecha','Emoji'], ...DATA.auctionItems.map(i=>[i.name, i.emoji])];
+    case 'timeline':
+      return [['Wydarzenie','Rok','Wskazowka'], ...DATA.timeline.map(t=>[t.event, t.year, t.hint])];
+    case 'dilemmas':
+      return [['Pytanie','Opcja A','Opcja B','Odpowiedz','Notatka'], ...DATA.dilemmas.map(d=>[d.q, d.opts[0], d.opts[1], d.answer, d.answerNote])];
+    case 'lovestory':
+      return [['Stwierdzenie','Prawda (TRUE/FALSE)','Komentarz'], ...DATA.lovestory.map(l=>[l.statement, l.truth?'TRUE':'FALSE', l.reveal])];
+    case 'whomost':
+      return [['Pytanie','Emoji'], ...DATA.whomost.map(w=>[w.q, w.emoji])];
+    case 'dedications':
+      return [['Autor','Tekst'], ...(window._dedications||[]).map(d=>[d.author, d.text])];
     default:
       return [['Brak danych do eksportu']];
   }
@@ -1492,7 +1569,7 @@ async function xlsxExportAll() {
   if(typeof XLSX === 'undefined') { await loadXLSX(); if(typeof XLSX === 'undefined') return; }
   const wb = XLSX.utils.book_new();
   const games = ['quiz','honornot','highlow','eight','choice','neverhave','couples',
-                 'tierlist','bingo','vabank','auction'];
+                 'tierlist','bingo','vabank','auction','timeline','dilemmas','lovestory','whomost','dedications'];
   games.forEach(game => {
     const label = (GAME_LABELS[game]||game).replace(/[🎤🎲🔥💌📊⏱️⚡✏️🏆💰🔮💑🙈📞🎰]/gu,'').trim().slice(0,31)||game;
     const rows = _gameToRows(game);
@@ -1573,6 +1650,10 @@ function _importRows(game, rows) {
       break;
     case 'bingo': DATA.bingo = rows.map(r=>r[0]).filter(Boolean).slice(0,25); break;
     case 'auction': DATA.auctionItems = rows.map(r=>({name:r[0]||'',emoji:r[1]||'⭐'})).filter(i=>i.name); break;
+    case 'timeline': DATA.timeline = rows.map(r=>({event:r[0]||'',year:+r[1]||2024,hint:r[2]||''})).filter(t=>t.event); break;
+    case 'dilemmas': DATA.dilemmas = rows.map(r=>({q:r[0]||'',opts:[r[1]||'Kasia',r[2]||'Narzeczony'],answer:r[3]||'',answerNote:r[4]||''})).filter(d=>d.q); break;
+    case 'lovestory': DATA.lovestory = rows.map(r=>({statement:r[0]||'',truth:String(r[1]).toUpperCase()==='TRUE',reveal:r[2]||''})).filter(l=>l.statement); break;
+    case 'whomost': DATA.whomost = rows.map(r=>({q:r[0]||'',emoji:r[1]||'🏆'})).filter(w=>w.q); break;
     case 'vabank':
       // Rebuild from paired rows (question/answer)
       rows.forEach((row,ri) => {
@@ -1758,15 +1839,70 @@ const GAME_INTROS = {
     score: '1 pkt za każde "🍹 Robiłam!" (im więcej tym lepiej 😄)',
   },
   telephone: {
-    emoji: '📞', title: 'GŁUCHY TELEFON',
-    subtitle: 'Rysowany głuchy telefon',
+    emoji: '📞', title: 'GLUCHY TELEFON',
+    subtitle: 'Rysowany gluchy telefon',
     rules: [
-      {icon:'✏️', text:'Pierwsza osoba rysuje hasło startowe'},
-      {icon:'👀', text:'Następna osoba patrzy na rysunek i zgaduje co to'},
-      {icon:'🔄', text:'Kolejna rysuje to co poprzednia napisała'},
-      {icon:'😂', text:'Na końcu porównajcie hasło z efektem końcowym!'},
+      {icon:'✏️', text:'Pierwsza osoba rysuje haslo startowe'},
+      {icon:'👀', text:'Nastepna osoba patrzy na rysunek i zgaduje co to'},
+      {icon:'🔄', text:'Kolejna rysuje to co poprzednia napisala'},
+      {icon:'😂', text:'Na koncu porownajcie haslo z efektem koncowym!'},
     ],
     score: null,
+  },
+  timeline: {
+    emoji:'📅', title:'OS CZASU KASI',
+    subtitle:'Uloz wydarzenia w kolejnosci',
+    rules: [
+      {icon:'📱', text:'Goscie ukladaja wydarzenia <strong>na telefonie</strong> w kolejnosci chronologicznej'},
+      {icon:'🔓', text:'Kliknij <strong>ODSLON</strong> zeby pokazac poprawna kolejnosc'},
+      {icon:'✅', text:'Punkty za kazde wydarzenie na wlasciwej pozycji'},
+      {icon:'🏆', text:'Bonus za idealna kolejnosc!'},
+    ],
+    score: '2 pkt za kazde trafione miejsce · +5 bonus za idealna kolejnosc',
+  },
+  dilemmas: {
+    emoji:'🤔', title:'DYLEMATY KASI',
+    subtitle:'Kto w zwiazku...?',
+    rules: [
+      {icon:'📺', text:'Na TV wyswietla sie pytanie o Kasie i Narzeczonym'},
+      {icon:'📱', text:'Goscie glosuja <strong>na telefonie</strong>'},
+      {icon:'🔓', text:'Kliknij <strong>KASIA UJAWNIA</strong> zeby pokazac odpowiedz'},
+      {icon:'😂', text:'Kasia komentuje kazda odpowiedz!'},
+    ],
+    score: '3 pkt za trafiona odpowiedz · 0.5 pkt za udzial',
+  },
+  dedications: {
+    emoji:'💌', title:'DEDYKACJE DLA KASI',
+    subtitle:'Napisz zyczenia dla Panny Mlodej',
+    rules: [
+      {icon:'📱', text:'Goscie pisza dedykacje <strong>na telefonach</strong>'},
+      {icon:'📺', text:'Dedykacje pojawiaja sie na TV w stylu disco'},
+      {icon:'✅', text:'Host zatwierdza lub pomija dedykacje'},
+      {icon:'💌', text:'Kasia dostaje pamiatke ze wszystkimi zyczeniami!'},
+    ],
+    score: null,
+  },
+  lovestory: {
+    emoji:'💑', title:'HISTORIA MILOSNA',
+    subtitle:'Prawda czy falsz o parze?',
+    rules: [
+      {icon:'📺', text:'Na TV wyswietla sie stwierdzenie o Kasi i Narzeczonym'},
+      {icon:'📱', text:'Goscie glosuja <strong>PRAWDA</strong> lub <strong>FALSZ</strong>'},
+      {icon:'🔓', text:'Kliknij <strong>UJAWNIJ</strong> zeby pokazac prawde'},
+      {icon:'😂', text:'Kasia komentuje kazde stwierdzenie!'},
+    ],
+    score: '2 pkt za trafiona odpowiedz · 0.5 pkt za udzial',
+  },
+  whomost: {
+    emoji:'🏆', title:'KTO NAJBARDZIEJ...?',
+    subtitle:'Glosuj na osobe z grupy!',
+    rules: [
+      {icon:'📺', text:'Na TV wyswietla sie pytanie "Kto w grupie najbardziej...?"'},
+      {icon:'📱', text:'Goscie glosuja na <strong>imie innego gracza</strong>'},
+      {icon:'🏆', text:'Osoba z najwieksza liczba glosow wygrywa runde!'},
+      {icon:'😂', text:'Smiejcie sie i komentujcie wyniki!'},
+    ],
+    score: '3 pkt dla lidera · 1 pkt za kazdy glos oddany',
   },
 };
 
@@ -1850,7 +1986,7 @@ function updateGamePlayersStrip(votes) {
   const strip = document.getElementById('gamePlayersStrip');
   if(!strip) return;
   const players = window._onlinePlayers || [];
-  const multiGames = ['quiz','honornot','highlow','choice','neverhave'];
+  const multiGames = ['quiz','honornot','highlow','choice','neverhave','dilemmas','lovestory','whomost'];
   const isVoting = multiGames.includes(window._currentGame);
 
   if(!players.length) {
@@ -1891,7 +2027,7 @@ function hostStart(game) {
   document.getElementById('gsAdmin').classList.remove('open');
   document.getElementById('gsAdminBtn').classList.remove('active');
   // Wire up votes listener for multiplayer games
-  const multiGames = ['quiz','honornot','highlow','choice','neverhave','couples'];
+  const multiGames = ['quiz','honornot','highlow','choice','neverhave','couples','dilemmas','lovestory','whomost'];
   if(multiGames.includes(game)) {
     document.getElementById('liveVotesBadge').style.display='';
     window.FB?.setVotesCallback(votes => renderLiveVotes(game, votes));
@@ -1902,10 +2038,14 @@ function hostStart(game) {
 }
 
 function hostBack() {
+  const prev = window._currentGame;
   window._currentGame = '';
   window.FB?.setVotesCallback(null);
   window.FB?.pushState({game:'idle'});
   cancelAnimationFrame(S.eight.interval);
+  // Cleanup game-specific Firebase paths
+  if(prev === 'timeline') window.FB?.set(window.FB.ref(window.FB.db,'timeline'), null);
+  // Don't clear dedications — they're precious!
   const vz=document.getElementById('gsVotesZone');if(vz)vz.innerHTML='';
   document.getElementById('gameScreen').classList.remove('active');
   document.getElementById('home').classList.add('active');
@@ -1921,6 +2061,8 @@ function renderGame(game) {
     draw:()=>{ document.getElementById('gsTitle').textContent='✏️ DORYSUJ TO'; document.getElementById('gsSubtitle').textContent='RYSUJ NA TV · RESZTA ZGADUJE'; renderDrawScreen(); },
     tierlist:renderTierList, auction:renderAuction, wrozby:renderWrozby,
     couples:renderCouples, neverhave:renderNever, telephone:renderTelephone,
+    timeline:renderTimeline, dilemmas:renderDilemmas, dedications:renderDedications,
+    lovestory:renderLoveStory, whomost:renderWhoMost,
   };
   try { renders[game]?.(); } catch(err) { showToast('Błąd gry: '+err.message); document.getElementById('gsBody').innerHTML='<div style="padding:20px;color:var(--red);">Błąd: '+e(err.message)+'</div>'; }
 }
@@ -2812,6 +2954,225 @@ function telNext(){const s=window._telState;if(s.round<DATA.telPlayers.length-1)
 function telBack(){const s=window._telState;if(s.round>0){s.round--;s.phase='draw';renderTelephone();}}
 
 // ════════════════════════════════════════════
+// TIMELINE (Os Czasu Kasi)
+// ════════════════════════════════════════════
+function renderTimeline(resetVotes=true) {
+  const s=S.timeline;
+  document.getElementById('gsTitle').textContent='📅 OS CZASU KASI';
+  const body=document.getElementById('gsBody');
+  if(s.phase==='arranging') {
+    document.getElementById('gsSubtitle').textContent='GOSCIE UKLADAJA NA TELEFONACH';
+    // Show events in shuffled order for display
+    if(!s.shuffled) s.shuffled=DATA.timeline.map((_,i)=>i).sort(()=>Math.random()-.5);
+    body.innerHTML=`
+      <div style="text-align:center;font-family:'Bebas Neue';font-size:.8rem;letter-spacing:3px;color:var(--muted);">WYDARZENIA DO ULOZENIA:</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${s.shuffled.map(i=>DATA.timeline[i]).map(ev=>`<div class="big-card" style="padding:14px 20px;"><div class="main-text" style="font-size:1.2rem;">${e(ev.event)}</div>${ev.hint?`<div class="sub-text" style="font-size:.8rem;">${e(ev.hint)}</div>`:''}</div>`).join('')}
+      </div>`;
+    document.getElementById('gsControls').innerHTML=`
+      <button class="ctrl-btn reveal-btn" onclick="timelineReveal()">🔓 ODSLON KOLEJNOSC</button>`;
+    pushQuestion('timeline',{phase:'arranging',events:s.shuffled.map(i=>({event:DATA.timeline[i].event,idx:i}))},resetVotes);
+  } else {
+    document.getElementById('gsSubtitle').textContent='POPRAWNA KOLEJNOSC';
+    body.innerHTML=`
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${DATA.timeline.map((ev,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(57,255,20,.06);border:1px solid rgba(57,255,20,.2);border-radius:10px;">
+          <div style="font-family:'Bebas Neue';font-size:1.4rem;color:var(--gold);min-width:36px;text-align:center;">${i+1}</div>
+          <div style="flex:1;"><div style="font-weight:700;">${e(ev.event)}</div><div style="font-size:.75rem;color:var(--muted);">${ev.year}</div></div>
+        </div>`).join('')}
+      </div>`;
+    document.getElementById('gsControls').innerHTML=`
+      <button class="ctrl-btn secondary" onclick="S.timeline.phase='arranging';S.timeline.shuffled=null;renderTimeline()">🔄 NOWA GRA</button>
+      <button class="ctrl-btn primary" onclick="showEndOfGameSB('timeline')">🏆 WYNIKI</button>`;
+    pushQuestion('timeline',{phase:'revealed',correctOrder:DATA.timeline.map((_,i)=>i)});
+    // Score from timeline/ Firebase
+    window.FB?.get(window.FB.ref(window.FB.db,'timeline')).then(snap=>{
+      const answers=snap.val()||{};
+      Object.entries(answers).forEach(([pKey,order])=>{
+        const name=pKey.replace(/_/g,' ');
+        if(!Array.isArray(order)) return;
+        let correct=0;
+        order.forEach((idx,pos)=>{ if(idx===pos) correct++; });
+        if(correct>0) scoreAdd(name,'timeline',correct*2, correct+'/'+DATA.timeline.length+' trafien');
+        if(correct===DATA.timeline.length) scoreAdd(name,'timeline',5,'Idealna kolejnosc!');
+      });
+      renderLocalSB('timeline');
+    }).catch(()=>{});
+  }
+}
+function timelineReveal(){ S.timeline.phase='revealed'; flashResult('win'); renderTimeline(false); }
+
+// ════════════════════════════════════════════
+// DILEMMAS (Dylematy Kasi)
+// ════════════════════════════════════════════
+function renderDilemmas(resetVotes=true) {
+  const s=S.dilemmas, d=DATA.dilemmas[s.idx];
+  document.getElementById('gsTitle').textContent='🤔 DYLEMATY KASI';
+  const dots=DATA.dilemmas.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
+  const body=document.getElementById('gsBody');
+  if(s.phase==='voting') {
+    document.getElementById('gsSubtitle').textContent=`PYTANIE ${s.idx+1}/${DATA.dilemmas.length} · GOSCIE GLOSUJA`;
+    body.innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card"><div class="round-badge">DYLEMAT ${s.idx+1}</div><div class="main-text">${e(d.q)}</div></div>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        ${d.opts.map((o,i)=>`<div style="flex:1;max-width:240px;padding:20px;border-radius:12px;text-align:center;font-family:'Bebas Neue';font-size:1.3rem;letter-spacing:2px;background:${i===0?'rgba(255,45,156,.12)':'rgba(0,207,255,.08)'};border:2px solid ${i===0?'rgba(255,45,156,.4)':'rgba(0,207,255,.3)'};color:${i===0?'var(--pink)':'var(--blue)'};">${e(o)}</div>`).join('')}
+      </div>`;
+    document.getElementById('gsControls').innerHTML=`
+      <button class="ctrl-btn secondary" onclick="dilemmasPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn reveal-btn" onclick="dilemmasReveal()">🔓 KASIA UJAWNIA!</button>
+      <button class="ctrl-btn secondary" onclick="dilemmasNext()">POMIN ▶</button>`;
+    pushQuestion('dilemmas',{idx:s.idx,phase:'voting',q:d.q,opts:d.opts},resetVotes);
+  } else {
+    document.getElementById('gsSubtitle').textContent=`PYTANIE ${s.idx+1}/${DATA.dilemmas.length} · ODPOWIEDZ`;
+    body.innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card"><div class="round-badge">DYLEMAT ${s.idx+1}</div><div class="main-text">${e(d.q)}</div></div>
+      <div class="answer-box correct"><div class="answer-label">ODPOWIEDZ</div><div class="answer-text">${e(d.answer)}</div>${d.answerNote?`<div class="answer-sub">${e(d.answerNote)}</div>`:''}</div>`;
+    document.getElementById('gsControls').innerHTML=`
+      <button class="ctrl-btn secondary" onclick="dilemmasPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn primary" onclick="dilemmasNext()">NASTEPNE ▶</button>`;
+    pushQuestion('dilemmas',{idx:s.idx,phase:'revealed',q:d.q,answer:d.answer,answerNote:d.answerNote});
+    renderLocalSB('dilemmas');
+  }
+}
+function dilemmasReveal(){
+  if(S.dilemmas._scored===S.dilemmas.idx) { renderDilemmas(false); return; }
+  S.dilemmas._scored=S.dilemmas.idx;
+  S.dilemmas.phase='revealed'; flashResult('win');
+  const d=DATA.dilemmas[S.dilemmas.idx], votes=window._lastVotes||{}, players=window._onlinePlayers||[];
+  players.forEach(p=>{ const key=p.replace(/\s/g,'_'); const v=votes[key]!==undefined?votes[key]:votes[p]; if(v===undefined) return; scoreAdd(p,'dilemmas',v===d.answer?3:0.5, v===d.answer?'Trafione!':'Udzial'); });
+  renderDilemmas(false);
+}
+function dilemmasNext(){ if(S.dilemmas.idx<DATA.dilemmas.length-1){S.dilemmas.idx++;S.dilemmas.phase='voting';renderDilemmas();}else{showEndOfGameSB('dilemmas');} }
+function dilemmasPrev(){ if(S.dilemmas.idx>0){S.dilemmas.idx--;S.dilemmas.phase='voting';renderDilemmas(false);} }
+
+// ════════════════════════════════════════════
+// DEDICATIONS (Dedykacje dla Kasi)
+// ════════════════════════════════════════════
+function renderDedications() {
+  document.getElementById('gsTitle').textContent='💌 DEDYKACJE DLA KASI';
+  document.getElementById('gsSubtitle').textContent='GOSCIE PISZA Z TELEFONU';
+  const body=document.getElementById('gsBody');
+  window._dedications = window._dedications || [];
+  body.innerHTML=`
+    <div style="display:flex;gap:16px;flex:1;min-height:0;">
+      <div style="flex:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+        background:linear-gradient(135deg,rgba(255,215,0,.06),rgba(255,45,156,.04));border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:10px;right:14px;font-size:2rem;opacity:.15;animation:welcomeSpin 8s linear infinite;">🪩</div>
+        <div id="dedCurrentText" style="font-family:'Playfair Display';font-style:italic;font-size:clamp(1.4rem,3vw,2.4rem);color:var(--text);line-height:1.5;max-width:90%;"></div>
+        <div id="dedCurrentAuthor" style="font-family:'Bebas Neue';font-size:1rem;letter-spacing:3px;color:var(--gold);margin-top:16px;"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:8px;overflow-y:auto;">
+        <div style="font-family:'Bebas Neue';font-size:.7rem;letter-spacing:3px;color:var(--muted);">KOLEJKA</div>
+        <div id="dedQueue"></div>
+      </div>
+    </div>`;
+  document.getElementById('gsControls').innerHTML=`
+    <button class="ctrl-btn primary" onclick="dedNext()">▶ NASTEPNA</button>`;
+  window.pushState?.({game:'dedications'});
+  renderDedDisplay();
+}
+function renderDedDisplay(){
+  const list=window._dedications||[];
+  const s=S.dedications;
+  const cur=list[s.currentIdx];
+  const txt=document.getElementById('dedCurrentText');
+  const auth=document.getElementById('dedCurrentAuthor');
+  if(txt) txt.textContent=cur?'"'+cur.text+'"':'Czekam na dedykacje...';
+  if(auth) auth.textContent=cur?'— '+cur.author:'';
+  const queue=document.getElementById('dedQueue');
+  if(queue) queue.innerHTML=list.length?list.map((d,i)=>`<div style="padding:8px 10px;background:${i===s.currentIdx?'rgba(255,215,0,.1)':'var(--card)'};border:1px solid ${i===s.currentIdx?'var(--gold)':'var(--border)'};border-radius:8px;font-size:.8rem;cursor:pointer;" onclick="S.dedications.currentIdx=${i};renderDedDisplay();">
+    <strong>${e(d.author)}</strong>: ${e(d.text.slice(0,40))}${d.text.length>40?'...':''}
+  </div>`).join(''):'<div style="color:var(--muted);font-size:.75rem;font-style:italic;">Brak dedykacji</div>';
+}window.renderDedDisplay = renderDedDisplay;
+function dedNext(){ S.dedications.currentIdx=Math.min(S.dedications.currentIdx+1,(window._dedications||[]).length-1); renderDedDisplay(); }
+
+// ════════════════════════════════════════════
+// LOVE STORY (Historia Milosna)
+// ════════════════════════════════════════════
+function renderLoveStory(resetVotes=true) {
+  const s=S.lovestory, d=DATA.lovestory[s.idx];
+  document.getElementById('gsTitle').textContent='💑 HISTORIA MILOSNA';
+  const dots=DATA.lovestory.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
+  const body=document.getElementById('gsBody');
+  if(s.phase==='voting') {
+    document.getElementById('gsSubtitle').textContent=`STWIERDZENIE ${s.idx+1}/${DATA.lovestory.length} · PRAWDA CZY FALSZ?`;
+    body.innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card"><div class="round-badge">PRAWDA CZY FALSZ?</div><div class="main-text">${e(d.statement)}</div></div>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <div style="flex:1;max-width:240px;padding:20px;border-radius:12px;text-align:center;font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:2px;background:rgba(57,255,20,.1);border:2px solid rgba(57,255,20,.4);color:var(--green);">✅ PRAWDA</div>
+        <div style="flex:1;max-width:240px;padding:20px;border-radius:12px;text-align:center;font-family:'Bebas Neue';font-size:1.4rem;letter-spacing:2px;background:rgba(255,51,51,.1);border:2px solid rgba(255,51,51,.4);color:var(--red);">❌ FALSZ</div>
+      </div>`;
+    document.getElementById('gsControls').innerHTML=`
+      <button class="ctrl-btn secondary" onclick="loveStoryPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn reveal-btn" onclick="loveStoryReveal()">🔓 UJAWNIJ!</button>
+      <button class="ctrl-btn secondary" onclick="loveStorySkip()">POMIN ▶</button>`;
+    pushQuestion('lovestory',{idx:s.idx,phase:'voting',statement:d.statement,opts:['✅ PRAWDA','❌ FALSZ']},resetVotes);
+  } else {
+    document.getElementById('gsSubtitle').textContent=`STWIERDZENIE ${s.idx+1}/${DATA.lovestory.length} · ODPOWIEDZ`;
+    body.innerHTML=`
+      <div class="step-indicator">${dots}</div>
+      <div class="big-card"><div class="main-text">${e(d.statement)}</div></div>
+      <div class="answer-box ${d.truth?'correct':'neutral'}"><div class="answer-label${d.truth?'':' neutral'}">${d.truth?'✅ PRAWDA!':'❌ FALSZ!'}</div><div class="answer-text">${e(d.reveal)}</div></div>`;
+    document.getElementById('gsControls').innerHTML=`
+      <button class="ctrl-btn secondary" onclick="loveStoryPrev()">◀ WSTECZ</button>
+      <button class="ctrl-btn primary" onclick="loveStoryNext()">NASTEPNE ▶</button>`;
+    pushQuestion('lovestory',{idx:s.idx,phase:'revealed',statement:d.statement,truth:d.truth,reveal:d.reveal});
+    renderLocalSB('lovestory');
+  }
+}
+function loveStoryReveal(){
+  if(S.lovestory._scored===S.lovestory.idx){renderLoveStory(false);return;}
+  S.lovestory._scored=S.lovestory.idx;
+  S.lovestory.phase='revealed'; flashResult('win');
+  const d=DATA.lovestory[S.lovestory.idx], votes=window._lastVotes||{}, players=window._onlinePlayers||[];
+  const correctVote=d.truth?'✅ PRAWDA':'❌ FALSZ';
+  players.forEach(p=>{ const key=p.replace(/\s/g,'_'); const v=votes[key]!==undefined?votes[key]:votes[p]; if(v===undefined) return; scoreAdd(p,'lovestory',v===correctVote?2:0.5, v===correctVote?'Trafione!':'Udzial'); });
+  renderLoveStory(false);
+}
+function loveStoryNext(){ if(S.lovestory.idx<DATA.lovestory.length-1){S.lovestory.idx++;S.lovestory.phase='voting';renderLoveStory();}else{showEndOfGameSB('lovestory');} }
+function loveStorySkip(){ loveStoryNext(); }
+function loveStoryPrev(){ if(S.lovestory.idx>0){S.lovestory.idx--;S.lovestory.phase='voting';renderLoveStory(false);} }
+
+// ════════════════════════════════════════════
+// WHO MOST (Kto Najbardziej)
+// ════════════════════════════════════════════
+function renderWhoMost(resetVotes=true) {
+  const s=S.whomost, d=DATA.whomost[s.idx];
+  document.getElementById('gsTitle').textContent='🏆 KTO NAJBARDZIEJ...?';
+  document.getElementById('gsSubtitle').textContent=`PYTANIE ${s.idx+1}/${DATA.whomost.length} · GOSCIE GLOSUJA`;
+  const dots=DATA.whomost.map((_,i)=>`<div class="step-dot ${i<s.idx?'done':i===s.idx?'active':''}"></div>`).join('');
+  document.getElementById('gsBody').innerHTML=`
+    <div class="step-indicator">${dots}</div>
+    <div class="big-card"><div class="round-badge">${d.emoji} PYTANIE ${s.idx+1}</div><div class="main-text">${e(d.q)}</div></div>
+    <div style="text-align:center;font-family:'Bebas Neue';font-size:.8rem;letter-spacing:3px;color:var(--muted);padding:8px 0;">📱 GOSCIE GLOSUJA NA TELEFONIE</div>`;
+  document.getElementById('gsControls').innerHTML=`
+    <button class="ctrl-btn secondary" onclick="whoMostPrev()">◀ WSTECZ</button>
+    <span class="counter-badge">${s.idx+1}/${DATA.whomost.length}</span>
+    <button class="ctrl-btn primary" onclick="whoMostNext()">NASTEPNE ▶</button>`;
+  pushQuestion('whomost',{idx:s.idx,q:d.q,emoji:d.emoji,players:window._onlinePlayers||[]},resetVotes);
+}
+function whoMostNext(){
+  if(S.whomost._scored!==S.whomost.idx){
+    S.whomost._scored=S.whomost.idx;
+    const votes=window._lastVotes||{}, players=window._onlinePlayers||[];
+    // Count votes per person
+    const counts={};
+    Object.values(votes).forEach(v=>{counts[v]=(counts[v]||0)+1;});
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    const leader=sorted[0]?.[0];
+    // Award points
+    if(leader) scoreAdd(leader,'whomost',3,'Lider rundy!');
+    players.forEach(p=>{ const key=p.replace(/\s/g,'_'); if(votes[key]!==undefined||votes[p]!==undefined) scoreAdd(p,'whomost',1,'Glos oddany'); });
+    renderLocalSB('whomost');
+  }
+  if(S.whomost.idx<DATA.whomost.length-1){S.whomost.idx++;renderWhoMost();}else{showEndOfGameSB('whomost');}
+}
+function whoMostPrev(){ if(S.whomost.idx>0){S.whomost.idx--;renderWhoMost(false);} }
+
+// ════════════════════════════════════════════
 // ADMIN BUILDER
 // ════════════════════════════════════════════
 function buildAdmin(g) {
@@ -2881,16 +3242,21 @@ document.addEventListener('keydown',ev=>{
     if(g==='highlow'){S.highlow.phase==='question'?hlReveal():hlNext();}
     if(g==='eight'){S.eight.phase==='task'?eightStartTimer():eightNext();}
     if(g==='vabank'&&S.vabank.view==='question'&&S.vabank.phase==='question')vbReveal();
+    if(g==='dilemmas'){S.dilemmas.phase==='voting'?dilemmasReveal():dilemmasNext();}
+    if(g==='lovestory'){S.lovestory.phase==='voting'?loveStoryReveal():loveStoryNext();}
+    if(g==='timeline'&&S.timeline.phase==='arranging')timelineReveal();
   }
   if(ev.key==='ArrowRight'){
     const g=window._currentGame;
     if(g==='quiz')quizNext();if(g==='honornot')honNext();if(g==='highlow')hlNext();
     if(g==='eight')eightNext();if(g==='choice')choiceNext();if(g==='neverhave')neverNext();
+    if(g==='dilemmas')dilemmasNext();if(g==='lovestory')loveStoryNext();if(g==='whomost')whoMostNext();
   }
   if(ev.key==='ArrowLeft'){
     const g=window._currentGame;
     if(g==='quiz')quizPrev();if(g==='honornot')honPrev();if(g==='highlow')hlPrev();
     if(g==='eight')eightPrev();if(g==='choice')choicePrev();if(g==='neverhave')neverPrev();
+    if(g==='dilemmas')dilemmasPrev();if(g==='lovestory')loveStoryPrev();if(g==='whomost')whoMostPrev();
   }
   if(ev.key==='Escape'){
     // Close intro overlay first, then admin panel, then go to menu

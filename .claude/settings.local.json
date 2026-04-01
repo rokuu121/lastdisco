@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(wc -l /c/Users/roku/Documents/lastdisco/lastdisco/*.html)"
+      "Bash(wc -l /c/Users/roku/Documents/lastdisco/lastdisco/*.html)",
+      "Bash(for fn:*)",
+      "Bash(do echo:*)",
+      "Bash(grep -c \"function $fn\" admin.html)",
+      "Bash(done)",
+      "Bash(grep -c \"function $fn\" index.html)",
+      "Bash(tr -cd '{}')",
+      "Read(//c/Users/roku/Documents/lastdisco/lastdisco/**)",
+      "Read(//<style>/,/</**)"
     ]
   }
 }

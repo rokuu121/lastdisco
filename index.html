@@ -454,13 +454,19 @@ window._handleGameState = function(state) {
     case 'wrozby':    renderWrozbyPlayer(state); break;
     case 'draw':      renderDrawPlayer(state); break;
     case 'telephone': renderTelephonePlayer(state); break;
+    case 'timeline':  window._lastGameState=state; renderTimelinePlayer(state); break;
+    case 'dilemmas':  renderDilemmasPlayer(state); break;
+    case 'dedications': renderDedicationsPlayer(state); break;
+    case 'lovestory': renderLoveStoryPlayer(state); break;
+    case 'whomost':   renderWhoMostPlayer(state); break;
     default:          renderIdleCard('Gra: ' + state.game); break;
   }
 };
 
 function gameEmoji(g) {
   return {quiz:'🎤',honornot:'🔥',highlow:'📊',choice:'⚡',neverhave:'🙈',advice:'💌',
-    bingo:'🎰',tierlist:'🏆',couples:'💑',vabank:'🎲',eight:'⏱️',auction:'💰',wrozby:'🔮',telephone:'📞'}[g]||'🪩';
+    bingo:'🎰',tierlist:'🏆',couples:'💑',vabank:'🎲',eight:'⏱️',auction:'💰',wrozby:'🔮',telephone:'📞',
+    timeline:'📅',dilemmas:'🤔',dedications:'💌',lovestory:'💑',whomost:'🏆'}[g]||'🪩';
 }
 
 // ── VOTE HELPER ──
@@ -795,6 +801,137 @@ function renderTelephonePlayer(state) {
   document.getElementById('gameContent').innerHTML=`
     <div class="q-card"><div class="q-round">📞 GŁUCHY TELEFON</div><div class="q-text" style="font-size:1.1rem;">Rysowany głuchy telefon!</div></div>
     <div class="idle-card"><div class="idle-emoji">📞</div><div class="idle-text">TWOJA KOLEJ NADCHODZI!</div><div class="idle-sub">Prowadząca steruje turami na TV.<br>Gdy przyjdzie Twoja tura — rysujesz lub zgadujesz!</div></div>`;
+}
+
+// ══════════════════════════════════════════
+// TIMELINE PLAYER
+// ══════════════════════════════════════════
+let _timelineOrder = null;
+function renderTimelinePlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.phase==='arranging') {
+    const events = state.events || [];
+    if(!_timelineOrder) _timelineOrder = events.map((_,i)=>i);
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round">📅 OS CZASU KASI</div><div class="q-text" style="font-size:1rem;">Przeciagnij wydarzenia w kolejnosci!</div></div>
+      <div id="timelineSortable" style="display:flex;flex-direction:column;gap:6px;">
+        ${_timelineOrder.map(i=>`<div class="opt" data-tidx="${i}" onclick="timelineMoveUp(${i})" style="cursor:pointer;min-height:50px;">
+          <span class="opt-letter" style="font-size:1rem;">${_timelineOrder.indexOf(i)+1}</span>
+          <span class="opt-text">${esc(events[i]?.event||'')}</span>
+        </div>`).join('')}
+      </div>
+      ${_playerVoted?`<div class="answer-card neutral"><div class="answer-lbl neutral">✅ KOLEJNOSC WYSLANA!</div></div>`
+      :`<button class="join-btn" style="margin-top:10px;" onclick="submitTimeline()">✅ ZATWIERDZ KOLEJNOSC</button>`}`;
+  } else {
+    const correct = state.correctOrder || [];
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round">📅 POPRAWNA KOLEJNOSC</div></div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${correct.map((idx,pos)=>`<div class="opt correct" style="cursor:default;">
+          <span class="opt-letter correct" style="font-size:1rem;">${pos+1}</span>
+          <span class="opt-text">${esc(state.events?.[idx]?.event||'Wydarzenie '+(pos+1))}</span>
+        </div>`).join('')}
+      </div>`;
+    spawnConfetti(15);
+  }
+}
+function timelineMoveUp(idx){
+  if(_playerVoted) return;
+  const pos = _timelineOrder.indexOf(idx);
+  if(pos>0){_timelineOrder.splice(pos,1);_timelineOrder.splice(pos-1,0,idx);}
+  else{_timelineOrder.push(_timelineOrder.shift());}// wrap
+  const state=window._lastGameState;if(state) renderTimelinePlayer(state);
+}
+function submitTimeline(){
+  if(_playerVoted) return;
+  _playerVoted=true;
+  // Map player order back to original indices
+  const events = window._lastGameState?.events||[];
+  const order = _timelineOrder.map(i=>events[i]?.idx??i);
+  window.DB?.set(window.DB.ref(window.DB.db,'timeline/'+_playerName.replace(/\s/g,'_')), order);
+  showToast('Kolejnosc wyslana!');spawnConfetti(15);
+  const state=window._lastGameState;if(state) renderTimelinePlayer(state);
+}
+
+// ══════════════════════════════════════════
+// DILEMMAS PLAYER
+// ══════════════════════════════════════════
+function renderDilemmasPlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.phase==='voting') {
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round">🤔 DYLEMAT</div><div class="q-text">${esc(state.q||'')}</div></div>
+      ${_playerVoted?`<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GLOS WYSLANY!</div><div style="font-size:.8rem;color:var(--muted);margin-top:4px;">Czekam az Kasia ujawni...</div></div>`:`
+      <div class="vote-grid">
+        ${(state.opts||[]).map((o,i)=>`<div class="vote-btn ${i===0?'hot':'not'}" onclick="sendVote('${esc(o)}');renderSimpleVoted()"><span class="vote-icon">${i===0?'💃':'🤵'}</span><span class="vote-label">${esc(o)}</span></div>`).join('')}
+      </div>`}`;
+  } else {
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round">🤔 DYLEMAT</div><div class="q-text">${esc(state.q||'')}</div></div>
+      <div class="answer-card correct"><div class="answer-lbl">ODPOWIEDZ</div><div class="answer-val">${esc(state.answer||'')}</div>${state.answerNote?`<div class="answer-note">${esc(state.answerNote)}</div>`:''}</div>`;
+    spawnConfetti(15);
+  }
+}
+
+// ══════════════════════════════════════════
+// DEDICATIONS PLAYER
+// ══════════════════════════════════════════
+function renderDedicationsPlayer(state) {
+  const c = document.getElementById('gameContent');
+  c.innerHTML=`
+    <div class="advice-wrap">
+      <div class="advice-label">💌 NAPISZ DEDYKACJE DLA KASI</div>
+      <textarea class="advice-ta" id="dedTa" placeholder="Droga Kasiu... / Pamietam jak... / Zycze Ci..." rows="4" maxlength="280"></textarea>
+      <div style="text-align:right;font-size:.65rem;color:var(--muted);margin-top:4px;"><span id="dedCharCount">0</span>/280</div>
+      <button class="advice-send" onclick="sendDedication()">💌 WYSLIJ DEDYKACJE</button>
+    </div>`;
+  document.getElementById('dedTa')?.addEventListener('input', function(){ document.getElementById('dedCharCount').textContent=this.value.length; });
+}
+function sendDedication(){
+  const v=document.getElementById('dedTa')?.value.trim();
+  if(!v){showToast('Wpisz dedykacje!');return;}
+  window.DB?.push(window.DB.ref(window.DB.db,'dedications'),{text:v,author:_playerName,ts:Date.now()});
+  document.getElementById('dedTa').value='';
+  document.getElementById('dedCharCount').textContent='0';
+  showToast('Dedykacja wyslana! 💌');spawnConfetti(20);
+}
+
+// ══════════════════════════════════════════
+// LOVE STORY PLAYER
+// ══════════════════════════════════════════
+function renderLoveStoryPlayer(state) {
+  const c = document.getElementById('gameContent');
+  if(state.phase==='voting') {
+    c.innerHTML=`
+      <div class="q-card"><div class="q-round">💑 PRAWDA CZY FALSZ?</div><div class="q-text">${esc(state.statement||'')}</div></div>
+      ${_playerVoted?`<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GLOS WYSLANY!</div></div>`:`
+      <div class="vote-grid">
+        <div class="vote-btn yes" onclick="sendVote('✅ PRAWDA');renderSimpleVoted()"><span class="vote-icon">✅</span><span class="vote-label">PRAWDA</span></div>
+        <div class="vote-btn no" style="background:rgba(255,51,51,.1);border-color:rgba(255,51,51,.4);color:var(--red);" onclick="sendVote('❌ FALSZ');renderSimpleVoted()"><span class="vote-icon">❌</span><span class="vote-label">FALSZ</span></div>
+      </div>`}`;
+  } else {
+    c.innerHTML=`
+      <div class="q-card"><div class="q-text">${esc(state.statement||'')}</div></div>
+      <div class="answer-card ${state.truth?'correct':'neutral'}"><div class="answer-lbl${state.truth?'':' neutral'}">${state.truth?'✅ PRAWDA!':'❌ FALSZ!'}</div><div class="answer-val">${esc(state.reveal||'')}</div></div>`;
+    spawnConfetti(15);
+  }
+}
+
+// ══════════════════════════════════════════
+// WHO MOST PLAYER
+// ══════════════════════════════════════════
+function renderWhoMostPlayer(state) {
+  const c = document.getElementById('gameContent');
+  const players = state.players || [];
+  c.innerHTML=`
+    <div class="q-card"><div class="q-round">${esc(state.emoji||'🏆')} KTO NAJBARDZIEJ...?</div><div class="q-text">${esc(state.q||'')}</div></div>
+    ${_playerVoted?`<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GLOS WYSLANY!</div></div>`:`
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${players.map(p=>`<div class="opt" onclick="sendVote('${esc(p)}');renderSimpleVoted()" style="cursor:pointer;min-height:56px;">
+        <span class="opt-letter" style="font-size:1.2rem;background:rgba(255,215,0,.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;">${esc(p.slice(0,2).toUpperCase())}</span>
+        <span class="opt-text" style="font-size:1rem;">${esc(p)}</span>
+      </div>`).join('')}
+    </div>`}`;
 }
 
 // ══════════════════════════════════════════
