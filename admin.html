@@ -497,15 +497,18 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .home-layout{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;}
 
 /* ── HEADER ── */
-.home-header{display:flex;align-items:center;gap:clamp(12px,2vw,24px);
-  padding:clamp(10px,1.5vh,20px) clamp(16px,3vw,32px);flex-shrink:0;
-  border-bottom:1px solid rgba(255,215,0,.1);background:rgba(7,0,15,.5);}
-.home-crown{font-size:clamp(2.5rem,5vw,4rem);animation:float 3s ease-in-out infinite;}
+.home-header{display:flex;align-items:center;justify-content:center;
+  padding:clamp(12px,2vh,28px) clamp(16px,3vw,32px);flex-shrink:0;
+  border-bottom:1px solid rgba(255,215,0,.15);
+  background:linear-gradient(180deg,rgba(255,215,0,.04),transparent);}
+.home-crown{font-size:clamp(2.5rem,5vw,4.5rem);animation:float 3s ease-in-out infinite;}
 @keyframes float{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-6px) rotate(5deg);}}
-.home-title{font-family:'Bebas Neue';font-size:clamp(2.2rem,4.5vw,4rem);letter-spacing:8px;line-height:.85;
+.home-title{font-family:'Bebas Neue';font-size:clamp(3rem,6vw,5.5rem);letter-spacing:clamp(6px,1.2vw,14px);line-height:.85;
   background:linear-gradient(135deg,var(--gold),var(--gold2) 40%,var(--pink));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.home-sub{font-size:clamp(.65rem,1.2vw,1rem);color:var(--muted);letter-spacing:3px;margin-top:2px;}
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(255,215,0,.15));}
+.home-sub{font-size:clamp(.8rem,1.5vw,1.2rem);color:var(--blue);letter-spacing:clamp(3px,.6vw,6px);
+  margin-top:clamp(2px,.5vh,6px);font-style:italic;}
 .home-header-btns{display:flex;gap:8px;margin-left:auto;flex-shrink:0;}
 .home-hbtn{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);
   border-radius:8px;padding:clamp(6px,1vh,10px) clamp(10px,1.5vw,18px);font-family:'Bebas Neue';
@@ -542,14 +545,13 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .cat-tag.tv{background:rgba(0,207,255,.08);border:1px solid rgba(0,207,255,.25);color:var(--blue);}
 
 /* ── BOTTOM BAR ── */
-.home-bottom{display:flex;align-items:center;gap:clamp(12px,2vw,24px);
-  padding:clamp(8px,1.2vh,14px) clamp(16px,3vw,32px);flex-shrink:0;
-  border-top:1px solid var(--border);background:rgba(7,0,15,.7);backdrop-filter:blur(10px);}
-.home-bottom .qr-img{width:clamp(64px,8vw,96px);height:clamp(64px,8vw,96px);border-radius:8px;background:white;padding:3px;}
-.home-bottom-info{flex:1;display:flex;flex-direction:column;gap:2px;}
-.home-bottom-url{font-size:clamp(.6rem,1vw,.8rem);color:var(--blue);word-break:break-all;opacity:.85;}
-.home-bottom-label{font-family:'Bebas Neue';font-size:clamp(.5rem,.8vw,.65rem);letter-spacing:3px;color:var(--gold);}
-.home-bottom-players{font-family:'Bebas Neue';font-size:clamp(.7rem,1.1vw,.9rem);letter-spacing:2px;color:var(--green);margin-left:auto;white-space:nowrap;}
+.home-bottom{display:flex;align-items:center;gap:clamp(14px,2.5vw,28px);
+  padding:clamp(10px,1.5vh,18px) clamp(20px,3vw,36px);flex-shrink:0;
+  border-top:1px solid rgba(255,215,0,.15);background:rgba(7,0,15,.8);backdrop-filter:blur(10px);}
+.home-bottom .qr-img{width:clamp(72px,9vw,110px);height:clamp(72px,9vw,110px);border-radius:10px;background:white;padding:4px;}
+.home-bottom-info{display:flex;flex-direction:column;gap:3px;}
+.home-bottom-url{font-size:clamp(.7rem,1.1vw,.95rem);color:var(--blue);word-break:break-all;}
+.home-bottom-label{font-family:'Bebas Neue';font-size:clamp(.55rem,.85vw,.7rem);letter-spacing:3px;color:var(--gold);}
 
 /* ── PLAYERS OVERLAY ── */
 .players-overlay{position:fixed;top:0;right:0;bottom:0;width:min(420px,85vw);
@@ -778,23 +780,28 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
     <!-- ── HEADER ── -->
     <div class="home-header">
-      <div class="home-crown">🪩</div>
-      <div>
-        <div class="home-title">LAST DISCO</div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+        <div style="display:flex;align-items:center;gap:clamp(10px,2vw,20px);justify-content:center;">
+          <div class="home-crown">🪩</div>
+          <div class="home-title">LAST DISCO</div>
+          <div class="home-crown">🪩</div>
+        </div>
         <div class="home-sub">Wieczor Panienski Kasi</div>
+      </div>
+    </div>
+
+    <!-- ── TOOLBAR: tabs + buttons ── -->
+    <div style="display:flex;align-items:center;gap:8px;padding:clamp(4px,0.8vh,10px) clamp(16px,3vw,32px);flex-shrink:0;border-bottom:1px solid rgba(255,215,0,.08);flex-wrap:wrap;">
+      <div class="game-tabs" style="padding:0;flex:1;min-width:0;">
+        <button class="game-tab active" onclick="filterGames('all',this)">WSZYSTKIE</button>
+        <button class="game-tab" onclick="filterGames('phone',this)">📱 TELEFON</button>
+        <button class="game-tab" onclick="filterGames('tv',this)">📺 TV</button>
       </div>
       <div class="home-header-btns">
         <button class="home-hbtn accent" onclick="togglePlayersOverlay()">👥 <span id="onlineNum">0</span> GRACZY</button>
         <button class="home-hbtn" onclick="toggleAdminHome()">⚙ ADMIN</button>
         <button class="home-hbtn" onclick="document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})">⛶</button>
       </div>
-    </div>
-
-    <!-- ── GAME TABS ── -->
-    <div class="game-tabs">
-      <button class="game-tab active" onclick="filterGames('all',this)">WSZYSTKIE</button>
-      <button class="game-tab" onclick="filterGames('phone',this)">📱 Z TELEFONEM</button>
-      <button class="game-tab" onclick="filterGames('tv',this)">📺 TYLKO TV</button>
     </div>
 
     <!-- ── GAMES GRID ── -->
@@ -820,10 +827,15 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
     <div class="home-bottom">
       <img id="qrImg" class="qr-img" alt="QR">
       <div class="home-bottom-info">
-        <div class="home-bottom-label">LINK DLA GOSCI</div>
+        <div class="home-bottom-label">SKANUJ QR LUB WEJDZ NA:</div>
         <div class="home-bottom-url" id="playerUrl">ladowanie...</div>
       </div>
-      <div class="home-bottom-players">🪩 LAST DISCO</div>
+      <div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,16px);margin-left:auto;">
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue';font-size:clamp(.6rem,.9vw,.75rem);letter-spacing:3px;color:var(--green);">⬤ ONLINE</div>
+          <div id="onlineNumBottom" style="font-family:'Bebas Neue';font-size:clamp(1.2rem,2vw,1.8rem);color:var(--gold);">0</div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -956,6 +968,8 @@ onValue(ref(db,'presence'), snap => {
         }).join('')
       : '<div class="players-empty">Czekam na graczy...</div>';
     if(num) num.textContent = namedList.length;
+    const numB = document.getElementById('onlineNumBottom');
+    if(numB) numB.textContent = namedList.length;
     window.updateGamePlayersStrip?.(window._lastVotes || {});
   }, 200);
 });
@@ -1002,7 +1016,7 @@ const playerUrl = window.location.origin + window.location.pathname.replace('adm
 document.getElementById('playerUrl').textContent = playerUrl;
 // QR code via qrserver.com API (stable, free)
 const qrImg = document.getElementById('qrImg');
-if(qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(playerUrl);
+if(qrImg) qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(playerUrl);
 
 window.PLAYER_URL = playerUrl;
 window.pushState = pushState;
@@ -1027,12 +1041,7 @@ async function hashPin(pin) {
 async function checkPin() {
   if(sessionStorage.getItem('admin_ok')==='1') {
     document.getElementById('pinGate').classList.remove('active');
-    // Skip welcome if already seen this session
-    if(sessionStorage.getItem('welcome_seen')==='1') {
-      document.getElementById('home').classList.add('active');
-    } else {
-      document.getElementById('welcome').classList.add('active');
-    }
+    document.getElementById('welcome').classList.add('active');
     return;
   }
   const v = document.getElementById('pinInput').value;
@@ -1048,19 +1057,14 @@ async function checkPin() {
   }
 }
 document.getElementById('pinInput')?.addEventListener('keydown', ev => { if(ev.key==='Enter') checkPin(); });
-// Auto-unlock
+// Auto-unlock — always show welcome (skip PIN only)
 if(sessionStorage.getItem('admin_ok')==='1') {
   document.getElementById('pinGate')?.classList.remove('active');
-  if(sessionStorage.getItem('welcome_seen')==='1') {
-    document.getElementById('home')?.classList.add('active');
-  } else {
-    document.getElementById('welcome')?.classList.add('active');
-  }
+  document.getElementById('welcome')?.classList.add('active');
 }
 
 // ── WELCOME → HOME ──
 function goToHome() {
-  sessionStorage.setItem('welcome_seen','1');
   document.getElementById('welcome')?.classList.remove('active');
   document.getElementById('home')?.classList.add('active');
 }
