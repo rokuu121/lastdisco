@@ -30,8 +30,8 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 /* ── HOME ── */
 /* ── GAME LAYOUT ── */
 .game-header{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;
-  padding:12px 20px 10px;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px;
-  background:rgba(7,0,15,.7);backdrop-filter:blur(10px);}
+  padding:clamp(8px,1.5vh,16px) clamp(14px,2.5vw,24px);border-bottom:1px solid var(--border);flex-shrink:0;gap:10px;
+  background:rgba(7,0,15,.7);backdrop-filter:blur(10px);will-change:transform;}
 .game-header-left{display:flex;flex-direction:column;min-width:0;}
 .game-header-title{font-family:'Bebas Neue';font-size:1.7rem;letter-spacing:4px;
   background:linear-gradient(90deg,var(--gold),var(--pink));
@@ -49,12 +49,12 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 .game-stage-wrap{flex:1;display:flex;overflow:hidden;position:relative;z-index:2;}
 .game-stage{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.game-body{flex:1;overflow-y:auto;padding:14px 20px;display:flex;flex-direction:column;gap:12px;}
+.game-body{flex:1;overflow-y:auto;padding:clamp(10px,2vh,20px) clamp(14px,3vw,28px);display:flex;flex-direction:column;gap:clamp(10px,1.5vh,16px);}
 .game-body::-webkit-scrollbar{width:4px;}
 .game-body::-webkit-scrollbar-thumb{background:var(--pink);border-radius:2px;}
-.nav-controls{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;
-  flex-shrink:0;padding:10px 20px 14px;border-top:1px solid var(--border);
-  background:rgba(7,0,15,.7);backdrop-filter:blur(10px);}
+.nav-controls{display:flex;gap:clamp(6px,1vw,12px);align-items:center;justify-content:center;flex-wrap:wrap;
+  flex-shrink:0;padding:clamp(8px,1.5vh,16px) clamp(14px,3vw,24px);border-top:1px solid var(--border);
+  background:rgba(7,0,15,.7);backdrop-filter:blur(10px);will-change:transform;}
 .ctrl-btn{padding:11px 22px;border-radius:8px;font-family:'Bebas Neue';font-size:1.05rem;letter-spacing:2px;cursor:pointer;transition:all .2s;border:none;}
 .ctrl-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);}
 .ctrl-btn.primary:hover{opacity:.85;transform:scale(1.02);}
@@ -93,7 +93,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 /* ── GAME CARDS ── */
 .big-card{background:linear-gradient(135deg,rgba(255,215,0,.07),rgba(255,45,156,.05));
-  border:1px solid rgba(255,215,0,.3);border-radius:16px;padding:28px 32px;text-align:center;position:relative;overflow:hidden;flex-shrink:0;}
+  border:1px solid rgba(255,215,0,.3);border-radius:clamp(12px,2vw,20px);padding:clamp(16px,3vh,36px) clamp(20px,4vw,40px);text-align:center;position:relative;overflow:hidden;flex-shrink:0;}
 .round-badge{font-family:'Bebas Neue';font-size:.8rem;letter-spacing:3px;color:var(--pink);margin-bottom:8px;}
 .main-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.6rem,3.2vw,3rem);line-height:1.15;color:var(--text);}
 .sub-text{font-size:.9rem;color:var(--muted);margin-top:10px;line-height:1.5;font-style:italic;}
@@ -105,7 +105,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .answer-label.neutral{color:var(--gold);}
 .answer-text{font-family:'Outfit';font-weight:800;font-size:clamp(1.6rem,3vw,2.8rem);color:var(--text);line-height:1.1;}
 .answer-sub{font-size:.85rem;color:var(--muted);margin-top:8px;line-height:1.5;}
-.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.options-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,45%),1fr));gap:clamp(8px,1.2vw,14px);}
 .opt-btn{background:rgba(255,255,255,.05);border:2px solid rgba(255,215,0,.2);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .25s;}
 .opt-btn.correct-opt{border-color:var(--green);background:rgba(57,255,20,.1);animation:correctPulse .4s ease;}
 .opt-btn.wrong-opt{border-color:var(--red);background:rgba(255,51,51,.07);}
@@ -141,9 +141,9 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 .b-letter:nth-child(1){color:var(--pink);}.b-letter:nth-child(2){color:var(--gold);}
 .b-letter:nth-child(3){color:var(--blue);}.b-letter:nth-child(4){color:var(--green2);}
 .b-letter:nth-child(5){color:var(--pink);}
-.bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:520px;margin:0 auto;}
+.bingo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(4px,0.8vw,8px);max-width:min(520px,85vw);margin:0 auto;}
 .b-cell{aspect-ratio:1;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;
-  text-align:center;padding:6px;font-size:.58rem;font-weight:600;color:var(--text);line-height:1.3;
+  text-align:center;padding:6px;font-size:clamp(.5rem,1vw,.75rem);font-weight:600;color:var(--text);line-height:1.3;
   cursor:pointer;transition:all .25s;background:var(--card);position:relative;overflow:hidden;}
 .b-cell:hover{border-color:var(--gold);background:rgba(255,215,0,.08);}
 .b-cell.marked{background:linear-gradient(135deg,var(--pink),#7B0044);border-color:var(--gold);color:white;animation:cellMark .3s cubic-bezier(.34,1.56,.64,1);}
@@ -186,7 +186,7 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 /* ── TIMER ── */
 .timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;}
-.timer-ring{width:150px;height:150px;position:relative;display:flex;align-items:center;justify-content:center;}
+.timer-ring{width:clamp(120px,20vw,200px);height:clamp(120px,20vw,200px);position:relative;display:flex;align-items:center;justify-content:center;}
 .timer-ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
 .timer-ring circle{fill:none;stroke-width:7;stroke-linecap:round;}
 .timer-bg{stroke:rgba(255,255,255,.08);}
@@ -732,15 +732,13 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
-  .home-layout{grid-template-columns:1fr;grid-template-rows:1fr auto;height:100vh;}
-  .home-left{overflow-y:auto;border-right:none;border-bottom:1px solid rgba(255,215,0,.1);}
-  .home-right{max-height:35vh;overflow-y:auto;}
-  .games-grid{grid-template-columns:repeat(4,1fr);}
   .admin-panel.open{width:260px;}
+  .game-tabs{flex-wrap:wrap;}
 }
 @media(max-width:600px){
-  .games-grid{grid-template-columns:repeat(3,1fr);}
   .admin-panel.open{width:100%;position:absolute;right:0;top:0;bottom:0;z-index:50;}
+  .home-header{flex-wrap:wrap;}
+  .home-header-btns{width:100%;justify-content:flex-end;}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;}
@@ -765,70 +763,101 @@ html,body{height:100%;background:var(--dark);color:var(--text);font-family:'Outf
   </div>
 </div>
 
+<!-- ══ WELCOME ══ -->
+<div class="screen" id="welcome" style="align-items:center;justify-content:center;text-align:center;gap:clamp(16px,3vh,32px);background:radial-gradient(ellipse at 50% 35%,rgba(255,215,0,.08),transparent 60%);">
+  <div class="welcome-ball">🪩</div>
+  <div class="welcome-title">LAST DISCO</div>
+  <div class="welcome-sub">Wieczor Panienski Kasi</div>
+  <div class="welcome-desc">Przygotujcie sie na wieczor pelny smiechu, zabawy i niezapomnianych wspomnien! Czeka Was 15 gier, quiz o Pannie Mlodej, wrozby, aukcje i duzo wiecej!</div>
+  <button class="welcome-start" onclick="goToHome()">ZACZYNAMY!</button>
+</div>
+
 <!-- ══ HOME ══ -->
 <div class="screen" id="home">
   <div class="home-layout">
 
-    <!-- ── LEFT: Logo + Games ── -->
-    <div class="home-left">
-      <div class="home-header">
-        <div class="home-crown-small">🪩</div>
-        <div>
-          <div class="home-title-small">LAST DISCO</div>
-          <div class="home-sub-small">Wieczór Panieński Kasi · <span style="color:var(--green);font-size:.75em;">📺 HOST</span></div>
-        </div>
-        <button onclick="document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})" style="margin-left:auto;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:'Bebas Neue';font-size:.7rem;letter-spacing:2px;cursor:pointer;">⛶ FULLSCREEN</button>
+    <!-- ── HEADER ── -->
+    <div class="home-header">
+      <div class="home-crown">🪩</div>
+      <div>
+        <div class="home-title">LAST DISCO</div>
+        <div class="home-sub">Wieczor Panienski Kasi</div>
       </div>
-      <div class="games-grid" id="gamesGrid">
-        <div class="game-btn" onclick="showGameIntro('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div></div>
-        <div class="game-btn" onclick="showGameIntro('quiz')"><span class="icon">🎤</span><div class="name">ZGADNIJ KASIĘ</div></div>
-        <div class="game-btn" onclick="showGameIntro('vabank')"><span class="icon">🎲</span><div class="name">VA-BANK</div></div>
-        <div class="game-btn" onclick="showGameIntro('honornot')"><span class="icon">🔥</span><div class="name">HOT OR NOT</div></div>
-        <div class="game-btn" onclick="showGameIntro('advice')"><span class="icon">💌</span><div class="name">RADY DLA KASI</div></div>
-        <div class="game-btn" onclick="showGameIntro('highlow')"><span class="icon">📊</span><div class="name">WYŻEJ CZY NIŻEJ</div></div>
-        <div class="game-btn" onclick="showGameIntro('eight')"><span class="icon">⏱️</span><div class="name">MASZ 8 SEKUND</div></div>
-        <div class="game-btn" onclick="showGameIntro('choice')"><span class="icon">⚡</span><div class="name">CO WYBIERASZ?</div></div>
-        <div class="game-btn" onclick="showGameIntro('draw')"><span class="icon">✏️</span><div class="name">DORYSUJ TO</div></div>
-        <div class="game-btn" onclick="showGameIntro('tierlist')"><span class="icon">🏆</span><div class="name">TIER LIST</div></div>
-        <div class="game-btn" onclick="showGameIntro('auction')"><span class="icon">💰</span><div class="name">AUKCJA ZALET</div></div>
-        <div class="game-btn" onclick="showGameIntro('wrozby')"><span class="icon">🔮</span><div class="name">WRÓŻBY</div></div>
-        <div class="game-btn" onclick="showGameIntro('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARĘ</div></div>
-        <div class="game-btn" onclick="showGameIntro('neverhave')"><span class="icon">🙈</span><div class="name">NIGDY NIE...</div></div>
-        <div class="game-btn" onclick="showGameIntro('telephone')"><span class="icon">📞</span><div class="name">GŁUCHY TELEFON</div></div>
+      <div class="home-header-btns">
+        <button class="home-hbtn accent" onclick="togglePlayersOverlay()">👥 <span id="onlineNum">0</span> GRACZY</button>
+        <button class="home-hbtn" onclick="toggleAdminHome()">⚙ ADMIN</button>
+        <button class="home-hbtn" onclick="document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})">⛶</button>
       </div>
     </div>
 
-    <!-- ── RIGHT: Players + Scoreboard ── -->
-    <div class="home-right">
-      <!-- QR compact -->
-      <div class="qr-compact">
-        <img id="qrImg" width="64" height="64" style="border-radius:6px;background:white;padding:3px;" alt="QR">
-        <div class="qr-compact-info">
-          <div class="qr-compact-label">LINK DLA GOŚCI</div>
-          <div class="qr-compact-url" id="playerUrl">ładowanie...</div>
-        </div>
-      </div>
-
-      <!-- Players -->
-      <div class="home-right-section">
-        <div class="home-right-header">
-          <div class="home-right-title">⬤ <span id="onlineNum">0</span> GRACZY ONLINE</div>
-        </div>
-        <div class="players-list" id="playersChips">
-          <div class="players-empty">Czekam na graczy…</div>
-        </div>
-      </div>
-
-      <!-- Global Scoreboard -->
-      <div class="home-right-section" id="globalSBWrap" style="display:none;flex-direction:column;">
-        <div class="home-right-header">
-          <div class="home-right-title">🏆 TABLICA WYNIKÓW</div>
-          <button onclick="resetScores()" class="sb-reset-small">🔄</button>
-        </div>
-        <div id="globalSBPanel"></div>
-      </div>
+    <!-- ── GAME TABS ── -->
+    <div class="game-tabs">
+      <button class="game-tab active" onclick="filterGames('all',this)">WSZYSTKIE</button>
+      <button class="game-tab" onclick="filterGames('phone',this)">📱 Z TELEFONEM</button>
+      <button class="game-tab" onclick="filterGames('tv',this)">📺 TYLKO TV</button>
     </div>
 
+    <!-- ── GAMES GRID ── -->
+    <div class="games-grid" id="gamesGrid">
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('quiz')"><span class="icon">🎤</span><div class="name">ZGADNIJ KASIE</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('honornot')"><span class="icon">🔥</span><div class="name">HOT OR NOT</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('highlow')"><span class="icon">📊</span><div class="name">WYZEJ CZY NIZEJ</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('choice')"><span class="icon">⚡</span><div class="name">CO WYBIERASZ?</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('neverhave')"><span class="icon">🙈</span><div class="name">NIGDY NIE...</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('advice')"><span class="icon">💌</span><div class="name">RADY DLA KASI</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="phone" onclick="showGameIntro('bingo')"><span class="icon">🎰</span><div class="name">BINGO</div><div class="cat-tag phone">📱 TELEFON</div></div>
+      <div class="game-btn" data-cat="tv" onclick="showGameIntro('vabank')"><span class="icon">🎲</span><div class="name">VA-BANK</div><div class="cat-tag tv">📺 TV</div></div>
+      <div class="game-btn" data-cat="tv" onclick="showGameIntro('eight')"><span class="icon">⏱️</span><div class="name">MASZ 8 SEKUND</div><div class="cat-tag tv">📺 TV</div></div>
+      <div class="game-btn" data-cat="tv" onclick="showGameIntro('draw')"><span class="icon">✏️</span><div class="name">DORYSUJ TO</div><div class="cat-tag tv">📺 TV</div></div>
+      <div class="game-btn" data-cat="tv" onclick="showGameIntro('tierlist')"><span class="icon">🏆</span><div class="name">TIER LIST</div><div class="cat-tag tv">📺 TV</div></div>
+      <div class="game-btn" data-cat="tv" onclick="showGameIntro('auction')"><span class="icon">💰</span><div class="name">AUKCJA ZALET</div><div class="cat-tag tv">📺 TV</div></div>
+      <div class="game-btn" data-cat="tv" onclick="showGameIntro('wrozby')"><span class="icon">🔮</span><div class="name">WROZBY</div><div class="cat-tag tv">📺 TV</div></div>
+      <div class="game-btn" data-cat="tv" onclick="showGameIntro('couples')"><span class="icon">💑</span><div class="name">DOPASUJ PARE</div><div class="cat-tag tv">📺 TV</div></div>
+      <div class="game-btn" data-cat="tv" onclick="showGameIntro('telephone')"><span class="icon">📞</span><div class="name">GLUCHY TELEFON</div><div class="cat-tag tv">📺 TV</div></div>
+    </div>
+
+    <!-- ── BOTTOM BAR ── -->
+    <div class="home-bottom">
+      <img id="qrImg" class="qr-img" alt="QR">
+      <div class="home-bottom-info">
+        <div class="home-bottom-label">LINK DLA GOSCI</div>
+        <div class="home-bottom-url" id="playerUrl">ladowanie...</div>
+      </div>
+      <div class="home-bottom-players">🪩 LAST DISCO</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ PLAYERS OVERLAY ══ -->
+<div class="players-overlay" id="playersOverlay">
+  <div class="po-header">
+    <div class="po-title">👥 GRACZE ONLINE</div>
+    <button class="po-close" onclick="togglePlayersOverlay()">✕</button>
+  </div>
+  <div class="po-scroll">
+    <div class="players-list" id="playersChips">
+      <div class="players-empty">Czekam na graczy...</div>
+    </div>
+    <div class="po-section-title">🏆 TABLICA WYNIKOW</div>
+    <div id="globalSBPanel"></div>
+    <button onclick="resetScores()" class="sb-reset-small" style="width:100%;margin-top:10px;padding:8px;text-align:center;">🔄 RESET WYNIKOW</button>
+  </div>
+</div>
+<div id="globalSBWrap" style="display:none;"></div>
+
+<!-- ══ ADMIN HOME MODAL ══ -->
+<div class="admin-home-modal" id="adminHomeModal">
+  <div class="admin-home-panel" style="position:relative;">
+    <button class="ahm-close" onclick="toggleAdminHome()">✕</button>
+    <div class="ahm-title">⚙ PANEL ADMINA</div>
+    <div class="ahm-section">EKSPORT / IMPORT</div>
+    <button class="ahm-btn" onclick="loadXLSX().then(()=>xlsxExportAll())">📦 EKSPORT WSZYSTKICH GIER (XLSX)</button>
+    <button class="ahm-btn" onclick="loadXLSX().then(()=>xlsxTriggerImportAll())">📦 IMPORT WSZYSTKICH GIER (XLSX)</button>
+    <div class="ahm-section">WYNIKI</div>
+    <button class="ahm-btn" onclick="resetScores();toggleAdminHome();">🔄 RESET WSZYSTKICH WYNIKOW</button>
+    <div class="ahm-section">SESJA</div>
+    <button class="ahm-btn" onclick="sessionStorage.clear();location.reload();">🔓 WYLOGUJ (RESET PIN)</button>
   </div>
 </div>
 
@@ -897,7 +926,8 @@ onValue(connRef, snap => {
   else { el.textContent = '⬤ OFFLINE'; el.className = 'fb-status'; }
 });
 
-// ── ONLINE COUNT ──
+// ── ONLINE COUNT (debounced) ──
+let _presenceTimer = null;
 onValue(ref(db,'presence'), snap => {
   const raw = snap.val() || {};
   const tsMap = {};
@@ -908,24 +938,26 @@ onValue(ref(db,'presence'), snap => {
   window._onlinePlayers = namedList;
   if(typeof scoresInit === 'function') window.scoresInit?.();
 
-  const chips = document.getElementById('playersChips');
-  const num   = document.getElementById('onlineNum');
-  if(chips) chips.innerHTML = namedList.length
-    ? namedList.map(n => {
-        const ts = tsMap[n] || Date.now();
-        const m  = Math.floor((Date.now() - ts) / 60000);
-        const t  = m < 1 ? 'przed chwilą' : m === 1 ? '1 min' : m + ' min';
-        const initials = n.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || n.slice(0,2).toUpperCase();
-        return `<div class="player-chip">
-          <div class="player-chip-av">${initials}</div>
-          <div class="player-chip-name">${n}</div>
-          <div class="player-chip-time">${t}</div>
-        </div>`;
-      }).join('')
-    : '<div class="players-empty">Czekam na graczy…</div>';
-  if(num) num.textContent = namedList.length;
-
-  window.updateGamePlayersStrip?.(window._lastVotes || {});
+  clearTimeout(_presenceTimer);
+  _presenceTimer = setTimeout(() => {
+    const chips = document.getElementById('playersChips');
+    const num   = document.getElementById('onlineNum');
+    if(chips) chips.innerHTML = namedList.length
+      ? namedList.map(n => {
+          const ts = tsMap[n] || Date.now();
+          const m  = Math.floor((Date.now() - ts) / 60000);
+          const t  = m < 1 ? 'przed chwila' : m === 1 ? '1 min' : m + ' min';
+          const initials = n.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase() || n.slice(0,2).toUpperCase();
+          return `<div class="player-chip">
+            <div class="player-chip-av">${initials}</div>
+            <div class="player-chip-name">${n}</div>
+            <div class="player-chip-time">${t}</div>
+          </div>`;
+        }).join('')
+      : '<div class="players-empty">Czekam na graczy...</div>';
+    if(num) num.textContent = namedList.length;
+    window.updateGamePlayersStrip?.(window._lastVotes || {});
+  }, 200);
 });
 
 // ── GAME STATE (what host broadcasts) ──
@@ -995,7 +1027,12 @@ async function hashPin(pin) {
 async function checkPin() {
   if(sessionStorage.getItem('admin_ok')==='1') {
     document.getElementById('pinGate').classList.remove('active');
-    document.getElementById('home').classList.add('active');
+    // Skip welcome if already seen this session
+    if(sessionStorage.getItem('welcome_seen')==='1') {
+      document.getElementById('home').classList.add('active');
+    } else {
+      document.getElementById('welcome').classList.add('active');
+    }
     return;
   }
   const v = document.getElementById('pinInput').value;
@@ -1003,18 +1040,49 @@ async function checkPin() {
   if(h === ADMIN_PIN_HASH) {
     sessionStorage.setItem('admin_ok','1');
     document.getElementById('pinGate').classList.remove('active');
-    document.getElementById('home').classList.add('active');
+    document.getElementById('welcome').classList.add('active');
   } else {
     document.getElementById('pinInput').style.borderColor = 'var(--red)';
     document.getElementById('pinInput').value = '';
-    showToast('Zły PIN!');
+    showToast('Zly PIN!');
   }
 }
 document.getElementById('pinInput')?.addEventListener('keydown', ev => { if(ev.key==='Enter') checkPin(); });
-// Auto-unlock if already authenticated in this session
+// Auto-unlock
 if(sessionStorage.getItem('admin_ok')==='1') {
   document.getElementById('pinGate')?.classList.remove('active');
+  if(sessionStorage.getItem('welcome_seen')==='1') {
+    document.getElementById('home')?.classList.add('active');
+  } else {
+    document.getElementById('welcome')?.classList.add('active');
+  }
+}
+
+// ── WELCOME → HOME ──
+function goToHome() {
+  sessionStorage.setItem('welcome_seen','1');
+  document.getElementById('welcome')?.classList.remove('active');
   document.getElementById('home')?.classList.add('active');
+}
+
+// ── GAME FILTER TABS ──
+function filterGames(cat, btn) {
+  document.querySelectorAll('.game-tab').forEach(t=>t.classList.remove('active'));
+  btn?.classList.add('active');
+  document.querySelectorAll('.game-btn').forEach(el=>{
+    if(cat==='all') { el.style.display=''; return; }
+    el.style.display = el.dataset.cat===cat ? '' : 'none';
+  });
+}
+
+// ── PLAYERS OVERLAY ──
+function togglePlayersOverlay() {
+  document.getElementById('playersOverlay')?.classList.toggle('open');
+}
+
+// ── ADMIN HOME MODAL ──
+function toggleAdminHome() {
+  document.getElementById('adminHomeModal')?.classList.toggle('open');
 }
 
 // ════════════════════════════════════════════
@@ -1211,13 +1279,10 @@ function _sbRowHTML(name, rank, sc, maxPts) {
 function renderGlobalSB() {
   const el = document.getElementById('globalSBPanel');
   if(!el) return;
-  const wrap = document.getElementById('globalSBWrap');
-  // Include online players even if 0 pts
   const online = window._onlinePlayers || [];
   online.forEach(p => { if(!SCORES[p]) SCORES[p] = {total:0, games:{}}; });
   const players = [...new Set([...Object.keys(SCORES), ...online])];
-  if(!players.length) { el.innerHTML='<div class="sb-empty">Zagraj w gry!</div>'; if(wrap) wrap.style.display='none'; return; }
-  if(wrap) wrap.style.display = online.length > 0 ? 'flex' : 'none';
+  if(!players.length) { el.innerHTML='<div class="players-empty">Brak wynikow</div>'; return; }
   const sorted = players.slice().sort((a,b)=>(SCORES[b].total||0)-(SCORES[a].total||0));
   const maxPts = SCORES[sorted[0]]?.total || 1;
   el.innerHTML = sorted.map((name,rank) => _sbRowHTML(name, rank, SCORES[name], maxPts)).join('');
@@ -1836,30 +1901,16 @@ function hostBack() {
   window._currentGame = '';
   window.FB?.setVotesCallback(null);
   window.FB?.pushState({game:'idle'});
-  clearInterval(S.eight.interval);
+  cancelAnimationFrame(S.eight.interval);
   const vz=document.getElementById('gsVotesZone');if(vz)vz.innerHTML='';
   document.getElementById('gameScreen').classList.remove('active');
   document.getElementById('home').classList.add('active');
 }
 
 function renderGame(game) {
-  // Update xlsx bar
+  // xlsx bar hidden — moved to admin modal + in-game admin panel
   const xlsxBar = document.getElementById('xlsxBar');
-  if(xlsxBar) {
-    const hasData = ['quiz','honornot','highlow','eight','choice','neverhave',
-                     'couples','tierlist','bingo','vabank','auction'].includes(game);
-    if(hasData) {
-      xlsxBar.innerHTML = `
-        <span class="xlsx-label">PYTANIA:</span>
-        <button class="xlsx-btn" onclick="xlsxExportGame('${game}')">📥 EKSPORT XLSX</button>
-        <button class="xlsx-btn import" onclick="xlsxTriggerImport('${game}')">📤 IMPORT XLSX</button>
-        <span style="flex:1"></span>
-        <button class="xlsx-btn global" onclick="xlsxExportAll()" title="Eksportuj wszystkie gry">📦 EKSPORT WSZYSTKICH</button>
-        <button class="xlsx-btn import global" onclick="xlsxTriggerImportAll()" title="Importuj wszystkie gry z jednego pliku">📦 IMPORT WSZYSTKICH</button>`;
-    } else {
-      xlsxBar.innerHTML = '';
-    }
-  }
+  if(xlsxBar) xlsxBar.innerHTML = '';
   const renders = {
     bingo:renderBingo, quiz:renderQuiz, vabank:renderVabank, honornot:renderHon,
     advice:renderAdvice, highlow:renderHL, eight:renderEight, choice:renderChoice,
@@ -2331,26 +2382,30 @@ function renderEight() {
   }
 }
 function eightStartTimer(){S.eight.phase='timer';renderEight();}
-function eightStop(){clearInterval(S.eight.interval);S.eight.phase='task';showToast('Zatrzymano');renderEight();}
+function eightStop(){cancelAnimationFrame(S.eight.interval);S.eight.phase='task';showToast('Zatrzymano');renderEight();}
 function eightNext(){
-  clearInterval(S.eight.interval);
+  cancelAnimationFrame(S.eight.interval);
   if(S.eight.idx<DATA.eight.length-1){S.eight.idx++;S.eight.phase='task';renderEight();}
   else { showToast('Koniec zadań! 🎉'); showEndOfGameSB('eight'); }
 }
-function eightPrev(){clearInterval(S.eight.interval);if(S.eight.idx>0){S.eight.idx--;S.eight.phase='task';renderEight();}}
+function eightPrev(){cancelAnimationFrame(S.eight.interval);if(S.eight.idx>0){S.eight.idx--;S.eight.phase='task';renderEight();}}
 function runTimer(secs){
-  let left=secs; const r=54*2*Math.PI;
-  clearInterval(S.eight.interval);
-  S.eight.interval=setInterval(()=>{
-    left-=.1;
+  const r=54*2*Math.PI;
+  cancelAnimationFrame(S.eight.interval);
+  const start=performance.now();
+  function tick(now){
+    const elapsed=(now-start)/1000;
+    const left=secs-elapsed;
     const c=document.getElementById('timerCircle'), n=document.getElementById('timerNum');
-    if(!c||!n){clearInterval(S.eight.interval);return;}
-    c.style.strokeDashoffset=r*(1-left/secs);
-    n.textContent=Math.ceil(left);
+    if(!c||!n)return;
+    c.style.strokeDashoffset=r*(1-Math.max(0,left)/secs);
+    n.textContent=Math.ceil(Math.max(0,left));
     const danger=left<=secs*.35;
-    c.classList.toggle('danger',danger); n.classList.toggle('danger',danger);
-    if(left<=0){clearInterval(S.eight.interval);n.textContent='💥';showToast('⏱ CZAS MINĄŁ!');flashResult('lose');}
-  },100);
+    c.classList.toggle('danger',danger);n.classList.toggle('danger',danger);
+    if(left<=0){n.textContent='💥';showToast('⏱ CZAS MINĄŁ!');flashResult('lose');return;}
+    S.eight.interval=requestAnimationFrame(tick);
+  }
+  S.eight.interval=requestAnimationFrame(tick);
 }
 
 // ════════════════════════════════════════════
@@ -2798,7 +2853,9 @@ function spawnConfetti(n=60){
   const ov=document.getElementById('confettiOverlay');ov.innerHTML='';
   clearTimeout(_confettiTimer);
   const cols=['#FFD700','#FF2D9C','#00CFFF','#ADFF2F','#FF6BC8','#FFA500'];
-  for(let i=0;i<n;i++){const d=document.createElement('div');d.className='confetti-piece';d.style.left=Math.random()*100+'%';d.style.background=cols[Math.floor(Math.random()*cols.length)];d.style.width=(7+Math.random()*9)+'px';d.style.height=(7+Math.random()*9)+'px';d.style.borderRadius=Math.random()>.5?'50%':'2px';d.style.animationDuration=(1.5+Math.random()*2)+'s';d.style.animationDelay=(Math.random()*.7)+'s';ov.appendChild(d);}
+  const frag=document.createDocumentFragment();
+  for(let i=0;i<n;i++){const d=document.createElement('div');d.className='confetti-piece';d.style.cssText=`left:${Math.random()*100}%;background:${cols[i%cols.length]};width:${7+Math.random()*9}px;height:${7+Math.random()*9}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.7}s`;frag.appendChild(d);}
+  ov.appendChild(frag);
   _confettiTimer=setTimeout(()=>ov.innerHTML='',3500);
 }
 function flashResult(type){const div=document.createElement('div');div.className='result-flash '+type;div.innerHTML=`<div class="result-emoji">${type==='win'?'🎉':'😬'}</div>`;document.body.appendChild(div);if(type==='win')spawnConfetti();setTimeout(()=>div.remove(),900);}
