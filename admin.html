@@ -959,6 +959,13 @@ onValue(ref(db,'content'), snap => {
   Object.keys(window.DATA_DEFAULTS).forEach(k => {
     window.DATA[k] = (k in cloud) ? cloud[k] : JSON.parse(JSON.stringify(window.DATA_DEFAULTS[k]));
   });
+  // Jesli to echo naszego wlasnego zapisu z ostatnich 3s — nie przerywaj edycji
+  const isOwnEcho = window._lastLocalSaveTs && (Date.now() - window._lastLocalSaveTs < 3000);
+  if(isOwnEcho) {
+    console.log('[content sync] echo wlasnego zapisu — pomijam re-render');
+    return;
+  }
+  console.log('[content sync] przyszly zmiany od innego urzadzenia — odswiezam UI');
   if(window._currentGame && typeof window.renderGame === 'function') {
     try { window.renderGame(window._currentGame); } catch(e){}
   }
@@ -1177,20 +1184,64 @@ window.DATA_DEFAULTS = DATA_DEFAULTS;
 
 // ── CONTENT SYNC (zapisywanie edycji pytan do Firebase, debounced) ──
 let _saveContentTimer = null;
-function saveContent() {
+let _pendingSave = false;
+function _updateSaveStatus(msg, color) {
+  const el = document.getElementById('saveStatus');
+  if(el) {
+    el.textContent = msg;
+    el.style.color = color || 'var(--muted)';
+  }
+}
+function _doSaveContent() {
   clearTimeout(_saveContentTimer);
-  _saveContentTimer = setTimeout(() => {
-    if(!window.FB) return;
-    let by = localStorage.getItem('editorName');
-    if(!by) {
-      by = prompt('Kto edytuje pytania? (twoje imie — zostanie zapamietane)')||'host';
-      localStorage.setItem('editorName', by);
-    }
-    window.FB.set(window.FB.ref(window.FB.db,'content'), DATA);
-    window.FB.set(window.FB.ref(window.FB.db,'content_meta'), { ts: Date.now(), by });
-  }, 500);
+  _saveContentTimer = null;
+  _pendingSave = false;
+  if(!window.FB) { _updateSaveStatus('⚠ Firebase niedostepny', 'var(--red)'); return; }
+  let by = localStorage.getItem('editorName');
+  if(!by) {
+    by = prompt('Kto edytuje pytania? (twoje imie — zostanie zapamietane)') || 'host';
+    localStorage.setItem('editorName', by);
+  }
+  _updateSaveStatus('⏳ Zapisywanie do chmury...', 'var(--gold)');
+  window._lastLocalSaveTs = Date.now();
+  console.log('[saveContent] wysylam DATA do Firebase /content');
+  Promise.all([
+    window.FB.set(window.FB.ref(window.FB.db,'content'), DATA),
+    window.FB.set(window.FB.ref(window.FB.db,'content_meta'), { ts: Date.now(), by })
+  ]).then(() => {
+    _updateSaveStatus('✅ Zapisano ' + new Date().toLocaleTimeString('pl-PL') + ' (' + by + ')', 'var(--green)');
+    console.log('[saveContent] OK — zapisano do Firebase');
+  }).catch(err => {
+    _updateSaveStatus('❌ Blad zapisu: ' + err.message, 'var(--red)');
+    console.error('[saveContent] BLAD:', err);
+  });
+}
+function saveContent() {
+  _pendingSave = true;
+  _updateSaveStatus('✎ Niezapisane zmiany...', 'var(--pink)');
+  clearTimeout(_saveContentTimer);
+  _saveContentTimer = setTimeout(_doSaveContent, 700);
+}
+function flushSaveContent() {
+  if(_saveContentTimer || _pendingSave) {
+    _doSaveContent();
+  } else {
+    _updateSaveStatus('ℹ Nic nie bylo zmieniane', 'var(--muted)');
+    setTimeout(() => _updateSaveStatus('✅ Zsynchronizowane', 'var(--green)'), 1500);
+  }
 }
 window.saveContent = saveContent;
+window.flushSaveContent = flushSaveContent;
+
+// Zapisz przy zamykaniu strony jesli byly zmiany
+window.addEventListener('beforeunload', ev => {
+  if(_pendingSave || _saveContentTimer) {
+    _doSaveContent();
+    ev.preventDefault();
+    ev.returnValue = 'Masz niezapisane zmiany — poczekaj chwile zanim zamkniesz!';
+    return ev.returnValue;
+  }
+});
 
 function resetContentToDefaults() {
   if(!confirm('Przywrocic domyslne pytania? To skasuje wszystkie edycje z chmury!')) return;
@@ -2753,12 +2804,18 @@ function buildAdmin(g) {
   const c=document.getElementById('gsAdminContent');
   if(!c)return;
   document.getElementById('gsAdminTitle').textContent='⚙ '+g.toUpperCase();
-  // Meta-info "ostatnio edytowane" + reset (umieszczane na gorze panelu)
-  const meta = document.getElementById('contentMeta');
-  if(!meta) {
+  // Pasek statusu zapisu + przycisk ZAPISZ TERAZ + info "ostatnio edytowane"
+  if(!document.getElementById('saveStatusBar')) {
+    const bar = document.createElement('div');
+    bar.id = 'saveStatusBar';
+    bar.style.cssText = 'display:flex;gap:6px;align-items:center;padding:8px 10px;background:rgba(255,215,0,.07);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;flex-wrap:wrap;';
+    bar.innerHTML = `
+      <div id="saveStatus" style="flex:1;font-size:.72rem;color:var(--green);min-width:120px;">✅ Zsynchronizowane</div>
+      <button onclick="flushSaveContent()" style="background:var(--gold);color:#000;border:none;border-radius:6px;padding:6px 12px;font-family:'Bebas Neue';font-size:.78rem;letter-spacing:1px;cursor:pointer;font-weight:700;">💾 ZAPISZ TERAZ</button>`;
+    c.parentNode?.insertBefore(bar, c);
     const metaDiv = document.createElement('div');
     metaDiv.id = 'contentMeta';
-    metaDiv.style.cssText = 'font-size:.7rem;color:var(--muted);padding:6px 10px;background:rgba(255,215,0,.05);border-radius:6px;margin-bottom:8px;';
+    metaDiv.style.cssText = 'font-size:.65rem;color:var(--muted);padding:4px 10px;margin-bottom:8px;font-style:italic;';
     c.parentNode?.insertBefore(metaDiv, c);
   }
   if(g==='bingo'){
