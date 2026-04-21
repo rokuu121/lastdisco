@@ -1,0 +1,11 @@
+# Claude Code local config (user-specific)
+.claude/
+
+# Tymczasowe pliki helperow / syntax-check
+_syntax_check.js
+
+# System / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
