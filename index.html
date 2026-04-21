@@ -435,20 +435,16 @@ window._handleGameState = function(state) {
     case 'neverhave': renderNeverPlayer(state); break;
     case 'advice':    renderAdvicePlayer(state); break;
     case 'bingo':     window._lastBingoState = state; renderBingoPlayer(state); break;
-    case 'couples':   renderCouplesPlayer(state); break;
     case 'vabank':    renderVabankPlayer(state); break;
     case 'eight':     renderEightPlayer(state); break;
     case 'draw':      renderDrawPlayer(state); break;
-    case 'timeline':  window._lastGameState=state; renderTimelinePlayer(state); break;
-    case 'dilemmas':  renderDilemmasPlayer(state); break;
     default:          renderIdleCard('Gra: ' + state.game); break;
   }
 };
 
 function gameEmoji(g) {
   return {quiz:'🎤',quizblazej:'💒',honornot:'🔥',highlow:'📊',choice:'⚡',neverhave:'🙈',advice:'💌',
-    bingo:'🎰',couples:'💑',vabank:'🎲',eight:'⏱️',
-    timeline:'📅',dilemmas:'🤔'}[g]||'🪩';
+    bingo:'🎰',vabank:'🎲',eight:'⏱️'}[g]||'🪩';
 }
 
 // ── VOTE HELPER ──
@@ -673,22 +669,6 @@ function checkPlayerBingo() {
 }
 
 // ══════════════════════════════════════════
-// COUPLES PLAYER
-// ══════════════════════════════════════════
-let _lastCouplesScore = 0;
-function renderCouplesPlayer(state) {
-  const c = document.getElementById('gameContent');
-  const score = state.score || 0;
-  c.innerHTML=`
-    <div class="q-card"><div class="q-round">💑 DOPASUJ PARĘ</div><div class="q-text" style="font-size:1rem;">✅ ${score} par dopasowanych</div></div>
-    <div class="idle-card"><div class="idle-emoji">💑</div><div class="idle-text">PODPOWIADAJ PROWADZĄCEJ!</div>
-      <div class="idle-sub">Prowadząca dopasowuje pary na TV.<br>Krzycz swoją propozycję!</div>
-    </div>`;
-  if(score > _lastCouplesScore && score > 0) spawnConfetti(10);
-  _lastCouplesScore = score;
-}
-
-// ══════════════════════════════════════════
 // VA-BANK PLAYER
 // ══════════════════════════════════════════
 function renderVabankPlayer(state) {
@@ -741,76 +721,6 @@ function renderDrawPlayer(state) {
   document.getElementById('gameContent').innerHTML=`
     <div class="q-card"><div class="q-round">✏️ DORYSUJ TO</div><div class="q-text" style="font-size:1.1rem;">Zgadnij co jest rysowane!</div></div>
     <div class="idle-card"><div class="idle-emoji">🎨</div><div class="idle-text">PATRZ NA TV I ZGADUJ!</div><div class="idle-sub">Ktoś rysuje na ekranie.<br>Krzycz swoją odpowiedź głośno!</div></div>`;
-}
-
-// ══════════════════════════════════════════
-// TIMELINE PLAYER
-// ══════════════════════════════════════════
-let _timelineOrder = null;
-function renderTimelinePlayer(state) {
-  const c = document.getElementById('gameContent');
-  if(state.phase==='arranging') {
-    const events = state.events || [];
-    if(!_timelineOrder) _timelineOrder = events.map((_,i)=>i);
-    c.innerHTML=`
-      <div class="q-card"><div class="q-round">📅 OS CZASU KASI</div><div class="q-text" style="font-size:1rem;">Przeciagnij wydarzenia w kolejnosci!</div></div>
-      <div id="timelineSortable" style="display:flex;flex-direction:column;gap:6px;">
-        ${_timelineOrder.map(i=>`<div class="opt" data-tidx="${i}" onclick="timelineMoveUp(${i})" style="cursor:pointer;min-height:50px;">
-          <span class="opt-letter" style="font-size:1rem;">${_timelineOrder.indexOf(i)+1}</span>
-          <span class="opt-text">${esc(events[i]?.event||'')}</span>
-        </div>`).join('')}
-      </div>
-      ${_playerVoted?`<div class="answer-card neutral"><div class="answer-lbl neutral">✅ KOLEJNOSC WYSLANA!</div></div>`
-      :`<button class="join-btn" style="margin-top:10px;" onclick="submitTimeline()">✅ ZATWIERDZ KOLEJNOSC</button>`}`;
-  } else {
-    const correct = state.correctOrder || [];
-    c.innerHTML=`
-      <div class="q-card"><div class="q-round">📅 POPRAWNA KOLEJNOSC</div></div>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        ${correct.map((idx,pos)=>`<div class="opt correct" style="cursor:default;">
-          <span class="opt-letter correct" style="font-size:1rem;">${pos+1}</span>
-          <span class="opt-text">${esc(state.events?.[idx]?.event||'Wydarzenie '+(pos+1))}</span>
-        </div>`).join('')}
-      </div>`;
-    spawnConfetti(15);
-  }
-}
-function timelineMoveUp(idx){
-  if(_playerVoted) return;
-  const pos = _timelineOrder.indexOf(idx);
-  if(pos>0){_timelineOrder.splice(pos,1);_timelineOrder.splice(pos-1,0,idx);}
-  else{_timelineOrder.push(_timelineOrder.shift());}// wrap
-  const state=window._lastGameState;if(state) renderTimelinePlayer(state);
-}
-function submitTimeline(){
-  if(_playerVoted) return;
-  _playerVoted=true;
-  // Map player order back to original indices
-  const events = window._lastGameState?.events||[];
-  const order = _timelineOrder.map(i=>events[i]?.idx??i);
-  window.DB?.set(window.DB.ref(window.DB.db,'timeline/'+_playerName.replace(/\s/g,'_')), order);
-  showToast('Kolejnosc wyslana!');spawnConfetti(15);
-  const state=window._lastGameState;if(state) renderTimelinePlayer(state);
-}
-
-// ══════════════════════════════════════════
-// DILEMMAS PLAYER
-// ══════════════════════════════════════════
-function renderDilemmasPlayer(state) {
-  const c = document.getElementById('gameContent');
-  if(state.phase==='voting') {
-    c.innerHTML=`
-      <div class="q-card"><div class="q-round">🤔 DYLEMAT</div><div class="q-text">${esc(state.q||'')}</div></div>
-      ${_playerVoted?`<div class="answer-card neutral"><div class="answer-lbl neutral">✅ GLOS WYSLANY!</div><div style="font-size:.8rem;color:var(--muted);margin-top:4px;">Czekam az Kasia ujawni...</div></div>`:`
-      <div class="vote-grid">
-        ${(state.opts||[]).map((o,i)=>`<div class="vote-btn ${i===0?'hot':'not'}" onclick="sendVote('${esc(o)}');renderSimpleVoted()"><span class="vote-icon">${i===0?'💃':'🤵'}</span><span class="vote-label">${esc(o)}</span></div>`).join('')}
-      </div>`}`;
-  } else {
-    c.innerHTML=`
-      <div class="q-card"><div class="q-round">🤔 DYLEMAT</div><div class="q-text">${esc(state.q||'')}</div></div>
-      <div class="answer-card correct"><div class="answer-lbl">ODPOWIEDZ</div><div class="answer-val">${esc(state.answer||'')}</div>${state.answerNote?`<div class="answer-note">${esc(state.answerNote)}</div>`:''}</div>`;
-    spawnConfetti(15);
-  }
 }
 
 // ══════════════════════════════════════════
