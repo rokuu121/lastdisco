@@ -2171,7 +2171,30 @@ function quizBlazejPrev(){if(S.quizblazej.idx>0){S.quizblazej.idx--;S.quizblazej
 // ════════════════════════════════════════════
 // VA-BANK
 // ════════════════════════════════════════════
+function _ensureVabankStructure() {
+  // Firebase zjada puste tablice przy round-trip (`used: []` -> undefined).
+  // Zapewniamy pelna strukture po kazdym cloud sync.
+  if(!DATA.vabank || typeof DATA.vabank !== 'object') DATA.vabank = JSON.parse(JSON.stringify(DATA_DEFAULTS.vabank));
+  if(!Array.isArray(DATA.vabank.used)) DATA.vabank.used = [];
+  if(!Array.isArray(DATA.vabank.categories) || !DATA.vabank.categories.length) DATA.vabank.categories = JSON.parse(JSON.stringify(DATA_DEFAULTS.vabank.categories));
+  if(!Array.isArray(DATA.vabank.prices) || !DATA.vabank.prices.length) DATA.vabank.prices = JSON.parse(JSON.stringify(DATA_DEFAULTS.vabank.prices));
+  if(!DATA.vabank.questions) DATA.vabank.questions = JSON.parse(JSON.stringify(DATA_DEFAULTS.vabank.questions));
+  // questions moze wrocic z Firebase jako obiekt {0:{...}, 1:{...}} zamiast tablicy — konwertujemy
+  if(!Array.isArray(DATA.vabank.questions)) {
+    const arr = [];
+    Object.keys(DATA.vabank.questions).sort((a,b)=>+a-+b).forEach(k => arr.push(DATA.vabank.questions[k]));
+    DATA.vabank.questions = arr;
+  }
+  DATA.vabank.questions.forEach((row, ci) => {
+    if(!Array.isArray(row)) {
+      const arr = [];
+      Object.keys(row||{}).sort((a,b)=>+a-+b).forEach(k => arr.push(row[k]));
+      DATA.vabank.questions[ci] = arr;
+    }
+  });
+}
 function renderVabank() {
+  _ensureVabankStructure();
   document.getElementById('gsTitle').textContent='🎲 VA-BANK';
   const vb=DATA.vabank;
   if(S.vabank.view==='board') {
@@ -2224,8 +2247,9 @@ function renderVabank() {
     window.pushState?.({game:'vabank',view:'question',ci,pi,question:qd.q,phase:S.vabank.phase,answer:S.vabank.phase==='answer'?qd.a:null});
   }
 }
-function vbSelect(ci,pi){if(DATA.vabank.used.includes(ci+'-'+pi))return;S.vabank.catIdx=ci;S.vabank.priceIdx=pi;S.vabank.view='question';S.vabank.phase='question';renderVabank();}
+function vbSelect(ci,pi){_ensureVabankStructure();if(DATA.vabank.used.includes(ci+'-'+pi))return;S.vabank.catIdx=ci;S.vabank.priceIdx=pi;S.vabank.view='question';S.vabank.phase='question';renderVabank();}
 function vbReveal(){
+  _ensureVabankStructure();
   const key=S.vabank.catIdx+'-'+S.vabank.priceIdx;
   if(!DATA.vabank.used.includes(key))DATA.vabank.used.push(key);
   S.vabank.phase='answer';
