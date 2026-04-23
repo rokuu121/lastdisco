@@ -970,7 +970,7 @@ window.FB = { db, ref, set, get, onValue, push, remove, pushState, pushVotesRese
   setVotesCallback(cb){ votesCallback = cb; } };
 
 // ── QR CODE (simple, no library) ──
-const playerUrl = window.location.origin + window.location.pathname.replace('admin.html','');
+const playerUrl = window.location.origin + window.location.pathname.replace(/\/admin(\.html)?\/?$/, '/');
 document.getElementById('playerUrl').textContent = playerUrl;
 // QR code via qrserver.com API (stable, free)
 const qrImg = document.getElementById('qrImg');
